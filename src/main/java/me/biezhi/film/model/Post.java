@@ -23,11 +23,13 @@ public class Post implements Serializable {
 	//封面
 	private String cover;
 	
-	//所属分类
-	private Integer category_id;
+	//所属菜单
+	private Integer menu_id;
 	
 	//内容
 	private String content;
+	
+	private String links;
 	
 	//浏览量
 	private Integer views;
@@ -72,12 +74,12 @@ public class Post implements Serializable {
 		this.cover = cover;
 	}
 	
-	public Integer getCategory_id() {
-		return category_id;
+	public Integer getMenu_id() {
+		return menu_id;
 	}
 
-	public void setCategory_id(Integer category_id) {
-		this.category_id = category_id;
+	public void setMenu_id(Integer menu_id) {
+		this.menu_id = menu_id;
 	}
 	
 	public String getContent() {
@@ -86,6 +88,14 @@ public class Post implements Serializable {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+	
+	public String getLinks() {
+		return links;
+	}
+
+	public void setLinks(String links) {
+		this.links = links;
 	}
 	
 	public Integer getViews() {
