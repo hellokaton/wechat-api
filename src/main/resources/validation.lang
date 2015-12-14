@@ -1,0 +1,10 @@
+required=%s不能为空
+min=%s最小为%d
+max=%s最大为%d
+minLen=%s最小长度为%d
+maxLen=%s最大长度为%d
+email=邮箱格式不正确
+date=日期格式不正确
+number=不是数字
+phone=不是正确的电话
+url=不是正确的URL
