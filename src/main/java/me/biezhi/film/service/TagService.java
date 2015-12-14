@@ -2,10 +2,8 @@ package me.biezhi.film.service;
 
 import java.util.List;
 
-import blade.plugin.sql2o.Page;
-import blade.plugin.sql2o.WhereParam;
-
 import me.biezhi.film.model.Tag;
+import blade.plugin.sql2o.WhereParam;
 
 public interface TagService {
 	
@@ -13,9 +11,7 @@ public interface TagService {
 	
 	public Tag getTag(WhereParam where);
 	
-	public List<Tag> getTagList(WhereParam where);
-	
-	public Page<Tag> getPageList(WhereParam where, Integer page, Integer pageSize, String order);
+	public List<Tag> getTagList(WhereParam where, String order);
 	
 	public boolean save( String name, Integer count );
 	

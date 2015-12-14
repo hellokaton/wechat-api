@@ -1,12 +1,13 @@
 package me.biezhi.film.service.impl;
 
 import java.util.List;
-import blade.plugin.sql2o.Model;
-import blade.plugin.sql2o.Page;
-import blade.plugin.sql2o.WhereParam;
-import com.blade.annotation.Component;
+
 import me.biezhi.film.model.Tag;
 import me.biezhi.film.service.TagService;
+import blade.plugin.sql2o.Model;
+import blade.plugin.sql2o.WhereParam;
+
+import com.blade.annotation.Component;
 
 @Component
 public class TagServiceImpl implements TagService {
@@ -27,17 +28,11 @@ public class TagServiceImpl implements TagService {
 	}
 	
 	@Override
-	public List<Tag> getTagList(WhereParam where) {
+	public List<Tag> getTagList(WhereParam where, String order) {
 		if(null != where){
-			return model.select().where(where).fetchList();
+			return model.select().where(where).orderBy(order).fetchList();
 		}
 		return null;
-	}
-	
-	@Override
-	public Page<Tag> getPageList(WhereParam where, Integer page, Integer pageSize, String order) {
-		Page<Tag> pageTag = model.select().where(where).orderBy(order).fetchPage(page, pageSize);
-		return pageTag;
 	}
 	
 	@Override
