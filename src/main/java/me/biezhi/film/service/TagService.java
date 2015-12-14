@@ -9,11 +9,13 @@ public interface TagService {
 	
 	public Tag getTag(Integer id);
 	
-	public Tag getTag(WhereParam where);
+	public Tag getTag(String tagName);
 	
 	public List<Tag> getTagList(WhereParam where, String order);
 	
-	public boolean save( String name, Integer count );
+	public Tag save( String name, Integer count);
+	
+	public boolean updateCount(Integer id, Integer type);
 	
 	public boolean delete(Integer id);
 		

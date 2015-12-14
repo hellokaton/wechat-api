@@ -17,7 +17,9 @@ public interface PostService {
 	
 	public Page<Post> getPageList(WhereParam where, Integer page, Integer pageSize, String order);
 	
-	public boolean save( String title, String slug, String cover, Integer categoryId, String content, Integer views, Boolean isDel, Integer dateline );
+	public boolean save(String title, String slug, String cover, Integer menu_id, String content, String links, String tags);
+	
+	public boolean update(Integer pid, String title, String slug, String cover, Integer menu_id, String content, String links);
 	
 	public boolean delete(Integer pid);
 		

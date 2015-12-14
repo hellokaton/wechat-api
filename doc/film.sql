@@ -50,8 +50,9 @@ CREATE TABLE `t_post` (
   `title` varchar(255) NOT NULL COMMENT '标题',
   `slug` varchar(255) DEFAULT NULL COMMENT '缩略名',
   `cover` varchar(255) NOT NULL COMMENT '封面',
-  `category_id` int(11) DEFAULT NULL COMMENT '所属分类',
+  `menu_id` int(11) DEFAULT NULL COMMENT '所属菜单',
   `content` text NOT NULL COMMENT '内容',
+  `links` text,
   `views` int(10) NOT NULL DEFAULT '0' COMMENT '浏览量',
   `is_del` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否已经删除',
   `dateline` int(11) NOT NULL COMMENT '发布日期',
@@ -59,6 +60,19 @@ CREATE TABLE `t_post` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /*Data for the table `t_post` */
+
+/*Table structure for table `t_post_tag` */
+
+DROP TABLE IF EXISTS `t_post_tag`;
+
+CREATE TABLE `t_post_tag` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `pid` int(10) NOT NULL,
+  `tid` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/*Data for the table `t_post_tag` */
 
 /*Table structure for table `t_tag` */
 

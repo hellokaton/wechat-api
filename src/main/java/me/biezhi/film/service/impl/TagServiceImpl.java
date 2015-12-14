@@ -4,6 +4,7 @@ import java.util.List;
 
 import me.biezhi.film.model.Tag;
 import me.biezhi.film.service.TagService;
+import blade.kit.StringKit;
 import blade.plugin.sql2o.Model;
 import blade.plugin.sql2o.WhereParam;
 
@@ -20,9 +21,9 @@ public class TagServiceImpl implements TagService {
 	}
 	
 	@Override
-	public Tag getTag(WhereParam where) {
-		if(null != where){
-			return model.select().where(where).fetchOne();
+	public Tag getTag(String name) {
+		if(StringKit.isNotBlank(name)){
+			return model.select().eq("name", name).fetchOne();
 		}
 		return null;
 	}
@@ -36,14 +37,28 @@ public class TagServiceImpl implements TagService {
 	}
 	
 	@Override
-	public boolean save( String name, Integer count ) {
-		return false;
+	public Tag save( String name, Integer count ) {
+		Integer tid = model.insert().param("name", name).param("count", count).executeAndCommit();
+		return this.getTag(tid);
 	}
 	
 	@Override
 	public boolean delete(Integer id) {
 		if(null != id){
 			return model.delete().eq("id", id).executeAndCommit() > 0;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean updateCount(Integer id, Integer count) {
+		if(null != id && null != count){
+			Tag tag = this.getTag(id);
+			Integer newcount = tag.getCount() + count;
+			if(newcount < 0){
+				newcount = 0;
+			}
+			return model.update().param("count", newcount).eq("id", id).executeAndCommit() > 0;
 		}
 		return false;
 	}
