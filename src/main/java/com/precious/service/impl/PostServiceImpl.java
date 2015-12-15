@@ -3,6 +3,7 @@ package com.precious.service.impl;
 import java.util.List;
 
 import blade.kit.DateKit;
+import blade.kit.StringKit;
 import blade.plugin.sql2o.Model;
 import blade.plugin.sql2o.Page;
 import blade.plugin.sql2o.WhereParam;
@@ -66,18 +67,19 @@ public class PostServiceImpl implements PostService {
 			.param("dateline", DateKit.getCurrentUnixTime())
 			.executeAndCommit();
 			
-			String[] tag_arr = tags.split(",");
-			for (String tag : tag_arr) {
-				Tag t = tagService.getTag(tag);
-				if (null == t) {
-					t = tagService.save(tag, 0);
-				} else {
-					Integer id = t.getId();
-					tagService.updateCount(id, 1);
+			if (StringKit.isNotBlank(tags)) {
+				String[] tag_arr = tags.split(",");
+				for (String tag : tag_arr) {
+					Tag t = tagService.getTag(tag);
+					if (null == t) {
+						t = tagService.save(tag, 0);
+					} else {
+						Integer id = t.getId();
+						tagService.updateCount(id, 1);
+					}
+					postTagService.save(pid, t.getId());
 				}
-				postTagService.save(pid, t.getId());
 			}
-			
 			return pid > 0;
 		} catch (Exception e) {
 			e.printStackTrace();

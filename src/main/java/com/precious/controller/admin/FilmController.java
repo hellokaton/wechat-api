@@ -1,9 +1,13 @@
 package com.precious.controller.admin;
 
+import blade.kit.StringKit;
+
 import com.blade.annotation.Inject;
 import com.blade.web.http.Request;
 import com.blade.web.http.Response;
+import com.precious.Validator;
 import com.precious.controller.BaseController;
+import com.precious.kit.Errors;
 import com.precious.model.Post;
 import com.precious.service.PostService;
 import com.precious.service.PostTagService;
@@ -40,13 +44,36 @@ public class FilmController extends BaseController {
 		String links = request.query("links");
 		String tags = request.query("tags");
 		
-		boolean flag = postService.save(title, slug, cover, menu_id, content, links, tags);
-		
-		if(flag){
-			response.text(this.SUCCESS);
-		} else {
-			response.text(this.FAILURE);
+		Errors errors = Errors.empty();
+		if(StringKit.isBlank(title)){
+			errors.add(Validator.required("标题"));
 		}
+		
+		if(StringKit.isBlank(cover)){
+			errors.add(Validator.required("封面"));
+		}
+		
+		if(null == menu_id){
+			errors.add(Validator.required("所属菜单"));
+		}
+		
+		if(StringKit.isBlank(content)){
+			errors.add(Validator.required("内容"));
+		}
+		
+		if(errors.hasError()){
+			request.attribute("errors", errors.getErrors());
+			response.render(this.getAdmin("film_page"));
+		} else {
+			boolean flag = postService.save(title, slug, cover, menu_id, content, links, tags);
+			
+			if(flag){
+				response.text(this.SUCCESS);
+			} else {
+				response.text(this.FAILURE);
+			}
+		}
+		
 	}
 	
 	/**
@@ -61,16 +88,39 @@ public class FilmController extends BaseController {
 		String content = request.query("content");
 		String links = request.query("links");
 		
+		Errors errors = Errors.empty();
+		
 		if(null == pid){
-			return;
+			errors.add(Validator.required("唯一标识"));
 		}
 		
-		boolean flag = postService.update(pid, title, slug, cover, menu_id, content, links);
+		if(StringKit.isBlank(title)){
+			errors.add(Validator.required("标题"));
+		}
 		
-		if(flag){
-			response.text(this.SUCCESS);
+		if(StringKit.isBlank(cover)){
+			errors.add(Validator.required("封面"));
+		}
+		
+		if(null == menu_id){
+			errors.add(Validator.required("所属菜单"));
+		}
+		
+		if(StringKit.isBlank(content)){
+			errors.add(Validator.required("内容"));
+		}
+		
+		if(errors.hasError()){
+			request.attribute("errors", errors.getErrors());
+			response.render(this.getAdmin("film_page"));
 		} else {
-			response.text(this.FAILURE);
+			boolean flag = postService.update(pid, title, slug, cover, menu_id, content, links);
+			
+			if(flag){
+				response.text(this.SUCCESS);
+			} else {
+				response.text(this.FAILURE);
+			}
 		}
 	}
 	
