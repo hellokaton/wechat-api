@@ -12,7 +12,7 @@
 		<async-supported>true</async-supported>
 		<init-param>
 			<param-name>bootstrap</param-name>
-			<param-value>me.biezhi.film.App</param-value>
+			<param-value>com.jewel.App</param-value>
 		</init-param>
 	</servlet>
 	<servlet-mapping>
