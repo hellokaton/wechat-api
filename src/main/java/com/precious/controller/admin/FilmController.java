@@ -17,7 +17,7 @@ public class FilmController extends BaseController {
 	private PostTagService postTagService;
 	
 	/**
-	 * 添加/编辑电影
+	 * 添加/编辑电影页面
 	 */
 	public void film_page(Request request, Response response){
 		Integer pid = request.paramAsInt("pid");

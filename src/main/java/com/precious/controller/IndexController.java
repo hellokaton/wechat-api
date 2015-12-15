@@ -1,17 +1,23 @@
 package com.precious.controller;
 
 import blade.kit.StringKit;
+import blade.kit.json.Json;
+import blade.kit.json.JsonArray;
 import blade.plugin.sql2o.Page;
 import blade.plugin.sql2o.WhereParam;
 
 import com.blade.annotation.Inject;
 import com.blade.web.http.Request;
 import com.blade.web.http.Response;
+import com.precious.Const;
 import com.precious.Validator;
 import com.precious.kit.Errors;
 import com.precious.kit.SessionKit;
+import com.precious.model.Menu;
 import com.precious.model.Post;
 import com.precious.model.User;
+import com.precious.service.MenuService;
+import com.precious.service.OptionService;
 import com.precious.service.PostService;
 import com.precious.service.UserService;
 
@@ -23,6 +29,12 @@ public class IndexController extends BaseController {
 	@Inject
 	private PostService postService;
 	
+	@Inject
+	private OptionService optionService;
+	
+	@Inject
+	private MenuService menuService;
+	
 	/**
 	 * 首页
 	 */
@@ -31,7 +43,28 @@ public class IndexController extends BaseController {
 		if(null == page || page < 1){
 			page = 1;
 		}
-		Page<Post> pagePost = postService.getPageList(null, page, this.pageSize, "dateline desc");
+		
+		// 首页幻灯片
+		String slider_str = optionService.getOption(Const.OPT_KEY_SLIDER);
+		if(StringKit.isNotBlank(slider_str)){
+			JsonArray slider = Json.parse(slider_str).asArray();
+			request.attribute("slider", slider);
+		}
+		
+		// 查询条件
+		WhereParam where = WhereParam.me();
+		String tab = request.query("tab");
+		if(StringKit.isNotBlank(tab)){
+			Menu menu = menuService.getMenu(tab);
+			if(null == menu){
+				response.render(this.getFront("404"));
+				return;
+			}
+			where.eq("menu_id", menu.getId());
+		}
+		
+		// 电影列表
+		Page<Post> pagePost = postService.getPageList(where, page, this.pageSize, "dateline desc");
 		request.attribute("pagePost", pagePost);
 		response.render(this.getFront("home"));
 	}

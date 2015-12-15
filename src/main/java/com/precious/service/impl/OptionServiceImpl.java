@@ -2,6 +2,7 @@ package com.precious.service.impl;
 
 import java.util.List;
 
+import blade.kit.StringKit;
 import blade.plugin.sql2o.Model;
 import blade.plugin.sql2o.Page;
 import blade.plugin.sql2o.WhereParam;
@@ -16,8 +17,12 @@ public class OptionServiceImpl implements OptionService {
 	private Model<Option> model = Model.create(Option.class);
 	
 	@Override
-	public Option getOption(String optKey) {
-		return model.fetchByPk(optKey);
+	public String getOption(String optKey) {
+		Option option = model.fetchByPk(optKey);
+		if(null != option){
+			return option.getOpt_value();
+		}
+		return null;
 	}
 	
 	@Override
@@ -43,7 +48,16 @@ public class OptionServiceImpl implements OptionService {
 	}
 	
 	@Override
-	public boolean save( String optValue ) {
+	public boolean saveOrUpdate(String optKey, String optValue) {
+		if(StringKit.isNotBlank(optKey)){
+			Option option = model.fetchByPk(optKey);
+			if(null == option){
+				model.insert().param("opt_key", optKey).param("opt_value", optValue).executeAndCommit();
+			} else {
+				model.update().param("opt_value", optValue).eq("opt_key", optKey).executeAndCommit();
+			}
+			return true;
+		}
 		return false;
 	}
 	

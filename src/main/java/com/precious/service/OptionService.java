@@ -9,7 +9,7 @@ import blade.plugin.sql2o.WhereParam;
 
 public interface OptionService {
 	
-	public Option getOption(String optKey);
+	public String getOption(String optKey);
 	
 	public Option getOption(WhereParam where);
 	
@@ -17,7 +17,7 @@ public interface OptionService {
 	
 	public Page<Option> getPageList(WhereParam where, Integer page, Integer pageSize, String order);
 	
-	public boolean save( String optValue );
+	public boolean saveOrUpdate(String optKey, String optValue);
 	
 	public boolean delete(String optKey);
 		
