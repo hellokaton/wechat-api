@@ -8,16 +8,16 @@
 
 	1. 下载项目
 	
-	```sh
-	git clone https://github.com/biezhi/precious.git
-	```
+```sh
+git clone https://github.com/biezhi/precious.git
+```
 	
 	2. 安装数据库
 	
-	新建数据库 `precious` ，将 `doc/precious.sql` 导入到您的数据库中
+新建数据库 `precious` ，将 `doc/precious.sql` 导入到您的数据库中
 	
 	3. 运行项目
 	
-	```sh
-	mvn clean install jetty:run
-	```
+```sh
+mvn clean install jetty:run
+```
