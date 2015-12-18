@@ -5,7 +5,7 @@
 	<artifactId>precious</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1</version>
-	<name>film Maven Webapp</name>
+	<name>precious Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	
 	<properties>

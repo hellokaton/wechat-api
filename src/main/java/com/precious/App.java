@@ -40,8 +40,8 @@ public class App extends Bootstrap {
 	public void init(Blade blade) {
 		// 加载配置文件
 		blade.config("blade.conf");
-		blade.routeConf("me.biezhi.film.controller", "route_front.conf");
-		blade.routeConf("me.biezhi.film.controller.admin", "route_admin.conf");
+		blade.routeConf("com.precious.controller", "route_front.conf");
+		blade.routeConf("com.precious.controller.admin", "route_admin.conf");
 		
 		// 设置模板引擎
 		JetbrickRender jetbrickRender = new JetbrickRender();
@@ -59,7 +59,7 @@ public class App extends Bootstrap {
 		blade.before("/admin/.*", new RouteHandler() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+				System.out.println("访问admin...");
 			}
 		});
 		
