@@ -1,6 +1,6 @@
 /*
 SQLyog Ultimate v11.11 (64 bit)
-MySQL - 5.5.40 : Database - jewel
+MySQL - 5.5.40 : Database - precious
 *********************************************************************
 */
 
