@@ -17,15 +17,15 @@ public class Const {
 	public static final String OPT_KEY_SLIDER = "site_silder";
 	
 	// 站点信息
-	public static final String OPT_KEY_SITE = "site_options";
+	public static final String OPT_KEY_SITE = "sysinfo";
 	
 	// 菜单key
-	public static final String MENU_KEY = "site_menu";
+	public static final String MENU_KEY = "site_menus";
 	
 	// 存储菜单
 	public static List<Menu> SITE_MENUS = null;
 	
 	// 存储站点信息
-	public static Map<String, Object> SITE_OPTIONS = null;
+	public static Map<String, String> SITE_OPTIONS = null;
 	
 }

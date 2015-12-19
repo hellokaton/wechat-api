@@ -1,15 +1,16 @@
 package com.precious.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
-
-import blade.kit.StringKit;
-import blade.plugin.sql2o.Model;
-import blade.plugin.sql2o.Page;
-import blade.plugin.sql2o.WhereParam;
+import java.util.Map;
 
 import com.blade.annotation.Component;
 import com.precious.model.Option;
 import com.precious.service.OptionService;
+
+import blade.kit.CollectionKit;
+import blade.kit.StringKit;
+import blade.plugin.sql2o.Model;
 
 @Component
 public class OptionServiceImpl implements OptionService {
@@ -26,26 +27,21 @@ public class OptionServiceImpl implements OptionService {
 	}
 	
 	@Override
-	public Option getOption(WhereParam where) {
-		if(null != where){
-			return model.select().where(where).fetchOne();
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String, String>();
+		List<Option> optionList = getOptionList();
+		if(CollectionKit.isNotEmpty(optionList)){
+			for(Option option : optionList){
+				options.put(option.getOpt_key(), option.getOpt_value());
+			}
 		}
-		return null;
+		return options;
 	}
 	
-	@Override
-	public List<Option> getOptionList(WhereParam where) {
-		if(null != where){
-			return model.select().where(where).fetchList();
-		}
-		return null;
+	private List<Option> getOptionList() {
+		return model.select().fetchList();
 	}
 	
-	@Override
-	public Page<Option> getPageList(WhereParam where, Integer page, Integer pageSize, String order) {
-		Page<Option> pageOption = model.select().where(where).orderBy(order).fetchPage(page, pageSize);
-		return pageOption;
-	}
 	
 	@Override
 	public boolean saveOrUpdate(String optKey, String optValue) {

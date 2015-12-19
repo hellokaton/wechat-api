@@ -67,6 +67,7 @@ public class IndexController extends BaseController {
 		Page<Post> pagePost = postService.getPageList(where, page, this.pageSize, "dateline desc");
 		request.attribute("pagePost", pagePost);
 		response.render(this.getFront("home"));
+		
 	}
 	
 	/**

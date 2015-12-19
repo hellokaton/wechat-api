@@ -31,10 +31,7 @@ public class MenuServiceImpl implements MenuService {
 	
 	@Override
 	public List<Menu> getMenuList(WhereParam where, String order) {
-		if(null != where){
-			return model.select().where(where).orderBy(order).fetchList();
-		}
-		return null;
+		return model.select().where(where).orderBy(order).fetchList();
 	}
 	
 	@Override
