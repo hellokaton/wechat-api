@@ -84,7 +84,7 @@ public class App extends Bootstrap {
 		if(null != Const.SITE_MENUS){
 			Const.CONTEXT.set(List.class, Const.MENU_KEY, Const.SITE_MENUS);
 		}
-		System.out.println(Validator.date(""));
+		
 		// 查站点信息
 		Map<String, String> options = optionService.getOptions();
 		Const.SITE_OPTIONS = options;

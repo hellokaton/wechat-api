@@ -23,6 +23,9 @@ public class User implements Serializable {
 	//头像
 	private String avatar;
 	
+	//邮箱
+	private String email;
+	
 	//是否是管理员
 	private Boolean is_admin;
 	
@@ -88,6 +91,14 @@ public class User implements Serializable {
 
 	public void setDateline(Integer dateline) {
 		this.dateline = dateline;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 }
