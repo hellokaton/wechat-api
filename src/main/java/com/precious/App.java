@@ -35,10 +35,9 @@ public class App extends Bootstrap {
 	@Override
 	public void init(Blade blade) {
 		// 加载配置文件
-		blade.config("blade.conf");
+		blade.setAppConf("blade.conf");
 		blade.routeConf("com.precious.controller", "route_front.conf");
 		blade.routeConf("com.precious.controller.admin", "route_admin.conf");
-		blade.webRoot("D:/soft/apache-tomcat-8.0.23/webapps/precious");
 		
 		// 设置模板引擎
 		JetbrickRender jetbrickRender = new JetbrickRender();
@@ -85,7 +84,7 @@ public class App extends Bootstrap {
 		if(null != Const.SITE_MENUS){
 			Const.CONTEXT.set(List.class, Const.MENU_KEY, Const.SITE_MENUS);
 		}
-		
+		System.out.println(Validator.date(""));
 		// 查站点信息
 		Map<String, String> options = optionService.getOptions();
 		Const.SITE_OPTIONS = options;

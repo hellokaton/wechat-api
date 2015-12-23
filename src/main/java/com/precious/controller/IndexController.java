@@ -96,16 +96,22 @@ public class IndexController extends BaseController {
 		if(StringKit.isBlank(pass_word)){
 			errors.add(Validator.required("密码"));
 		}
-		User user = userService.signin(login_name, pass_word);
-		if (null == user) {
-			errors.add("用户名或密码错误");
-		}
+		
 		if(errors.hasError()){
 			request.attribute("errors", errors.getErrors());
 		} else {
-			SessionKit.setLoginUser(request, user);
-			response.go("/admin/index");
+			User user = userService.signin(login_name, pass_word);
+			if (null == user) {
+				errors.add("用户名或密码错误");
+			} else {
+				SessionKit.setLoginUser(request, user);
+				response.go("/admin/index");
+			}
 		}
+		if(errors.hasError()){
+			request.attribute("errors", errors.getErrors());
+		}
+		response.render(this.getFront("signin"));
 	}
 	
 	/**

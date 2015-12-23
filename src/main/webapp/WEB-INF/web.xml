@@ -9,7 +9,6 @@
 		<servlet-name>dispatcherServlet</servlet-name>
 		<servlet-class>com.blade.web.DispatcherServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
-		<async-supported>false</async-supported>
 		<init-param>
 			<param-name>bootstrap</param-name>
 			<param-value>com.precious.App</param-value>

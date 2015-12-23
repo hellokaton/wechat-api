@@ -10,7 +10,7 @@ public final class Validator {
 	private static Map<String, String> errorMsg = new HashMap<String, String>();
 	
 	static {
-		errorMsg = PropertyKit.getPropertyMap("validation.lang");
+		errorMsg = PropertyKit.getPropertyMap("validator.properties");
 	}
 	
 	public static String required(String val){
