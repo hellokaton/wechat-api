@@ -46,7 +46,6 @@ public class App extends Bootstrap {
 		blade.setAppConf("blade.conf");
 		blade.routeConf("com.precious.controller", "route_front.conf");
 		blade.routeConf("com.precious.controller.admin", "route_admin.conf");
-		blade.routes("com.precious.controller1");
 		
 		// 设置模板引擎
 		JetbrickRender jetbrickRender = new JetbrickRender();
