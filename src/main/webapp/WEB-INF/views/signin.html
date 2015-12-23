@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>${site_title ?! sysinfo.site_title} - By Blade</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="${base}/static/css/bootstrap.min.css" rel="stylesheet">
+   	<link href="${base}/static/css/bootstrap-material-design.min.css" rel="stylesheet">
+   	<link href="${base}/static/css/ripples.min.css" rel="stylesheet">	
+    <!-- Custom CSS -->
+    <link href="${base}/static/css/style.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 col-md-offset-3">
+                <div class="login-panel panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">登录到 ${sysinfo.site_title}</h3>
+                    </div>
+                    <div class="panel-body">
+                    	#if(null != errors)
+                    	<div class="alert alert-dismissible alert-danger">
+						  <button type="button" class="close" data-dismiss="alert">×</button>
+						  #for(item : errors)
+						  <strong>${item}</strong><br/>
+						  #end
+						</div>
+                    	#end
+                        <form role="form" method="post" action="${base}/signin">
+                            <fieldset>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="管理员邮箱" name="email" type="email" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="密码" name="password" type="password" value="">
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="remember" type="checkbox" />记住我
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-raised btn-success">登&nbsp;录</button>
+                                <a href="${base}/forget_pwd" class="btn btn-raised btn-danger">找回密码</a>
+								<a href="${base}" class="btn btn-raised btn-info">返回首页</a>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	#include("./footer.html")
+</body>
+</html>
