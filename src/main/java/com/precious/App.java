@@ -66,6 +66,8 @@ public class App extends Bootstrap {
 				request.attribute("base", request.contextPath());
 			}
 		});
+		
+		// 后台管理拦截
 		blade.before("/admin/.*", new RouteHandler() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -77,6 +79,7 @@ public class App extends Bootstrap {
 						Integer uid = SecretKit.decodeRemeberToken(token);
 						if(null != uid){
 							user = userService.getUser(uid);
+							SessionKit.setLoginUser(request, user);
 						}
 					}
 				}

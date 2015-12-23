@@ -11,8 +11,6 @@ MySQL - 5.5.40 : Database - precious
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`precious` /*!40100 DEFAULT CHARACTER SET utf8 */;
-
 /*Table structure for table `t_menu` */
 
 DROP TABLE IF EXISTS `t_menu`;
@@ -40,6 +38,8 @@ CREATE TABLE `t_option` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /*Data for the table `t_option` */
+
+insert  into `t_option`(`opt_key`,`opt_value`) values ('site_title','钻石电影网'),('site_name','钻石电影');
 
 /*Table structure for table `t_post` */
 
@@ -98,6 +98,7 @@ CREATE TABLE `t_user` (
   `login_name` varchar(100) NOT NULL COMMENT '登录名',
   `pass_word` varchar(255) NOT NULL COMMENT '密码',
   `avatar` varchar(255) DEFAULT NULL COMMENT '头像',
+  `email` varchar(255) DEFAULT NULL COMMENT '邮箱',
   `is_admin` tinyint(1) NOT NULL COMMENT '是否是管理员',
   `is_del` tinyint(1) NOT NULL COMMENT '是否删除',
   `dateline` int(11) NOT NULL COMMENT '注册时间',
@@ -106,7 +107,7 @@ CREATE TABLE `t_user` (
 
 /*Data for the table `t_user` */
 
-insert  into `t_user`(`uid`,`login_name`,`pass_word`,`avatar`,`is_admin`,`is_del`,`dateline`) values (1,'admin','BQlRvE7PKAX4b1waywkqD8Vom3yjeYGn',NULL,1,0,0);
+insert  into `t_user`(`uid`,`login_name`,`pass_word`,`avatar`,`email`,`is_admin`,`is_del`,`dateline`) values (1,'admin','BQlRvE7PKAX4b1waywkqD8Vom3yjeYGn',NULL,NULL,1,0,0);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
