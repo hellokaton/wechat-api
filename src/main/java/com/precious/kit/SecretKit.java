@@ -4,10 +4,7 @@ import blade.kit.HashidKit;
 import blade.kit.StringKit;
 
 /**
- * 
- * <p>
  * 加密解密类
- * </p>
  *
  * @author	<a href="mailto:biezhi.me@gmail.com" target="_blank">biezhi</a>
  * @since	1.0
@@ -31,6 +28,34 @@ public class SecretKit {
 	public static String createAttachId(String key){
 		HashidKit hashidKit = new HashidKit(key, 12);
 		return hashidKit.encode( System.currentTimeMillis() );
+	}
+	
+	/**
+	 * 创建记住我token
+	 * @param uid
+	 * @return
+	 */
+	public static String createRemeberToken(Integer uid){
+		if(null != uid && uid != 0){
+			return MagicCrypt.aesEncrypt(uid.toString());
+		}
+		return "";
+	}
+
+	/**
+	 * 解密记住我的uid
+	 * @param token
+	 * @return
+	 */
+	public static Integer decodeRemeberToken(String token){
+		if(StringKit.isNotBlank(token)){
+			try {
+				String decode = MagicCrypt.aesDecrypt(token);
+				return Integer.valueOf(decode);
+			} catch (NumberFormatException e) {
+			}
+		}
+		return null;
 	}
 	
 	public static void main(String[] args) {

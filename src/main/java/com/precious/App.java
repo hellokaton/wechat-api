@@ -15,10 +15,15 @@ import com.blade.route.RouteHandler;
 import com.blade.web.http.Request;
 import com.blade.web.http.Response;
 import com.precious.func.Funcs;
+import com.precious.kit.SecretKit;
+import com.precious.kit.SessionKit;
+import com.precious.model.User;
 import com.precious.service.MenuService;
 import com.precious.service.OptionService;
+import com.precious.service.UserService;
 
 import blade.kit.PropertyKit;
+import blade.kit.StringKit;
 import blade.plugin.sql2o.Sql2oPlugin;
 import jetbrick.template.JetEngine;
 import jetbrick.template.JetGlobalContext;
@@ -32,12 +37,16 @@ public class App extends Bootstrap {
 	@Inject
 	private OptionService optionService;
 	
+	@Inject
+	private UserService userService;
+	
 	@Override
 	public void init(Blade blade) {
 		// 加载配置文件
 		blade.setAppConf("blade.conf");
 		blade.routeConf("com.precious.controller", "route_front.conf");
 		blade.routeConf("com.precious.controller.admin", "route_admin.conf");
+		blade.routes("com.precious.controller1");
 		
 		// 设置模板引擎
 		JetbrickRender jetbrickRender = new JetbrickRender();
@@ -61,6 +70,23 @@ public class App extends Bootstrap {
 		blade.before("/admin/.*", new RouteHandler() {
 			@Override
 			public void handle(Request request, Response response) {
+				
+				User user = SessionKit.getLoginUser(request);
+				if(null == user){
+					String token = request.cookie(Const.REMEBERME_TOKEN);
+					if(StringKit.isNotBlank(token)){
+						Integer uid = SecretKit.decodeRemeberToken(token);
+						if(null != uid){
+							user = userService.getUser(uid);
+						}
+					}
+				}
+				
+				if(null == user){
+					response.go("/signin");
+					return;
+				}
+				
 				System.out.println("访问admin...");
 			}
 		});

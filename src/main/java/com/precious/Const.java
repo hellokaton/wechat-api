@@ -11,6 +11,9 @@ public class Const {
 
 	public static final String LOGIN_SESSION = "login_user";
 	
+	// AES 盐值
+	public static final String AES_SLAT = "precious_biezhi";
+	
 	public static JetGlobalContext CONTEXT = null;
 	
 	// 幻灯片key
@@ -28,4 +31,9 @@ public class Const {
 	// 存储站点信息
 	public static Map<String, String> SITE_OPTIONS = null;
 	
+	// 页面标题字段
+	public static final String PAGE_TITLE = "page_title";
+	
+	// 记住我Token
+	public static final String REMEBERME_TOKEN = "PRECIOUS_ID";
 }

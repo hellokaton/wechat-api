@@ -12,6 +12,7 @@ import com.blade.web.http.Response;
 import com.precious.Const;
 import com.precious.Validator;
 import com.precious.kit.Errors;
+import com.precious.kit.SecretKit;
 import com.precious.kit.SessionKit;
 import com.precious.model.Menu;
 import com.precious.model.Post;
@@ -76,6 +77,8 @@ public class IndexController extends BaseController {
 	 * @param response
 	 */
 	public void show_signin(Request request, Response response){
+		System.out.println("userservice = " + userService);
+		request.attribute(Const.PAGE_TITLE, "管理员登录");
 		response.render(this.getFront("signin"));
 	}
 	
@@ -87,6 +90,7 @@ public class IndexController extends BaseController {
 	public void signin(Request request, Response response){
 		String login_name = request.query("login_name");
 		String pass_word = request.query("pass_word");
+		String remember = request.query("remember");
 		
 		Errors errors = Errors.empty();
 		
@@ -104,6 +108,14 @@ public class IndexController extends BaseController {
 			if (null == user) {
 				errors.add("用户名或密码错误");
 			} else {
+				// 记住我
+				if(StringKit.isNotBlank(remember)){
+					// 一个月
+					int maxAge = 2592000;
+					String value = SecretKit.createRemeberToken(user.getUid());
+					response.cookie(Const.REMEBERME_TOKEN, value, maxAge);
+				}
+				
 				SessionKit.setLoginUser(request, user);
 				response.go("/admin/index");
 			}

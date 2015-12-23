@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>${site_title ?! sysinfo.site_title} - By Blade</title>
+    <title>${page_title ?! sysinfo.site_title} - By Blade</title>
     <!-- Bootstrap Core CSS -->
     <link href="${base}/static/css/bootstrap.min.css" rel="stylesheet">
    	<link href="${base}/static/css/bootstrap-material-design.min.css" rel="stylesheet">
@@ -39,10 +39,10 @@
                         <form role="form" method="post" action="${base}/signin">
                             <fieldset>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="管理员邮箱" name="email" type="email" autofocus>
+                                    <input class="form-control" placeholder="管理员账号" name="login_name" type="name" autofocus>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="密码" name="password" type="password" value="">
+                                    <input class="form-control" placeholder="密码" name="pass_word" type="password" value="">
                                 </div>
                                 <div class="checkbox">
                                     <label>
