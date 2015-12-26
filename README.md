@@ -8,15 +8,18 @@ Use blade framework for the development of film publishing site.
 
 You must have maven + JDK + Mysql.
 
-1. get project
+1. Get Project
+
 ```sh
 git clone https://github.com/biezhi/precious.git
 ```
 
 2. Install Database
+
 Create databse `precious`, import `doc/precious.sql` to your database.
 
 3. Run
+
 ```sh
 mvn clean install jetty:run
 ```
