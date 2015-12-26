@@ -54,7 +54,7 @@ public class MagicCrypt {
 	 * @param key 传入任意长度的AES密钥
 	 */
 	public MagicCrypt(final String key) {
-		this(key, 256);
+		this(key, 128);
 	}
  
 	/**

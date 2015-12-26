@@ -1,12 +1,12 @@
 package com.precious.controller.admin;
 
-import blade.kit.StringKit;
-
 import com.blade.web.http.Request;
 import com.blade.web.http.Response;
 import com.precious.Const;
 import com.precious.controller.BaseController;
 import com.precious.kit.SessionKit;
+
+import blade.kit.StringKit;
 
 public class IndexController extends BaseController {
 	
@@ -14,7 +14,7 @@ public class IndexController extends BaseController {
 	 * 首页
 	 */
 	public void home(Request request, Response response){
-		
+		response.render(this.getAdmin("index"));
 	}
 	
 	/**

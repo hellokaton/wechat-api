@@ -37,6 +37,12 @@ public class BaseController {
 	 */
 	protected String FAILURE = "failure";
 	
+	// 页面标题字段
+	public static final String PAGE_TITLE = "page_title";
+	
+	// 页面选中菜单字段
+	public static final String PAGE_ACTIEV_MENU = "active_id";
+		
 	protected ModelAndView getFront(String view){
 		return new ModelAndView(view);
 	}

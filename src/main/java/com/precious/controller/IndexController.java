@@ -77,8 +77,7 @@ public class IndexController extends BaseController {
 	 * @param response
 	 */
 	public void show_signin(Request request, Response response){
-		System.out.println("userservice = " + userService);
-		request.attribute(Const.PAGE_TITLE, "管理员登录");
+		request.attribute(PAGE_TITLE, "管理员登录");
 		response.render(this.getFront("signin"));
 	}
 	

@@ -1,0 +1,71 @@
+#include("./header.html")
+	<div class="row">
+		<div class="panel panel-success">
+            <div class="panel-heading">
+              <h3 class="panel-title">电影发布列表</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+              		<div class="col-md-8">
+              			<a href="${base}/admin/add_film" class="btn btn-raised btn-success">发布新影片</a>
+              		</div>
+              		<div class="col-md-4">
+	              		<div class="pull-right">
+		        			<div class="form-group is-empty">
+					            <div class="input-group">
+					              <span class="input-group-addon"></span>
+					              <input type="text" id="addon1" class="form-control" width="200px"/>
+					              <span class="input-group-btn">
+					                  <button class="btn btn-primary" type="button">搜索<div class="ripple-container"></div></button>
+					              </span>
+					            </div>
+					          	<span class="material-input"></span>
+					         </div>
+		        		</div>
+              		</div>
+	        	</div>
+	            <div class="table-responsive">
+	                <table class="table table-striped table-hover ">
+					  <thead>
+					  <tr>
+					    <th>#</th>
+					    <th>电影名称</th>
+					    <th>所属分类</th>
+					    <th>发布日期</th>
+					    <th>操作</th>
+					  </tr>
+					  </thead>
+					  <tbody>
+					  #for(item : films.results)
+					  <tr>
+					    <td>2</td>
+					    <td>${item.title}</td>
+					    <td>${item.menu_id}</td>
+					    <td>${item.dateline}</td>
+					    <td>
+					    	<a>编辑</a> | 
+					    	<a>删除</a> |
+					    	<a>预览</a>  
+					    </td>
+					  </tr>
+					  #end
+					  </tbody>
+					</table>  
+					<ul class="pagination">
+					  <li class="disabled"><a href="javascript:void(0)">«</a></li>
+					  <li class="active"><a href="javascript:void(0)">1</a></li>
+					  <li><a href="javascript:void(0)">2</a></li>
+					  <li><a href="javascript:void(0)">3</a></li>
+					  <li><a href="javascript:void(0)">4</a></li>
+					  <li><a href="javascript:void(0)">5</a></li>
+					  <li><a href="javascript:void(0)">»</a></li>
+					</ul>
+	            </div>
+            </div>
+          </div>
+	</div>
+</div>
+<!-- /.container -->
+#include("./footer.html")
+</body>
+</html>
