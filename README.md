@@ -1,23 +1,22 @@
 # precious
 
-使用blade框架开发的电影资源发布站点，未开发完成。
+Use blade framework for the development of film publishing site.
 
-## 使用方法
+> Status: Ongoing
+ 
+## Usage
 
-> 您必须具备mysql+jdk+maven环境
+You must have maven + JDK + Mysql.
 
-	1. 下载项目
-	
+1. get project
 ```sh
 git clone https://github.com/biezhi/precious.git
 ```
-	
-	2. 安装数据库
-	
-新建数据库 `precious` ，将 `doc/precious.sql` 导入到您的数据库中
-	
-	3. 运行项目
-	
+
+2. Install Database
+Create databse `precious`, import `doc/precious.sql` to your database.
+
+3. Run
 ```sh
 mvn clean install jetty:run
 ```
