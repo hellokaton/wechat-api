@@ -1,20 +1,14 @@
-/*
-SQLyog Ultimate v11.11 (64 bit)
-MySQL - 5.5.40 : Database - precious
-*********************************************************************
-*/
+﻿# Host: localhost  (Version: 5.5.40)
+# Date: 2015-12-26 16:43:43
+# Generator: MySQL-Front 5.3  (Build 4.120)
 
 /*!40101 SET NAMES utf8 */;
 
-/*!40101 SET SQL_MODE=''*/;
-
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-/*Table structure for table `t_menu` */
+#
+# Structure for table "t_menu"
+#
 
 DROP TABLE IF EXISTS `t_menu`;
-
 CREATE TABLE `t_menu` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL COMMENT '菜单名',
@@ -23,28 +17,38 @@ CREATE TABLE `t_menu` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
-/*Data for the table `t_menu` */
+#
+# Data for table "t_menu"
+#
 
-insert  into `t_menu`(`id`,`name`,`slug`,`display_order`) values (1,'首页','/',0),(2,'高清电影','/gaoqingdianying',1),(3,'1080P','/1080P',2),(4,'720P','/720P',3),(5,'电视剧','/tv',4);
+/*!40000 ALTER TABLE `t_menu` DISABLE KEYS */;
+INSERT INTO `t_menu` VALUES (2,'高清电影','gaoqingdianying',1),(3,'1080P','1080P',2),(4,'720P','720P',3),(5,'电视剧','tv',4);
+/*!40000 ALTER TABLE `t_menu` ENABLE KEYS */;
 
-/*Table structure for table `t_option` */
+#
+# Structure for table "t_option"
+#
 
 DROP TABLE IF EXISTS `t_option`;
-
 CREATE TABLE `t_option` (
   `opt_key` varchar(255) NOT NULL,
   `opt_value` text NOT NULL,
   PRIMARY KEY (`opt_key`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-/*Data for the table `t_option` */
+#
+# Data for table "t_option"
+#
 
-insert  into `t_option`(`opt_key`,`opt_value`) values ('site_title','钻石电影网'),('site_name','钻石电影');
+/*!40000 ALTER TABLE `t_option` DISABLE KEYS */;
+INSERT INTO `t_option` VALUES ('site_description','钻石电影网是Blade框架开发的一款电影磁力链接网站'),('site_keywords','blade框架,电影,磁力链接,Java开源'),('site_name','钻石电影'),('site_title','钻石电影网');
+/*!40000 ALTER TABLE `t_option` ENABLE KEYS */;
 
-/*Table structure for table `t_post` */
+#
+# Structure for table "t_post"
+#
 
 DROP TABLE IF EXISTS `t_post`;
-
 CREATE TABLE `t_post` (
   `pid` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL COMMENT '标题',
@@ -59,12 +63,18 @@ CREATE TABLE `t_post` (
   PRIMARY KEY (`pid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-/*Data for the table `t_post` */
+#
+# Data for table "t_post"
+#
 
-/*Table structure for table `t_post_tag` */
+/*!40000 ALTER TABLE `t_post` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_post` ENABLE KEYS */;
+
+#
+# Structure for table "t_post_tag"
+#
 
 DROP TABLE IF EXISTS `t_post_tag`;
-
 CREATE TABLE `t_post_tag` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `pid` int(10) NOT NULL,
@@ -72,12 +82,18 @@ CREATE TABLE `t_post_tag` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-/*Data for the table `t_post_tag` */
+#
+# Data for table "t_post_tag"
+#
 
-/*Table structure for table `t_tag` */
+/*!40000 ALTER TABLE `t_post_tag` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_post_tag` ENABLE KEYS */;
+
+#
+# Structure for table "t_tag"
+#
 
 DROP TABLE IF EXISTS `t_tag`;
-
 CREATE TABLE `t_tag` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL COMMENT '标签',
@@ -85,14 +101,19 @@ CREATE TABLE `t_tag` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
-/*Data for the table `t_tag` */
+#
+# Data for table "t_tag"
+#
 
-insert  into `t_tag`(`id`,`name`,`count`) values (1,'2015',0),(2,'悬疑',0),(3,'惊悚',0),(4,'喜剧',0),(5,'爱情',0),(6,'华语',0),(7,'欧美',0),(8,'搞笑',0),(9,'科幻',0),(10,'动画',0);
+/*!40000 ALTER TABLE `t_tag` DISABLE KEYS */;
+INSERT INTO `t_tag` VALUES (1,'2015',0),(2,'悬疑',0),(3,'惊悚',0),(4,'喜剧',0),(5,'爱情',0),(6,'华语',0),(7,'欧美',0),(8,'搞笑',0),(9,'科幻',0),(10,'动画',0);
+/*!40000 ALTER TABLE `t_tag` ENABLE KEYS */;
 
-/*Table structure for table `t_user` */
+#
+# Structure for table "t_user"
+#
 
 DROP TABLE IF EXISTS `t_user`;
-
 CREATE TABLE `t_user` (
   `uid` int(10) NOT NULL AUTO_INCREMENT,
   `login_name` varchar(100) NOT NULL COMMENT '登录名',
@@ -105,10 +126,10 @@ CREATE TABLE `t_user` (
   PRIMARY KEY (`uid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-/*Data for the table `t_user` */
+#
+# Data for table "t_user"
+#
 
-insert  into `t_user`(`uid`,`login_name`,`pass_word`,`avatar`,`email`,`is_admin`,`is_del`,`dateline`) values (1,'admin','BQlRvE7PKAX4b1waywkqD8Vom3yjeYGn',NULL,NULL,1,0,0);
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*!40000 ALTER TABLE `t_user` DISABLE KEYS */;
+INSERT INTO `t_user` VALUES (1,'admin','BQlRvE7PKAX4b1waywkqD8Vom3yjeYGn',NULL,NULL,1,0,0);
+/*!40000 ALTER TABLE `t_user` ENABLE KEYS */;
