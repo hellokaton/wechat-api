@@ -11,5 +11,7 @@ public interface OptionService {
 	public boolean saveOrUpdate(String optKey, String optValue);
 	
 	public boolean delete(String optKey);
+
+	public boolean updateSetting(String site_name, String site_title, String site_keywords, String site_description);
 		
 }

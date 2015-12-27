@@ -17,6 +17,7 @@ import com.blade.web.http.Response;
 import com.precious.func.Funcs;
 import com.precious.kit.SecretKit;
 import com.precious.kit.SessionKit;
+import com.precious.model.Menu;
 import com.precious.model.User;
 import com.precious.service.MenuService;
 import com.precious.service.OptionService;
@@ -52,6 +53,8 @@ public class App extends Bootstrap {
 		JetEngine jetEngine = jetbrickRender.getJetEngine();
 		
 		JetGlobalContext globalContext = jetEngine.getGlobalContext();
+		globalContext.define(Map.class, Const.OPT_KEY_SITE);
+		globalContext.define(List.class, Const.MENU_KEY);
 		Const.CONTEXT = globalContext;
 		
 		GlobalResolver resolver = jetEngine.getGlobalResolver();
@@ -108,14 +111,11 @@ public class App extends Bootstrap {
 	public void contextInitialized(Blade blade) {
 		
 		// 查菜单
-		Const.SITE_MENUS = menuService.getMenuList(null, "display_order, id desc");
-		if(null != Const.SITE_MENUS){
-			Const.CONTEXT.set(List.class, Const.MENU_KEY, Const.SITE_MENUS);
-		}
+		List<Menu> menus = menuService.getMenuList(null, "display_order, id desc");
+		Const.sysmenu(menus);
 		
 		// 查站点信息
 		Map<String, String> options = optionService.getOptions();
-		Const.SITE_OPTIONS = options;
-		Const.CONTEXT.set(Map.class, Const.OPT_KEY_SITE, Const.SITE_OPTIONS);
+		Const.sysinfo(options);
 	}
 }

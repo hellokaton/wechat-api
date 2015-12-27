@@ -34,13 +34,13 @@
 	                    <span class="icon-bar"></span>
 	                    <span class="icon-bar"></span>
 	                </button>
-	                <a class="navbar-brand" href="${base}">${sysinfo.site_name}</a>
+	                <a class="navbar-brand" href="${base}/">${sysinfo.site_name}</a>
 	            </div>
 	            <!-- Collect the nav links, forms, and other content for toggling -->
 	            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 	                <ul class="nav nav-pills navbar-nav" aaa="${site_menu}">
 	                	#for(item : site_menus)
-	                	<li>
+	                	<li class="#if(active_id==item.slug)active#end">
 	                        <a href="${base}?tab=${item.slug}">${item.name}</a>
 	                    </li>
 	                	#end

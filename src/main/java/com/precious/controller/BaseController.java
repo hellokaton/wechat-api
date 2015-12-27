@@ -33,6 +33,11 @@ public class BaseController {
 	protected String EXIST = "exist";
 	
 	/**
+	 * 不存在
+	 */
+	protected String NOT_EXIST = "not_exist";
+	
+	/**
 	 * 失败
 	 */
 	protected String FAILURE = "failure";

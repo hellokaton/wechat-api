@@ -64,5 +64,22 @@ public class OptionServiceImpl implements OptionService {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean updateSetting(String site_name, String site_title, String site_keywords, String site_description) {
+		if(StringKit.isNotBlank(site_name)){
+			this.saveOrUpdate("site_name", site_name);
+		}
+		if(StringKit.isNotBlank(site_title)){
+			this.saveOrUpdate("site_title", site_title);
+		}
+		if(StringKit.isNotBlank(site_keywords)){
+			this.saveOrUpdate("site_keywords", site_keywords);
+		}
+		if(StringKit.isNotBlank(site_description)){
+			this.saveOrUpdate("site_description", site_description);
+		}
+		return true;
+	}
 		
 }

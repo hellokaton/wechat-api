@@ -25,12 +25,22 @@ public class Const {
 	// 菜单key
 	public static final String MENU_KEY = "site_menus";
 	
-	// 存储菜单
-	public static List<Menu> SITE_MENUS = null;
-	
-	// 存储站点信息
-	public static Map<String, String> SITE_OPTIONS = null;
-	
 	// 记住我Token
 	public static final String REMEBERME_TOKEN = "PRECIOUS_ID";
+	
+	/**
+	 * 设置系统信息
+	 * @param options
+	 */
+	public static void sysinfo(Map<String, String> options){
+		Const.CONTEXT.set(Const.OPT_KEY_SITE, options);
+	}
+	
+	/**
+	 * 设置菜单信息
+	 * @param options
+	 */
+	public static void sysmenu(List<Menu> menus){
+		Const.CONTEXT.set(Const.MENU_KEY, menus);
+	}
 }

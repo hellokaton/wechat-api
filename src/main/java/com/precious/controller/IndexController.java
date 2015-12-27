@@ -61,6 +61,39 @@ public class IndexController extends BaseController {
 				response.render(this.getFront("404"));
 				return;
 			}
+			request.attribute(PAGE_ACTIEV_MENU, menu.getSlug());
+			where.eq("menu_id", menu.getId());
+		}
+		
+		// 电影列表
+		Page<Post> pagePost = postService.getPageList(where, page, this.pageSize, "dateline desc");
+		request.attribute("pagePost", pagePost);
+		response.render(this.getFront("home"));
+		
+	}
+	
+	public void search(Request request, Response response){
+		Integer page = request.paramAsInt("page");
+		if(null == page || page < 1){
+			page = 1;
+		}
+		
+		// 首页幻灯片
+		String slider_str = optionService.getOption(Const.OPT_KEY_SLIDER);
+		if(StringKit.isNotBlank(slider_str)){
+			JsonArray slider = Json.parse(slider_str).asArray();
+			request.attribute("slider", slider);
+		}
+		
+		// 查询条件
+		WhereParam where = WhereParam.me();
+		String tab = request.query("tab");
+		if(StringKit.isNotBlank(tab)){
+			Menu menu = menuService.getMenu(tab);
+			if(null == menu){
+				response.render(this.getFront("404"));
+				return;
+			}
 			where.eq("menu_id", menu.getId());
 		}
 		

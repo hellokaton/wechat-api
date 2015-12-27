@@ -2,6 +2,7 @@ package com.precious.service.impl;
 
 import java.util.List;
 
+import blade.kit.CollectionKit;
 import blade.kit.StringKit;
 import blade.plugin.sql2o.Model;
 import blade.plugin.sql2o.WhereParam;
@@ -29,7 +30,19 @@ public class TagServiceImpl implements TagService {
 	}
 	
 	@Override
-	public List<Tag> getTagList(WhereParam where, String order) {
+	public String getTags(String order) {
+		List<Tag> tags = getTagList(WhereParam.me(), order);
+		if(CollectionKit.isNotEmpty(tags)){
+			StringBuffer sb = new StringBuffer();
+			for(Tag tag : tags){
+				sb.append("," + tag.getName());
+			}
+			return sb.substring(1);
+		}
+		return "";
+	}
+	
+	private List<Tag> getTagList(WhereParam where, String order) {
 		if(null != where){
 			return model.select().where(where).orderBy(order).fetchList();
 		}

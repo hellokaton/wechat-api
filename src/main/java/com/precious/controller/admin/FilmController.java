@@ -81,6 +81,8 @@ public class FilmController extends BaseController {
 		String links = request.query("links");
 		String tags = request.query("tags");
 		
+		request.attribute(PAGE_ACTIEV_MENU, "films");
+		
 		Errors errors = Errors.empty();
 		if(StringKit.isBlank(title)){
 			errors.add(Validator.required("标题"));
@@ -126,6 +128,8 @@ public class FilmController extends BaseController {
 		String links = request.query("links");
 		
 		Errors errors = Errors.empty();
+		
+		request.attribute(PAGE_ACTIEV_MENU, "films");
 		
 		if(null == pid){
 			errors.add(Validator.required("唯一标识"));

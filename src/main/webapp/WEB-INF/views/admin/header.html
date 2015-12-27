@@ -31,31 +31,35 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="">${sysinfo.site_name}</a>
+                    <a class="navbar-brand" href="${base}/admin/index">${sysinfo.site_name}</a>
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav nav-pills navbar-nav" aaa="">
-                        <li>
+                        <li class="#if(active_id=='films')active#end">
                             <a href="${base}/admin/films">电影管理</a>
                         </li>
-                        <li>
+                        <li class="#if(active_id=='slides')active#end">
                             <a href="${base}/admin/slides">幻灯片管理</a>
                         </li>
-                        <li>
-                            <a href="${base}/admin/categories">分类管理</a>
+                        <li class="#if(active_id=='tags')active#end">
+                            <a href="${base}/admin/tags">标签管理</a>
+                        </li>
+                        <li class="#if(active_id=='setting')active#end">
+                            <a href="${base}/admin/setting">系统设置</a>
                         </li>
                         <li>
-                            <a href="${base}/admin/categories">系统设置</a>
+                            <a href="${base}/" target="_blank">查看前台</a>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
 	                    <li class="dropdown">
 		                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="true">
-		                        <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i> 管理员
+		                        	管理员
 		                    </a>
 		                    <ul class="dropdown-menu dropdown-user">
-		                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> 注销</a></li>
+		                        <li><a href="${base}/admin/reset_pwd">修改密码</a></li>
+		                        <li><a href="${base}/admin/signout">注销</a></li>
 		                    </ul>
 		                    <!-- /.dropdown-user -->
 		                </li>
