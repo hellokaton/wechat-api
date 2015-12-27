@@ -1,0 +1,35 @@
+/*队列*/
+.upload-queue {zoom:1}
+.upload-queue:after {display:block;content:'\20';height:0;clear:both}
+.upload-queue .queue {position:relative;}
+.upload-queue ul {position:relative; z-index:2; margin:0; padding:0; border-bottom:1px solid #F0F2F6; color:#555; overflow:hidden;}
+.upload-queue ul:nth-child(2n) { background:#F8F8F8;}
+.upload-queue .last-queue ul {border-bottom:none;}
+.upload-queue li {float:left; height:24px; line-height:24px; padding-left:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.upload-queue .f-name {width:220px;}
+.upload-queue .f-progress {width:100px;}
+.upload-queue .f-size {width:60px;}
+.upload-queue .f-operate {float:right;padding-right:0;}
+.upload-queue .f-operate a {padding:0 5px; color:#333; text-decoration:none;font-size:16px; font-family:'Microsoft Yahei',Tahoma}
+.upload-queue .f-operate a:hover {color:#d00;}
+
+.upload-preview ul{}
+.upload-preview li {height:60px;}
+.upload-preview .f-preview {width:60px;height:60px;overflow:hidden;}
+.upload-preview .f-preview img {width:100%;height:100%;vertical-align:middle;}
+.upload-preview .f-progress-bg {margin-left: 70px; height:60px;}
+
+/*进度条*/
+.f-progress-bg {
+	position:absolute; top:0; left:0; z-index:1;
+	height:24px;
+	overflow:hidden;
+	background:#B4D9FC;
+	background:-webkit-linear-gradient(top, #C1E4FD, #B4D9FC 100%);
+	background:-moz-linear-gradient(top, #C1E4FD, #B4D9FC 100%);
+	background:-o-linear-gradient(top, #C1E4FD, #B4D9FC 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#C1E4FD', endColorstr='#B4D9FC');
+}
+
+.upload-error .f-progress-bg {background:#FEE8D6; filter:0; width:100%;}
+.upload-error .f-progress {color:#c00;}

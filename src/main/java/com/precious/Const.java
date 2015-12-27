@@ -14,6 +14,9 @@ public class Const {
 	// AES 盐值
 	public static final String AES_SLAT = "precious_biezhi";
 	
+	// 文件上传目录
+	public static String UPLOAD_DIR = "static/upload";
+	
 	public static JetGlobalContext CONTEXT = null;
 	
 	// 幻灯片key

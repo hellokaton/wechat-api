@@ -1,4 +1,6 @@
 #include("./header.html")
+<link rel="stylesheet" href="${base}/static/plugins/nice_upload/jquery.uploader.css">
+<link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/jquery-tagsinput/1.3.6/jquery.tagsinput.min.css" />
 	<div class="row col-md-8">
 		<div class="well">
 			<form class="form-horizontal" action="${base}/admin/save_film" method="post">
@@ -29,20 +31,18 @@
 			    <div class="form-group">
 			      <label for="inputFile" class="col-md-2 control-label">上传封面图</label>
 			      <div class="col-md-10">
-			        <input type="text" readonly="" class="form-control" placeholder="选择图片...">
-			        <input type="file" id="inputFile">
+			        <button type="button" id="upload_btn" class="btn btn-raised btn-default">上传图片</button>
 			      </div>
 			    </div>
-			    <input type="hidden" name="cover"/>
-			    <div class="form-group">
-			      <div class="col-md-offset-2 col-md-10">
-			        <div class="togglebutton">
-			          <label>
-			            <input type="checkbox"> 网络图片
-			          </label>
-			        </div>
+			    <div id="preview" class="form-group hide">
+			      <label for="links" class="col-md-2 control-label">预览图</label>
+			      <div class="col-md-10">
+				       <a href="#" class="thumbnail">
+				       		<img />
+				       </a>
 			      </div>
 			    </div>
+			    <input type="hidden" name="cover" id="cover"/>
 			    <div class="form-group">
 			      <label for="content" class="col-md-2 control-label">影片详情</label>
 			      <div class="col-md-10">
@@ -52,7 +52,7 @@
 			    <div class="form-group">
 			      <label for="tags" class="col-md-2 control-label">影片标签</label>
 			      <div class="col-md-10">
-			        <input type="text" class="form-control" id="tags" name="tags" placeholder="请输入影片标签">
+			        <input type="text" class="form-control" id="tags" name="tags" placeholder="请输入影片标签" />
 			      </div>
 			    </div>
 			    <div class="form-group">
@@ -85,5 +85,64 @@
 </div>
 <!-- /.container -->
 #include("./footer.html")
+<script type="text/javascript" src="${base}/static/plugins/nice_upload/jquery.uploader.js"></script>
+<script src="//cdn.bootcss.com/jquery-tagsinput/1.3.6/jquery.tagsinput.min.js"></script>
+<script type="text/javascript">
+function log(obj1, obj2){
+    if ('console' in window) {
+        obj2 ? console.log(obj1, obj2) : console.log(obj1);
+    }
+}
+$("#upload_btn").uploader({
+    action: '${base}/admin/upload_img',
+    name: "file",
+    auto: true,
+    preview: true,
+    fileSizeLimit: '10M',
+    fileTypeDesc: '选择图片文件',
+    fileTypeExts: 'jpg,jpeg,gif,png',
+ 	// 上传初始化完成
+    onInit:function(){
+        log('onInit');
+        if (this.options.mode === 'html5') {
+            if ($.uploader.html5) log('恭喜，您的浏览器支持HTML5方式上传文件！');
+            else log('抱歉，由于您的浏览器不支持HTML5上传，将自动降级到Flash方式');
+        } else {
+        	log('您设置了强制使用Flash方式上传！');
+        }
+        var o = '当前配置：';
+        o += this.options.multiple ? '允许多选' : '只能单选';
+        o += this.options.auto ? '，选择完文件后自动上传' : '，选择完文件后手动上传';
+        log(o);
+        log("===============================================");
+    },
+    // 上传发生错误
+    onError: function(e){
+        log('onError', e);
+        log("===============================================");
+    },
+    // 上传成功
+    onSuccess: function(e){
+    	var res = eval('(' + e.data + ')');
+        $("#preview img").attr('src', res.url);
+        $("#cover").val(res.save_path);
+        $("#preview").removeClass('hide');
+    }
+});
+var tags_arr = [];
+$('#tags').tagsInput({
+	'width':'100%',
+	'interactive':true,
+	'defaultText':'添加标签',
+	'onAddTag': function(elem){
+		tags_arr.push(elem);
+		$("#tags").val(tags_arr.join(','));
+	},
+	'onRemoveTag':function(elem){
+		tags_arr.remove(elem);
+		$("#tags").val(tags_arr.join(','));
+	}
+});
+</script>
 </body>
 </html>
