@@ -7,6 +7,11 @@
 5.此时可以获取联系人列表，可以发送消息。然后不断调用同步接口。
 6.如果同步接口有返回，则可以获取新消息，然后继续调用同步接口。
 
+Java版实现源码：https://github.com/biezhi/wechat-robot
+Python实现：https://github.com/Urinx/WeixinBot
+C#实现：https://github.com/sherlockchou86/WeChat.NET
+QT实现：https://github.com/xiangzhai/qwx
+
 ## 执行流程
 
 ```sh
