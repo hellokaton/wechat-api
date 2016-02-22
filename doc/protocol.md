@@ -1,4 +1,4 @@
-# 协议分析（微信网页版 wx2.qq.com）
+# 微信web协议分析和实现微信机器人（微信网页版 wx2.qq.com）
 
 1.打开首页，分配一个随机uuid，
 2.根据该uuid获取二维码图片。
@@ -7,10 +7,10 @@
 5.此时可以获取联系人列表，可以发送消息。然后不断调用同步接口。
 6.如果同步接口有返回，则可以获取新消息，然后继续调用同步接口。
 
-Java版实现源码：https://github.com/biezhi/wechat-robot
-Python实现：https://github.com/Urinx/WeixinBot
-C#实现：https://github.com/sherlockchou86/WeChat.NET
-QT实现：https://github.com/xiangzhai/qwx
+- Java版实现源码：https://github.com/biezhi/wechat-robot
+- Python实现：https://github.com/Urinx/WeixinBot
+- C#实现：https://github.com/sherlockchou86/WeChat.NET
+- QT实现：https://github.com/xiangzhai/qwx
 
 ## 执行流程
 
