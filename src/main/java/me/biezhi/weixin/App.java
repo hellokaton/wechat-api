@@ -2,6 +2,8 @@ package me.biezhi.weixin;
 
 import java.awt.EventQueue;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import blade.kit.json.JSONObject;
 import blade.kit.logging.Logger;
 import blade.kit.logging.LoggerFactory;
 import me.biezhi.weixin.util.CookieUtil;
+import me.biezhi.weixin.util.JSUtil;
 import me.biezhi.weixin.util.Matchers;
 
 /**
@@ -63,7 +66,7 @@ public class App {
 		
 		String res = request.body();
 		request.disconnect();
-		
+
 		if(StringKit.isNotBlank(res)){
 			String code = Matchers.match("window.QRLogin.code = (\\d+);", res);
 			if(null != code){
@@ -92,7 +95,7 @@ public class App {
 				"t", "webwx", 
 				"_" , DateKit.getCurrentUnixTime())
 				.receive(output);
-		
+
 		if(null != output && output.exists() && output.isFile()){
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
@@ -122,7 +125,7 @@ public class App {
 		
 		String res = request.body();
 		request.disconnect();
-		
+
 		if(null == res){
 			LOGGER.info("[*] 扫描二维码验证失败");
 			return "";
@@ -139,6 +142,17 @@ public class App {
 			} else if(code.equals("200")){
 				LOGGER.info("[*] 正在登录...");
 				String pm = Matchers.match("window.redirect_uri=\"(\\S+?)\";", res);
+
+				String redirectHost = "wx.qq.com";
+				try {
+					URL pmURL = new URL(pm);
+					redirectHost = pmURL.getHost();
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+				String pushServer = JSUtil.getPushServer(redirectHost);
+				webpush_url = "https://" + pushServer + "/cgi-bin/mmwebwx-bin";
+
 				this.redirect_uri = pm + "&fun=new";
 				LOGGER.info("[*] redirect_uri=%s", this.redirect_uri);
 				this.base_uri = this.redirect_uri.substring(0, this.redirect_uri.lastIndexOf("/"));
@@ -167,7 +181,7 @@ public class App {
 		
 		String res = request.body();
 		this.cookie = CookieUtil.getCookie(request);
-		
+
 		request.disconnect();
 		
 		if(StringKit.isBlank(res)){
@@ -268,7 +282,7 @@ public class App {
 		LOGGER.info("[*] " + request);
 		String res = request.body();
 		request.disconnect();
-		
+
 		if(StringKit.isBlank(res)){
 			return false;
 		}
@@ -303,7 +317,7 @@ public class App {
 		LOGGER.info("[*] " + request);
 		String res = request.body();
 		request.disconnect();
-		
+
 		if(StringKit.isBlank(res)){
 			return false;
 		}
@@ -371,7 +385,7 @@ public class App {
 		LOGGER.info("[*] " + request);
 		String res = request.body();
 		request.disconnect();
-		
+
 		if(StringKit.isBlank(res)){
 			return arr;
 		}
@@ -580,6 +594,9 @@ public class App {
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
+
+		System.out.println(JSUtil.getPushServer("wx.qq.com"));
+
 		App app = new App();
 		String uuid = app.getUUID();
 		if(null == uuid){
