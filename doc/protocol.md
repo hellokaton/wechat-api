@@ -11,6 +11,7 @@
 - Python实现：https://github.com/Urinx/WeixinBot
 - C#实现：https://github.com/sherlockchou86/WeChat.NET
 - QT实现：https://github.com/xiangzhai/qwx
+- Perl实现：https://github.com/sjdy521/Mojo-Weixin
 
 ## 执行流程
 
