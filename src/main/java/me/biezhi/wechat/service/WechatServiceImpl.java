@@ -445,7 +445,7 @@ public class WechatServiceImpl implements WechatService {
 		body.put("rr", DateKit.getCurrentUnixTime());
 
 		HttpRequest request = HttpRequest.post(url).contentType("application/json;charset=utf-8")
-				.header("Cookie", meta.getCookie()).readTimeout(3000).send(body.toString());
+				.header("Cookie", meta.getCookie()).send(body.toString());
 		
 		LOGGER.debug(request.toString());
 		String res = request.body();
