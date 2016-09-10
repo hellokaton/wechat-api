@@ -6,7 +6,11 @@ wechat-robot是基于微信网页版协议开发的普通微信号机器人程�
 
 ## 使用
 
-直接运行 `Application` 中的main函数
+直接运行 `me.biezhi.wechat.Application` 中的main函数
+
+## 机器人接口申请地址 (申请后在config.properties文件中配置)
+
+[http://www.itpk.cn/robot.php](http://www.itpk.cn/robot.php)
 
 使用手机扫描二维码
 
@@ -15,34 +19,26 @@ wechat-robot是基于微信网页版协议开发的普通微信号机器人程�
 ### 控制台日志
 
 ```sh
-2016-02-21 18:49:02,636 INFO [main] me.biezhi.weixin.App | [*] GET https://login.weixin.qq.com/jslogin?appid=wx782c26e4c19acffb&fun=new&lang=zh_CN&_=1456051742
-2016-02-21 18:49:03,100 INFO [main] me.biezhi.weixin.App | [*] 获取到uuid为 [QZP9RCOmVA==]
-2016-02-21 18:49:03,328 INFO [main] me.biezhi.weixin.App | [*] GET https://login.weixin.qq.com/cgi-bin/mmwebwx-bin/login?tip=1&uuid=QZP9RCOmVA==&_=1456051743
-2016-02-21 18:49:06,413 INFO [main] me.biezhi.weixin.App | [*] 成功扫描,请在手机上点击确认以登录
-2016-02-21 18:49:08,413 INFO [main] me.biezhi.weixin.App | [*] GET https://login.weixin.qq.com/cgi-bin/mmwebwx-bin/login?tip=1&uuid=QZP9RCOmVA==&_=1456051748
-2016-02-21 18:49:08,414 INFO [main] me.biezhi.weixin.App | [*] 正在登录...
-2016-02-21 18:49:08,414 INFO [main] me.biezhi.weixin.App | [*] redirect_uri=https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxnewloginpage?ticket=A4BjR97r2-55oYG23dXSucQK@qrticket_0&uuid=QZP9RCOmVA==&lang=zh_CN&scan=1456051814&fun=new
-2016-02-21 18:49:08,414 INFO [main] me.biezhi.weixin.App | [*] base_uri=https://wx2.qq.com/cgi-bin/mmwebwx-bin
-2016-02-21 18:49:08,419 INFO [main] me.biezhi.weixin.App | [*] GET https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxnewloginpage?ticket=A4BjR97r2-55oYG23dXSucQK@qrticket_0&uuid=QZP9RCOmVA==&lang=zh_CN&scan=1456051814&fun=new
-2016-02-21 18:49:08,861 INFO [main] me.biezhi.weixin.App | [*] skey[@crypt_a742d75a_9c1d3752638ef9112f0b48895e8ae69d]
-2016-02-21 18:49:08,861 INFO [main] me.biezhi.weixin.App | [*] wxsid[3DfEeKrrBD2r4Sn6]
-2016-02-21 18:49:08,861 INFO [main] me.biezhi.weixin.App | [*] wxuin[3155248292]
-2016-02-21 18:49:08,861 INFO [main] me.biezhi.weixin.App | [*] pass_ticket[iYBKk3bszHw1ZIUZgow4tqSZx%2BfY3ACnGlgqQI7rAJwkP%2B4iVQHdHlxT0ipK3V4N]
-2016-02-21 18:49:08,866 INFO [main] me.biezhi.weixin.App | [*] 微信登录成功
-2016-02-21 18:49:09,031 INFO [main] me.biezhi.weixin.App | [*] POST https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxinit?r=1456051748&pass_ticket=iYBKk3bszHw1ZIUZgow4tqSZx%2BfY3ACnGlgqQI7rAJwkP%2B4iVQHdHlxT0ipK3V4N&skey=@crypt_a742d75a_9c1d3752638ef9112f0b48895e8ae69d
-2016-02-21 18:49:09,214 INFO [main] me.biezhi.weixin.App | [*] 微信初始化成功
-2016-02-21 18:49:09,215 INFO [main] me.biezhi.weixin.App | [*] POST https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxstatusnotify?lang=zh_CN&pass_ticket=iYBKk3bszHw1ZIUZgow4tqSZx%2BfY3ACnGlgqQI7rAJwkP%2B4iVQHdHlxT0ipK3V4N
-2016-02-21 18:49:09,306 INFO [main] me.biezhi.weixin.App | [*] 开启状态通知成功
-2016-02-21 18:49:09,307 INFO [main] me.biezhi.weixin.App | [*] POST https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxgetcontact?pass_ticket=iYBKk3bszHw1ZIUZgow4tqSZx%2BfY3ACnGlgqQI7rAJwkP%2B4iVQHdHlxT0ipK3V4N&skey=@crypt_a742d75a_9c1d3752638ef9112f0b48895e8ae69d&r=1456051749
-2016-02-21 18:49:09,540 INFO [main] me.biezhi.weixin.App | [*] 获取联系人成功
-2016-02-21 18:49:09,540 INFO [main] me.biezhi.weixin.App | [*] 共有 4 位联系人
-2016-02-21 18:49:09,542 INFO [listenMsgMode] me.biezhi.weixin.App | [*] 进入消息监听模式 ...
-2016-02-21 18:49:09,543 INFO [listenMsgMode] me.biezhi.weixin.App | [*] GET https://webpush2.weixin.qq.com/cgi-bin/mmwebwx-bin/synccheck?r=145605174961757&skey=@crypt_a742d75a_9c1d3752638ef9112f0b48895e8ae69d&uin=3155248292&sid=3DfEeKrrBD2r4Sn6&deviceid=e1456051742&synckey=1_610390336%7C2_610390399%7C3_610390360%7C1000_1456046795&_=1456051749542
-2016-02-21 18:49:09,779 INFO [listenMsgMode] me.biezhi.weixin.App | [*] retcode=0,selector=2
-2016-02-21 18:49:09,782 INFO [listenMsgMode] me.biezhi.weixin.App | [*] POST https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsync?lang=zh_CN&pass_ticket=iYBKk3bszHw1ZIUZgow4tqSZx%2BfY3ACnGlgqQI7rAJwkP%2B4iVQHdHlxT0ipK3V4N&skey=@crypt_a742d75a_9c1d3752638ef9112f0b48895e8ae69d&sid=3DfEeKrrBD2r4Sn6&r=1456051749
-2016-02-21 18:49:09,978 INFO [listenMsgMode] me.biezhi.weixin.App | [*] 你有新的消息，请注意查收
-2016-02-21 18:49:09,978 INFO [listenMsgMode] me.biezhi.weixin.App | [*] 成功截获微信初始化消息
-2016-02-21 18:49:09,978 INFO [listenMsgMode] me.biezhi.weixin.App | [*] 你有新的消息，请注意查收
+[wechat-robot] 2016-09-11 01:01:45,734 INFO [main] com.blade.kit.base.Config => Load config [classpath:config.properties]
+[wechat-robot] 2016-09-11 01:01:47,763 INFO [main] me.biezhi.wechat.WechatRobot => 获取到uuid为 [IdNRA183Nw==]
+[wechat-robot] 2016-09-11 01:01:47,991 INFO [main] me.biezhi.wechat.WechatRobot => 等待登录...
+[wechat-robot] 2016-09-11 01:01:57,180 INFO [main] me.biezhi.wechat.WechatRobot => 成功扫描,请在手机上点击确认以登录
+[wechat-robot] 2016-09-11 01:01:59,184 INFO [main] me.biezhi.wechat.WechatRobot => 等待登录...
+[wechat-robot] 2016-09-11 01:01:59,204 INFO [main] me.biezhi.wechat.WechatRobot => 正在登录...
+[wechat-robot] 2016-09-11 01:01:59,959 INFO [main] me.biezhi.wechat.WechatRobot => 微信登录成功
+[wechat-robot] 2016-09-11 01:01:59,959 INFO [main] me.biezhi.wechat.WechatRobot => 微信初始化...
+[wechat-robot] 2016-09-11 01:02:00,153 INFO [main] me.biezhi.wechat.WechatRobot => 微信初始化成功
+[wechat-robot] 2016-09-11 01:02:00,153 INFO [main] me.biezhi.wechat.WechatRobot => 开启状态通知...
+[wechat-robot] 2016-09-11 01:02:00,259 INFO [main] me.biezhi.wechat.WechatRobot => 开启状态通知成功
+[wechat-robot] 2016-09-11 01:02:00,259 INFO [main] me.biezhi.wechat.WechatRobot => 获取联系人...
+[wechat-robot] 2016-09-11 01:02:00,538 INFO [main] me.biezhi.wechat.WechatRobot => 获取联系人成功
+[wechat-robot] 2016-09-11 01:02:00,538 INFO [main] me.biezhi.wechat.WechatRobot => 共有 4 位联系人
+[wechat-robot] 2016-09-11 01:02:00,539 INFO [wechat-listener-thread] me.biezhi.wechat.listener.WechatListener => 进入消息监听模式 ...
+[wechat-robot] 2016-09-11 01:02:00,782 INFO [wechat-listener-thread] me.biezhi.wechat.service.WechatService => 选择线路：[webpush2.weixin.qq.com]
+[wechat-robot] 2016-09-11 01:02:00,835 INFO [wechat-listener-thread] me.biezhi.wechat.listener.WechatListener => retcode=0, selector=2
+[wechat-robot] 2016-09-11 01:02:01,095 INFO [wechat-listener-thread] me.biezhi.wechat.service.WechatService => 你有新的消息，请注意查收
+[wechat-robot] 2016-09-11 01:02:01,095 INFO [wechat-listener-thread] me.biezhi.wechat.service.WechatService => 成功截获微信初始化消息
+[wechat-robot] 2016-09-11 01:02:01,095 INFO [wechat-listener-thread] me.biezhi.wechat.listener.WechatListener => 等待2000ms...
 ```
 
 ### 测试通信
