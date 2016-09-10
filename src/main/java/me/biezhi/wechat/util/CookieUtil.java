@@ -1,10 +1,10 @@
-package me.biezhi.weixin.util;
+package me.biezhi.wechat.util;
 
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
 
-import blade.kit.http.HttpRequest;
+import com.blade.kit.http.HttpRequest;
 
 public class CookieUtil {
 

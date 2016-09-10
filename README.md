@@ -6,8 +6,7 @@ wechat-robot是基于微信网页版协议开发的普通微信号机器人程�
 
 ## 使用
 
-这是一个Maven工程，如果你想在普通项目中运行该程序，需要下载 [blade-kit.jar](http://search.maven.org/remotecontent?filepath=com/bladejava/blade-kit/1.2.9-alpha/blade-kit-1.2.9-alpha.jar)
-运行 `me.biezhi.weixin.App` 类
+直接运行 `Application` 中的main函数
 
 使用手机扫描二维码
 

@@ -1,4 +1,4 @@
-package me.biezhi.weixin.util;
+package me.biezhi.wechat.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

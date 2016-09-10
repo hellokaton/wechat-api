@@ -1,4 +1,4 @@
-package me.biezhi.weixin;
+package me.biezhi.wechat.ui;
 
 import java.awt.EventQueue;
 import java.awt.Graphics;
