@@ -12,6 +12,7 @@
 - C#实现：https://github.com/sherlockchou86/WeChat.NET
 - QT实现：https://github.com/xiangzhai/qwx
 - Perl实现：https://github.com/sjdy521/Mojo-Weixin
+- go实现: https://github.com/songtianyi/wechat-go
 
 ## 执行流程
 
