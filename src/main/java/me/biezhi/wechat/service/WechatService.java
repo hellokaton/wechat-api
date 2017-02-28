@@ -12,27 +12,27 @@ public interface WechatService {
 	 * 获取UUID
 	 * @return
 	 */
-	String getUUID() throws WechatException;
+	String getUUID();
 	
 	/**
 	 * 微信初始化
 	 * @param wechatMeta
 	 * @throws WechatException
 	 */
-	void wxInit(WechatMeta wechatMeta) throws WechatException;
+	void wxInit(WechatMeta wechatMeta);
 	
 	/**
 	 * 开启状态通知
 	 * @return
 	 */
-	void openStatusNotify(WechatMeta wechatMeta) throws WechatException;
+	void openStatusNotify(WechatMeta wechatMeta);
 	
 	/**
 	 * 获取联系人
 	 * @param wechatMeta
 	 * @return
 	 */
-	WechatContact getContact(WechatMeta wechatMeta) throws WechatException;
+	WechatContact getContact(WechatMeta wechatMeta);
 	
 	/**
 	 * 选择同步线路
@@ -41,26 +41,26 @@ public interface WechatService {
 	 * @return
 	 * @throws WechatException
 	 */
-	void choiceSyncLine(WechatMeta wechatMeta) throws WechatException;
+	void choiceSyncLine(WechatMeta wechatMeta);
 	
 	/**
 	 * 消息检查
 	 * @param wechatMeta
 	 * @return
 	 */
-	int[] syncCheck(WechatMeta wechatMeta) throws WechatException;
+	int[] syncCheck(WechatMeta wechatMeta);
 	
 	/**
 	 * 处理聊天信息
-	 * @param wechatRequest
+	 * @param wechatMeta
 	 * @param data
 	 */
-	void handleMsg(WechatMeta wechatMeta, JSONObject data) throws WechatException;
+	void handleMsg(WechatMeta wechatMeta, JSONObject data);
 	
 	/**
 	 * 获取最新消息
 	 * @param meta
 	 * @return
 	 */
-	JSONObject webwxsync(WechatMeta meta) throws WechatException;
+	JSONObject webwxsync(WechatMeta meta);
 }

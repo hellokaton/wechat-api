@@ -1,7 +1,9 @@
 package me.biezhi.wechat.service;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
+import me.biezhi.wechat.util.PingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,7 +166,7 @@ public class WechatServiceImpl implements WechatService {
 	 * 获取UUID
 	 */
 	@Override
-	public String getUUID() throws WechatException {
+	public String getUUID() {
 		HttpRequest request = HttpRequest.get(Constant.JS_LOGIN_URL, true, "appid", "wx782c26e4c19acffb", "fun", "new",
 				"lang", "zh_CN", "_", DateKit.getCurrentUnixTime());
 		
@@ -190,7 +192,7 @@ public class WechatServiceImpl implements WechatService {
 	 * 打开状态提醒
 	 */
 	@Override
-	public void openStatusNotify(WechatMeta wechatMeta) throws WechatException {
+	public void openStatusNotify(WechatMeta wechatMeta) {
 
 		String url = wechatMeta.getBase_uri() + "/webwxstatusnotify?lang=zh_CN&pass_ticket=" + wechatMeta.getPass_ticket();
 
@@ -230,7 +232,7 @@ public class WechatServiceImpl implements WechatService {
 	 * 微信初始化
 	 */
 	@Override
-	public void wxInit(WechatMeta wechatMeta) throws WechatException {
+	public void wxInit(WechatMeta wechatMeta) {
 		String url = wechatMeta.getBase_uri() + "/webwxinit?r=" + DateKit.getCurrentUnixTime() + "&pass_ticket="
 				+ wechatMeta.getPass_ticket() + "&skey=" + wechatMeta.getSkey();
 
@@ -276,7 +278,7 @@ public class WechatServiceImpl implements WechatService {
 	 * 选择同步线路
 	 */
 	@Override
-	public void choiceSyncLine(WechatMeta wechatMeta) throws WechatException {
+	public void choiceSyncLine(WechatMeta wechatMeta) {
 		boolean enabled = false;
 		for(String syncUrl : Constant.SYNC_HOST){
 			int[] res = this.syncCheck(syncUrl, wechatMeta);
@@ -297,14 +299,24 @@ public class WechatServiceImpl implements WechatService {
 	 * 检测心跳
 	 */
 	@Override
-	public int[] syncCheck(WechatMeta wechatMeta) throws WechatException{
+	public int[] syncCheck(WechatMeta wechatMeta){
 		return this.syncCheck(null, wechatMeta);
 	}
 	
 	/**
 	 * 检测心跳
 	 */
-	private int[] syncCheck(String url, WechatMeta meta) throws WechatException{
+	private int[] syncCheck(String url, WechatMeta meta){
+
+		// 如果网络中断，休息10秒
+		if(PingUtil.netIsOver()){
+			try {
+				TimeUnit.SECONDS.sleep(10);
+			} catch (Exception e){
+				LOGGER.error("", e);
+			}
+		}
+
 		if(null == url){
 			url = meta.getWebpush_url() + "/synccheck";
 		} else{
@@ -435,7 +447,7 @@ public class WechatServiceImpl implements WechatService {
 	}
 	
 	@Override
-	public JSONObject webwxsync(WechatMeta meta) throws WechatException{
+	public JSONObject webwxsync(WechatMeta meta){
 		
 		String url = meta.getBase_uri() + "/webwxsync?skey=" + meta.getSkey() + "&sid=" + meta.getWxsid();
 		
