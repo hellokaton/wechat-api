@@ -1,4 +1,4 @@
-package io.github.biezhi.wechat.model.request;
+package io.github.biezhi.wechat.model.entity;
 
 import java.io.Serializable;
 

@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author biezhi
  *         15/06/2017
  */
-public class WebwxsyncResponse implements Serializable {
+public class SyncResponse implements Serializable {
 
     private BaseResponse BaseResponse;
     private int Ret;

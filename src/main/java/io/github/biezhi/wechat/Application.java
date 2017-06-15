@@ -2,23 +2,23 @@ package io.github.biezhi.wechat;
 
 import io.github.biezhi.wechat.util.Environment;
 
+import java.util.concurrent.TimeUnit;
+
+/**
+ * wechat启动程序
+ */
 public class Application {
 
-    public static void main(String[] args) {
-        try {
+    public static void main(String[] args) throws Exception {
+        Constant.environment = Environment.of("classpath:config.properties");
 
-            Constant.environment = Environment.of("classpath:environment.properties");
-
-            WechatRobot wechatRobot = new WechatRobot();
-            wechatRobot.showQrCode();
-            while (!Constant.HTTP_OK.equals(wechatRobot.waitForLogin())) {
-                Thread.sleep(2000);
-            }
-            wechatRobot.closeQrWindow();
-            wechatRobot.start();
-        } catch (Exception e) {
-            e.printStackTrace();
+        WechatRobot wechatRobot = new WechatRobot();
+        wechatRobot.showQrCode();
+        while (!Constant.HTTP_OK.equals(wechatRobot.waitForLogin())) {
+            TimeUnit.SECONDS.sleep(2);
         }
+        wechatRobot.closeQrWindow();
+        wechatRobot.start();
     }
 
 }

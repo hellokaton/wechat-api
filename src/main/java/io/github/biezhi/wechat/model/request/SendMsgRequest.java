@@ -6,7 +6,7 @@ import java.io.Serializable;
  * @author biezhi
  *         15/06/2017
  */
-public class WebSendMsgRequest implements Serializable {
+public class SendMsgRequest implements Serializable {
 
     private Integer Type;
     private String Content;

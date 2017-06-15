@@ -2,6 +2,7 @@ package io.github.biezhi.wechat.model.response;
 
 import io.github.biezhi.wechat.model.entity.SyncKey;
 import io.github.biezhi.wechat.model.entity.WechatUser;
+import io.github.biezhi.wechat.model.entity.AddMessage;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,6 +17,7 @@ public class BaseResponse implements Serializable {
     private Integer Ret;
     private WechatUser User;
     private List<WechatUser> MemberList;
+    private List<AddMessage> AddMsgList;
 
     public SyncKey getSyncKey() {
         return SyncKey;
@@ -47,5 +49,13 @@ public class BaseResponse implements Serializable {
 
     public void setUser(WechatUser user) {
         User = user;
+    }
+
+    public List<AddMessage> getAddMsgList() {
+        return AddMsgList;
+    }
+
+    public void setAddMsgList(List<AddMessage> addMsgList) {
+        AddMsgList = addMsgList;
     }
 }

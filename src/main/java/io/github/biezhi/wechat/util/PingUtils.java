@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PingUtil {
+public class PingUtils {
 
     public static boolean ping(String ipAddress) throws Exception {
         int timeOut = 3000;  //超时应该在3钞以上

@@ -2,6 +2,7 @@ package io.github.biezhi.wechat.model.entity;
 
 import io.github.biezhi.wechat.Constant;
 import io.github.biezhi.wechat.model.request.BaseRequest;
+import io.github.biezhi.wechat.model.request.LoginRequest;
 
 public class WechatMeta {
 

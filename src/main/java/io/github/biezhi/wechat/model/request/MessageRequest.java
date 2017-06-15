@@ -1,5 +1,7 @@
 package io.github.biezhi.wechat.model.request;
 
+import io.github.biezhi.wechat.model.entity.AddMessage;
+
 import java.io.Serializable;
 import java.util.List;
 

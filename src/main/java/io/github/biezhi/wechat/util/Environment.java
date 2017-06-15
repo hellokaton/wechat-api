@@ -144,7 +144,7 @@ public class Environment {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         } finally {
-            IOKit.closeQuietly(is);
+            IOUtils.closeQuietly(is);
         }
     }
 

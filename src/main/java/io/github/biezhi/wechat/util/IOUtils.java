@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
  * @author biezhi
  *         2017/6/2
  */
-public final class IOKit {
+public final class IOUtils {
 
-    private IOKit() {
-        throw new IllegalStateException("IOKit shouldn't be constructed!");
+    private IOUtils() {
+        throw new IllegalStateException("IOUtils shouldn't be constructed!");
     }
 
     public static void closeQuietly(Closeable closeable) {

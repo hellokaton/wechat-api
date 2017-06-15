@@ -1,12 +1,12 @@
 package io.github.biezhi.wechat.util;
 
+import com.github.kevinsawicki.http.HttpRequest;
+
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
 
-import com.blade.kit.http.HttpRequest;
-
-public class CookieUtil {
+public class CookieUtils {
 
     public static String getCookie(HttpRequest request) {
         HttpURLConnection conn = request.getConnection();

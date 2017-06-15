@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author biezhi
  *         15/06/2017
  */
-public class WebwxsyncRequest implements Serializable {
+public class SyncRequest implements Serializable {
 
     private BaseRequest BaseRequest;
     private io.github.biezhi.wechat.model.entity.SyncKey SyncKey;

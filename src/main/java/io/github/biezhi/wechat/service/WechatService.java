@@ -1,10 +1,12 @@
 package io.github.biezhi.wechat.service;
 
 import io.github.biezhi.wechat.exception.WechatException;
-import io.github.biezhi.wechat.model.request.MessageRequest;
-import io.github.biezhi.wechat.model.response.BaseResponse;
+import io.github.biezhi.wechat.model.entity.AddMessage;
 import io.github.biezhi.wechat.model.entity.WechatContact;
 import io.github.biezhi.wechat.model.entity.WechatMeta;
+import io.github.biezhi.wechat.model.response.BaseResponse;
+
+import java.util.List;
 
 public interface WechatService {
 
@@ -61,7 +63,7 @@ public interface WechatService {
      * @param wechatMeta
      * @param message
      */
-    void handleMsg(WechatMeta wechatMeta, MessageRequest message) throws WechatException;
+    void handleMsg(WechatMeta wechatMeta, List<AddMessage> addMsgList) throws WechatException;
 
     /**
      * 获取最新消息

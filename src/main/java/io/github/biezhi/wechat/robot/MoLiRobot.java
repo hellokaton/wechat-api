@@ -1,9 +1,8 @@
 package io.github.biezhi.wechat.robot;
 
-import com.blade.kit.StringKit;
-import com.blade.kit.http.HttpRequest;
-
+import com.github.kevinsawicki.http.HttpRequest;
 import io.github.biezhi.wechat.Constant;
+import io.github.biezhi.wechat.util.StringUtils;
 
 public class MoLiRobot implements Robot {
 
@@ -12,7 +11,7 @@ public class MoLiRobot implements Robot {
     public MoLiRobot() {
         String api_key = Constant.environment.get("itpk.api_key");
         String api_secret = Constant.environment.get("itpk.api_secret");
-        if (StringKit.isNotBlank(api_key) && StringKit.isNotBlank(api_secret)) {
+        if (StringUtils.isNotBlank(api_key) && StringUtils.isNotBlank(api_secret)) {
             this.apiUrl = Constant.ITPK_API + "?api_key=" + api_key + "&api_secret=" + api_secret;
         }
     }

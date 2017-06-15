@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
  * @author biezhi
  *         15/06/2017
  */
-public class JsonUtil {
+public class JsonUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(JsonUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(JsonUtils.class);
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
