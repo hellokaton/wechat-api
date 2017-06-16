@@ -43,24 +43,12 @@ public class WechatServiceImpl implements WechatService {
         WechatRequest wechatRequest = new WechatRequest();
         wechatRequest.setBaseRequest(wechatMeta.getBaseRequest());
 
-        String body = JsonUtils.toJson(wechatRequest);
-        HttpRequest request = HttpRequest.post(url).contentType("application/json;charset=utf-8")
-                .header("Cookie", wechatMeta.getCookie()).send(body);
-
-        log.info("获取联系人请求: {}", request.toString());
-        String res = request.body();
-        request.disconnect();
-
-        if (StringUtils.isBlank(res)) {
+        WechatResponse wechatResponse = HttpUtils.doRequest(url, wechatMeta.getCookie(), wechatRequest, WechatResponse.class);
+        if (null == wechatResponse) {
             throw new WechatException("获取联系人失败");
         }
-
-        log.debug(res);
-
         WechatContact wechatContact = new WechatContact();
         try {
-
-            WechatResponse wechatResponse = JsonUtils.fromJson(res, WechatResponse.class);
             if (wechatResponse.getBaseResponse().getRet() == 0) {
                 List<WechatUser> memberList = wechatResponse.getMemberList();
                 List<WechatUser> contactList = wechatResponse.getContactList();
@@ -105,24 +93,13 @@ public class WechatServiceImpl implements WechatService {
         WechatRequest wechatRequest = new WechatRequest();
         wechatRequest.setBaseRequest(wechatMeta.getBaseRequest());
 
-        String body = JsonUtils.toJson(wechatContact);
+        WechatResponse wechatResponse = HttpUtils.doRequest(url, wechatMeta.getCookie(), wechatRequest, WechatResponse.class);
 
-        HttpRequest request = HttpRequest.post(url).contentType("application/json;charset=utf-8")
-                .header("Cookie", wechatMeta.getCookie()).send(body);
-
-        log.debug(request.toString());
-        String res = request.body();
-        request.disconnect();
-
-        if (StringUtils.isBlank(res)) {
+        if (null == wechatResponse) {
             throw new WechatException("获取群信息失败");
         }
 
-        log.debug(res);
         try {
-
-            WechatResponse wechatResponse = JsonUtils.fromJson(res, WechatResponse.class);
-
             BaseResponse baseResponse = wechatResponse.getBaseResponse();
             if (baseResponse.getRet() == 0) {
                 List<WechatUser> memberList = baseResponse.getMemberList();
@@ -165,16 +142,15 @@ public class WechatServiceImpl implements WechatService {
         HttpRequest request = HttpRequest.get(Constant.JS_LOGIN_URL, true, "appid", "wx782c26e4c19acffb", "fun", "new",
                 "lang", "zh_CN", "_", System.currentTimeMillis());
 
-        log.info(request.toString());
-
-        String res = request.body();
+        log.info("获取UUID请求: {}", request.toString());
+        String response = request.body();
         request.disconnect();
 
-        if (StringUtils.isNotBlank(res)) {
-            String code = Matchers.match("window.QRLogin.code = (\\d+);", res);
+        if (StringUtils.isNotBlank(response)) {
+            String code = Matchers.match("window.QRLogin.code = (\\d+);", response);
             if (null != code) {
                 if (code.equals("200")) {
-                    return Matchers.match("window.QRLogin.uuid = \"(.*)\";", res);
+                    return Matchers.match("window.QRLogin.uuid = \"(.*)\";", response);
                 } else {
                     throw new WechatException("错误的状态码: " + code);
                 }
@@ -198,13 +174,11 @@ public class WechatServiceImpl implements WechatService {
         statusNotifyRequest.setToUserName(wechatMeta.getUser().getUserName());
         statusNotifyRequest.setClientMsgId(System.currentTimeMillis());
 
-        String response = HttpUtils.doRequest(url, wechatMeta.getCookie(), statusNotifyRequest);
-
-        if (StringUtils.isBlank(response)) {
+        WechatResponse wechatResponse = HttpUtils.doRequest(url, wechatMeta.getCookie(), statusNotifyRequest, WechatResponse.class);
+        if (null == wechatResponse) {
             throw new WechatException("状态通知开启失败");
         }
         try {
-            WechatResponse wechatResponse = JsonUtils.fromJson(response, WechatResponse.class);
             BaseResponse baseResponse = wechatResponse.getBaseResponse();
             if (baseResponse.getRet() != 0) {
                 throw new WechatException("状态通知开启失败，ret：" + baseResponse.getRet());
@@ -225,12 +199,11 @@ public class WechatServiceImpl implements WechatService {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("BaseRequest", wechatMeta.getBaseRequest());
 
-        String response = HttpUtils.doRequest(url, wechatMeta.getCookie(), map);
-        if (StringUtils.isBlank(response)) {
+        WechatResponse wechatResponse = HttpUtils.doRequest(url, wechatMeta.getCookie(), map, WechatResponse.class);
+        if (null == wechatResponse) {
             throw new WechatException("微信初始化失败");
         }
 
-        WechatResponse wechatResponse = JsonUtils.fromJson(response, WechatResponse.class);
         BaseResponse baseResponse = wechatResponse.getBaseResponse();
         if (baseResponse.getRet() == 0) {
             wechatMeta.setSyncKey(baseResponse.getSyncKey());
@@ -394,13 +367,7 @@ public class WechatServiceImpl implements WechatService {
 
         String body = JsonUtils.toJson(map);
 
-        HttpRequest request = HttpRequest.post(url).contentType("application/json;charset=utf-8")
-                .header("Cookie", meta.getCookie()).send(body);
-
-        log.info("发送消息...");
-        log.debug("" + request);
-        request.body();
-        request.disconnect();
+        HttpUtils.doRequest(url, meta.getCookie(), map, null);
     }
 
     private String getUserRemarkName(String id) {
@@ -430,18 +397,11 @@ public class WechatServiceImpl implements WechatService {
 
         String body = JsonUtils.toJson(syncRequest);
 
-        HttpRequest request = HttpRequest.post(url).contentType("application/json;charset=utf-8")
-                .header("Cookie", meta.getCookie()).send(body);
+        SyncResponse syncResponse = HttpUtils.doRequest(url, meta.getCookie(), syncRequest, SyncResponse.class);
 
-        log.debug(request.toString());
-        String res = request.body();
-        request.disconnect();
-
-        if (StringUtils.isBlank(res)) {
+        if (null == syncResponse) {
             throw new WechatException("同步syncKey失败");
         }
-
-        SyncResponse syncResponse = JsonUtils.fromJson(res, SyncResponse.class);
         int ret = syncResponse.getRet();
         if (ret == 0) {
             return syncResponse.getBaseResponse();

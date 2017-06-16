@@ -12,30 +12,20 @@ public class HttpUtils {
 
     private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
 
-    public static String doRequest(String url, String cookie, String bodyJson) {
-
-        HttpRequest request = HttpRequest.post(url).contentType("application/json;charset=utf-8")
-                .header("Cookie", cookie).send(bodyJson);
-
-        log.info("发送请求: {}", request);
-
-        String body = request.body();
-        request.disconnect();
-        return body;
-    }
-
-    public static String doRequest(String url, String cookie, Object object) {
+    public static <T> T doRequest(String url, String cookie, Object object, Class<T> responseType) {
 
         String bodyJson = JsonUtils.toJson(object);
-
-        log.info("微信初始化请求URL: {}", url);
-        log.info("发送参数: {}", bodyJson);
-
         HttpRequest request = HttpRequest.post(url).contentType("application/json;charset=utf-8")
                 .header("Cookie", cookie).send(bodyJson);
+        log.info("请求: {}", request);
         String body = request.body();
+        log.info("响应: {}", body);
+
         request.disconnect();
-        return body;
+        if (null != responseType) {
+            return JsonUtils.fromJson(body, responseType);
+        }
+        return null;
     }
 
 }
