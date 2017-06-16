@@ -13,10 +13,7 @@ import io.github.biezhi.wechat.model.response.SyncResponse;
 import io.github.biezhi.wechat.model.response.WechatResponse;
 import io.github.biezhi.wechat.robot.MoLiRobot;
 import io.github.biezhi.wechat.robot.Robot;
-import io.github.biezhi.wechat.util.JsonUtils;
-import io.github.biezhi.wechat.util.Matchers;
-import io.github.biezhi.wechat.util.PingUtils;
-import io.github.biezhi.wechat.util.StringUtils;
+import io.github.biezhi.wechat.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +36,7 @@ public class WechatServiceImpl implements WechatService {
      */
     @Override
     public WechatContact getContact(WechatMeta wechatMeta) throws WechatException {
+
         String url = wechatMeta.getBase_uri() + "/webwxgetcontact?pass_ticket=" + wechatMeta.getPass_ticket() + "&skey="
                 + wechatMeta.getSkey() + "&r=" + System.currentTimeMillis();
 
@@ -46,11 +44,10 @@ public class WechatServiceImpl implements WechatService {
         wechatRequest.setBaseRequest(wechatMeta.getBaseRequest());
 
         String body = JsonUtils.toJson(wechatRequest);
-
         HttpRequest request = HttpRequest.post(url).contentType("application/json;charset=utf-8")
                 .header("Cookie", wechatMeta.getCookie()).send(body);
 
-        log.debug(request.toString());
+        log.info("获取联系人请求: {}", request.toString());
         String res = request.body();
         request.disconnect();
 
@@ -168,7 +165,7 @@ public class WechatServiceImpl implements WechatService {
         HttpRequest request = HttpRequest.get(Constant.JS_LOGIN_URL, true, "appid", "wx782c26e4c19acffb", "fun", "new",
                 "lang", "zh_CN", "_", System.currentTimeMillis());
 
-        log.debug(request.toString());
+        log.info(request.toString());
 
         String res = request.body();
         request.disconnect();
@@ -201,20 +198,13 @@ public class WechatServiceImpl implements WechatService {
         statusNotifyRequest.setToUserName(wechatMeta.getUser().getUserName());
         statusNotifyRequest.setClientMsgId(System.currentTimeMillis());
 
-        String body = JsonUtils.toJson(statusNotifyRequest);
+        String response = HttpUtils.doRequest(url, wechatMeta.getCookie(), statusNotifyRequest);
 
-        HttpRequest request = HttpRequest.post(url).contentType("application/json;charset=utf-8")
-                .header("Cookie", wechatMeta.getCookie()).send(body.toString());
-
-        log.debug("" + request);
-        String res = request.body();
-        request.disconnect();
-
-        if (StringUtils.isBlank(res)) {
+        if (StringUtils.isBlank(response)) {
             throw new WechatException("状态通知开启失败");
         }
         try {
-            WechatResponse wechatResponse = JsonUtils.fromJson(res, WechatResponse.class);
+            WechatResponse wechatResponse = JsonUtils.fromJson(response, WechatResponse.class);
             BaseResponse baseResponse = wechatResponse.getBaseResponse();
             if (baseResponse.getRet() != 0) {
                 throw new WechatException("状态通知开启失败，ret：" + baseResponse.getRet());
@@ -234,20 +224,13 @@ public class WechatServiceImpl implements WechatService {
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("BaseRequest", wechatMeta.getBaseRequest());
-        String body = JsonUtils.toJson(map);
 
-        HttpRequest request = HttpRequest.post(url).contentType("application/json;charset=utf-8")
-                .header("Cookie", wechatMeta.getCookie()).send(body);
-
-        log.debug("" + request);
-        String res = request.body();
-        request.disconnect();
-
-        if (StringUtils.isBlank(res)) {
+        String response = HttpUtils.doRequest(url, wechatMeta.getCookie(), map);
+        if (StringUtils.isBlank(response)) {
             throw new WechatException("微信初始化失败");
         }
 
-        WechatResponse wechatResponse = JsonUtils.fromJson(res, WechatResponse.class);
+        WechatResponse wechatResponse = JsonUtils.fromJson(response, WechatResponse.class);
         BaseResponse baseResponse = wechatResponse.getBaseResponse();
         if (baseResponse.getRet() == 0) {
             wechatMeta.setSyncKey(baseResponse.getSyncKey());
