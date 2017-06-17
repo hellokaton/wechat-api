@@ -1,4 +1,4 @@
-package io.github.biezhi.wechat.util;
+package io.github.biezhi.wechat;
 
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.Gson;

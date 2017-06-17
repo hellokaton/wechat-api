@@ -1,6 +1,6 @@
 package io.github.biezhi.wechat.model;
 
-import io.github.biezhi.wechat.util.Utils;
+import io.github.biezhi.wechat.Utils;
 
 import java.util.Arrays;
 import java.util.HashSet;

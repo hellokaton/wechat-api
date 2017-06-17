@@ -1,5 +1,6 @@
-package io.github.biezhi.wechat.util;
+package io.github.biezhi.wechat.model;
 
+import io.github.biezhi.wechat.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -5,8 +5,8 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import io.github.biezhi.wechat.model.Const;
 import io.github.biezhi.wechat.model.Session;
-import io.github.biezhi.wechat.util.Environment;
-import io.github.biezhi.wechat.util.Utils;
+import io.github.biezhi.wechat.model.Environment;
+import io.github.biezhi.wechat.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

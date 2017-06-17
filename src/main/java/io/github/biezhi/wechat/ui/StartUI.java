@@ -7,8 +7,8 @@ import io.github.biezhi.wechat.model.Const;
 import io.github.biezhi.wechat.handle.MessageHandle;
 import io.github.biezhi.wechat.api.WechatApi;
 import io.github.biezhi.wechat.model.WechatMessage;
-import io.github.biezhi.wechat.util.Environment;
-import io.github.biezhi.wechat.util.Utils;
+import io.github.biezhi.wechat.model.Environment;
+import io.github.biezhi.wechat.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
