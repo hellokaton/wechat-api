@@ -1,5 +1,6 @@
 package io.github.biezhi.wechat.event;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.Map;
  */
 public class EventManager {
 
-    private Map<EventType, List<EventListener>> listenerMap;
+    private Map<EventType, List<EventListener>> listenerMap = new HashMap<EventType, List<EventListener>>();
 
     public EventManager() {
         EventType[] eventTypes = EventType.values();

@@ -1,38 +1,13 @@
 package io.github.biezhi.wechat.ui;
 
-import java.awt.EventQueue;
-import java.awt.Graphics;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.SwingConstants;
-import java.awt.Font;
-import java.awt.Color;
+import java.awt.*;
 
 public class QRCodeFrame extends JFrame {
 
     private static final long serialVersionUID = 8550014433017811556L;
     private JPanel contentPane;
-
-    /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-                    new QRCodeFrame("d:/a.png");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
 
     /**
      * Create the frame.
