@@ -1,7 +1,9 @@
 package io.github.biezhi.wechat.handle;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.github.biezhi.wechat.model.WechatMessage;
+import io.github.biezhi.wechat.model.GroupMessage;
+import io.github.biezhi.wechat.model.UserMessage;
 
 /**
  * 一个默认的消息处理实现
@@ -18,30 +20,39 @@ public class SampleMessageHandler implements MessageHandle {
      */
     @Override
     public void wxSync(JsonObject msg) {
-
     }
 
     @Override
-    public void userMessage(WechatMessage wechatMessage) {
-        if (null == wechatMessage) {
+    public void userMessage(UserMessage userMessage) {
+        if (null == userMessage || userMessage.isEmpty()) {
             return;
         }
-        String text = wechatMessage.getText();
-        JsonObject raw_msg = wechatMessage.getRawMsg();
+        String text = userMessage.getText();
+        JsonObject raw_msg = userMessage.getRawMsg();
         String toUid = raw_msg.get("FromUserName").getAsString();
         // 撤回消息
         if ("test_revoke".equals(text)) {
-            JsonObject dic = wechatMessage.getWechatApi().webwxsendmsg("这条消息将被撤回", toUid);
+            JsonObject dic = userMessage.getWechatApi().webwxsendmsg("这条消息将被撤回", toUid);
         } else if ("reply".equals(text)) {
-            wechatMessage.getWechatApi().send_text("自动回复", toUid);
+            userMessage.sendText("自动回复", toUid);
         } else {
             String replayMsg = "接收到：" + text;
-            wechatMessage.getWechatApi().send_text(replayMsg, toUid);
+            userMessage.sendText(replayMsg, toUid);
         }
     }
 
     @Override
-    public void groupMessage(WechatMessage wechatMessage) {
+    public void groupMessage(GroupMessage groupMessage) {
+        groupMessage.sendText("自动回复", groupMessage.getGroupId());
+    }
+
+    @Override
+    public void groupMemberChange(String groupId, JsonArray memberList) {
+
+    }
+
+    @Override
+    public void groupListChange(String groupId, JsonArray memberList) {
 
     }
 

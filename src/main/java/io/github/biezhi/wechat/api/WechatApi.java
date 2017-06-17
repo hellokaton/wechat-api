@@ -1,20 +1,19 @@
 package io.github.biezhi.wechat.api;
 
-import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import io.github.biezhi.wechat.model.Const;
-import io.github.biezhi.wechat.model.Session;
-import io.github.biezhi.wechat.model.Environment;
 import io.github.biezhi.wechat.Utils;
+import io.github.biezhi.wechat.model.Const;
+import io.github.biezhi.wechat.model.Environment;
+import io.github.biezhi.wechat.model.Session;
+import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.io.FileOutputStream;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author biezhi
@@ -63,7 +62,7 @@ public class WechatApi {
     protected JsonArray groupList;
 
     // 群聊成员字典 {group_id:[]}
-    protected JsonObject groupMemeberList;
+    protected Map<String, JsonArray> groupMemeberList = new HashMap<String, JsonArray>();
 
     // 公众号／服务号
     protected JsonArray publicUsersList;
@@ -232,7 +231,25 @@ public class WechatApi {
     public String genqrcode() {
         String url = conf.get("API_qrcode_img") + session.getUuid();
         final File output = new File("qrcode.jpg");
-        HttpRequest.post(url, true, "t", "webwx", "_", System.currentTimeMillis()).receive(output);
+
+        RequestBody body = new FormBody.Builder()
+                .add("t", "webwx")
+                .add("_", System.currentTimeMillis() + "").build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            byte[] bytes = response.body().bytes();
+            FileOutputStream fos = new FileOutputStream(output);
+            fos.write(bytes);
+            fos.close();
+        } catch (Exception e) {
+            log.error("", e);
+        }
         return output.getPath();
     }
 
@@ -285,31 +302,37 @@ public class WechatApi {
      * @return
      */
     public boolean login() {
-        HttpRequest request = HttpRequest.get(this.redirectUri);
-        log.debug("请求 => {}", request);
-        String response = request.body();
-        log.debug("响应 => {}", response);
-        this.cookie = Utils.getCookie(request);
-        log.info("设置cookie [{}]", this.cookie);
-        request.disconnect();
 
-        if (Utils.isBlank(response)) {
+        Request.Builder requestBuilder = new Request.Builder().url(this.redirectUri);
+        Request request = requestBuilder.build();
+
+        log.debug("[*] 请求 => {}\n", request);
+        try {
+            Response response = client.newCall(request).execute();
+            Headers headers = response.headers();
+            List<String> cookies = headers.values("Set-Cookie");
+            this.cookie = Utils.getCookie(cookies);
+            log.info("设置cookie [{}]", this.cookie);
+            String body = response.body().string();
+            if (Utils.isBlank(body)) {
+                return false;
+            }
+            session.setSkey(Utils.match("<skey>(\\S+)</skey>", body));
+            session.setSid(Utils.match("<wxsid>(\\S+)</wxsid>", body));
+            session.setUin(Utils.match("<wxuin>(\\S+)</wxuin>", body));
+            session.setPassTicket(Utils.match("<pass_ticket>(\\S+)</pass_ticket>", body));
+
+            this.baseRequest = Utils.createMap("Uin", Long.valueOf(session.getUin()),
+                    "Sid", session.getSid(), "Skey", session.getSkey(), "DeviceID", this.deviceId);
+
+            File output = new File("temp.jpg");
+            if (output.exists()) {
+                output.delete();
+            }
+            return true;
+        } catch (Exception e) {
             return false;
         }
-
-        session.setSkey(Utils.match("<skey>(\\S+)</skey>", response));
-        session.setSid(Utils.match("<wxsid>(\\S+)</wxsid>", response));
-        session.setUin(Utils.match("<wxuin>(\\S+)</wxuin>", response));
-        session.setPassTicket(Utils.match("<pass_ticket>(\\S+)</pass_ticket>", response));
-
-        this.baseRequest = Utils.createMap("Uin", Long.valueOf(session.getUin()),
-                "Sid", session.getSid(), "Skey", session.getSkey(), "DeviceID", this.deviceId);
-
-        File output = new File("temp.jpg");
-        if (output.exists()) {
-            output.delete();
-        }
-        return true;
     }
 
     /**
@@ -436,6 +459,22 @@ public class WechatApi {
         return dic;
     }
 
+
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
+
+    private final HashMap<String, List<Cookie>> cookieStore = new HashMap<String, List<Cookie>>();
+
+    OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build();
+
+    private String doGet(String url, Map<String, Object>... params) {
+        return doGet(url, null, params);
+    }
+
     private String doGet(String url, String cookie, Map<String, Object>... params) {
         if (null != params && params.length > 0) {
             Map<String, Object> param = params[0];
@@ -451,51 +490,53 @@ public class WechatApi {
             }
             url = sbuf.substring(0, sbuf.length() - 1);
         }
+        try {
+            Request.Builder requestBuilder = new Request.Builder().url(url);
 
-        HttpRequest request = HttpRequest.get(url).userAgent(this.userAgent);
-        if (null != cookie) {
-            request.header("Cookie", cookie);
+            if (null != cookie) {
+                requestBuilder.addHeader("Cookie", this.cookie);
+            }
+
+            Request request = requestBuilder.build();
+
+            log.debug("[*] 请求 => {}\n", request);
+
+            Response response = client.newCall(request).execute();
+            String body = response.body().string();
+
+            log.debug("[*] 响应 => {}", body);
+            return body;
+        } catch (Exception e) {
+            log.error("", e);
+            return null;
         }
-
-        log.debug("[*] 请求 => {}\n", request);
-        String body = request.body();
-        log.debug("[*] 响应 => {}", body);
-        System.out.println();
-        request.disconnect();
-        return body;
-    }
-
-    private String doGet(String url, Map<String, Object>... params) {
-        return doGet(url, null, params);
     }
 
     private JsonElement doPost(String url, Object object) {
         String bodyJson = null;
+        RequestBody requestBody = RequestBody.create(JSON, "");
         if (null != object) {
             bodyJson = Utils.toJson(object);
+            requestBody = RequestBody.create(JSON, bodyJson);
         }
 
-        HttpRequest request = HttpRequest.post(url)
-                .contentType("application/json;charset=utf-8")
-                .userAgent(this.userAgent);
+        Request.Builder requestBuilder = new Request.Builder().url(url).post(requestBody);
+        if (null != cookie) {
+            requestBuilder.addHeader("Cookie", cookie);
+        }
 
-        if (null != this.cookie) {
-            request.header("Cookie", this.cookie);
-        }
-        if (null != bodyJson) {
-            request.send(bodyJson);
-        }
+        Request request = requestBuilder.build();
 
         log.debug("[*] 请求 => {}\n", request);
-        String body = request.body();
-        if (body.length() <= 300) {
-            log.debug("[*] 响应 => {}", body);
-        }
-        System.out.println();
-        request.disconnect();
-        if (Utils.isNotBlank(body)) {
+        try {
+            Response response = client.newCall(request).execute();
+            String body = response.body().string();
+            if (null != body && body.length() <= 300) {
+                log.debug("[*] 响应 => {}", body);
+            }
             return new JsonParser().parse(body);
-        } else {
+        } catch (Exception e) {
+            log.error("", e);
             return new JsonParser().parse("{}");
         }
     }
@@ -539,6 +580,61 @@ public class WechatApi {
             arr[1] = Integer.parseInt(selector);
         }
         return arr;
+    }
+
+    public Map<String, String> get_group_user_by_id(String userId, String g_id) {
+        String unknownPeople = Const.LOG_MSG_UNKNOWN_NAME + userId;
+        Map<String, String> user = new HashMap<String, String>();
+        user.put("UserName", userId);
+        user.put("RemarkName", "");
+        user.put("NickName", "");
+        user.put("ShowName", unknownPeople);
+
+        // 群友
+        if (!groupMemeberList.containsKey(g_id)) {
+            return user;
+        }
+
+        JsonArray memebers = groupMemeberList.get(g_id);
+        for (JsonElement element : memebers) {
+            JsonObject member = element.getAsJsonObject();
+            if (member.get("UserName").getAsString().equals(userId)) {
+                user.put("RemarkName", member.get("RemarkName").getAsString());
+                user.put("NickName", member.get("NickName").getAsString());
+                if (Utils.isNotBlank(user.get("RemarkName"))) {
+                    user.put("ShowName", user.get("RemarkName"));
+                } else {
+                    user.put("ShowName", user.get("NickName"));
+                }
+                break;
+            }
+        }
+        return user;
+    }
+
+    public Map<String, String> get_group_by_id(String groupId) {
+        String unknownGroup = Const.LOG_MSG_UNKNOWN_GROUP_NAME + groupId;
+        Map<String, String> group = new HashMap<String, String>();
+        group.put("UserName", groupId);
+        group.put("NickName", "");
+        group.put("DisplayName", "");
+        group.put("ShowName", "");
+        group.put("OwnerUin", "");
+        group.put("MemberCount", "");
+
+        for (JsonElement element : groupList) {
+            JsonObject member = element.getAsJsonObject();
+            if (member.get("UserName").getAsString().equals(groupId)) {
+                group.put("NickName", member.get("NickName").getAsString());
+                group.put("DisplayName", member.get("DisplayName").getAsString());
+                group.put("ShowName", member.get("NickName").getAsString());
+                group.put("OwnerUin", member.get("OwnerUin").getAsString());
+                group.put("MemberCount", member.get("MemberCount").getAsString());
+                break;
+            }
+        }
+
+        return group;
     }
 
     public Map<String, String> get_user_by_id(String userId) {
@@ -592,7 +688,7 @@ public class WechatApi {
         params.put("BaseRequest", this.baseRequest);
         Map<String, Object> Msg = new HashMap<String, Object>();
         Msg.put("Type", 1);
-        Msg.put("Content", msg);
+        Msg.put("Content", Utils.unicodeToUtf8(msg));
         Msg.put("FromUserName", this.user.get("UserName"));
         Msg.put("ToUserName", to);
         Msg.put("LocalID", clientMsgId);
@@ -606,7 +702,7 @@ public class WechatApi {
         return response.getAsJsonObject();
     }
 
-    public void send_text(String msg, String uid) {
+    public void sendText(String msg, String uid) {
         this.webwxsendmsg(msg, uid);
     }
 }
