@@ -1,7 +1,8 @@
-package io.github.biezhi.wechat.api;
+package io.github.biezhi.wechat.handle;
 
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.JsonObject;
+import io.github.biezhi.wechat.model.WechatMessage;
 
 /**
  * 茉莉机器人实现
@@ -9,7 +10,7 @@ import com.google.gson.JsonObject;
  * @author biezhi
  *         17/06/2017
  */
-public class MoliHandler implements MsgHandle {
+public class MoliHandler implements MessageHandle {
 
     private String api_key;
     private String api_secret;
@@ -27,11 +28,11 @@ public class MoliHandler implements MsgHandle {
      * @param msg
      */
     @Override
-    public void handleWxsync(JsonObject msg) {
+    public void wxSync(JsonObject msg) {
     }
 
     @Override
-    public void handleUserMessage(WechatMessage wechatMessage) {
+    public void userMessage(WechatMessage wechatMessage) {
         if (null == wechatMessage) {
             return;
         }
@@ -42,6 +43,11 @@ public class MoliHandler implements MsgHandle {
         String url = baseUrl + "&question=" + text;
         String result = HttpRequest.get(url).connectTimeout(3000).body();
         wechatMessage.getWechatApi().send_text(result, toUid);
+
+    }
+
+    @Override
+    public void groupMessage(WechatMessage wechatMessage) {
 
     }
 

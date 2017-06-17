@@ -1,8 +1,7 @@
-package io.github.biezhi.wechat.api;
+package io.github.biezhi.wechat.handle;
 
 import com.google.gson.JsonObject;
-
-import java.util.Map;
+import io.github.biezhi.wechat.model.WechatMessage;
 
 /**
  * 一个默认的消息处理实现
@@ -10,7 +9,7 @@ import java.util.Map;
  * @author biezhi
  *         17/06/2017
  */
-public class SampleMessageHandler implements MsgHandle {
+public class SampleMessageHandler implements MessageHandle {
 
     /**
      * 保存微信消息
@@ -18,12 +17,12 @@ public class SampleMessageHandler implements MsgHandle {
      * @param msg
      */
     @Override
-    public void handleWxsync(JsonObject msg) {
+    public void wxSync(JsonObject msg) {
 
     }
 
     @Override
-    public void handleUserMessage(WechatMessage wechatMessage) {
+    public void userMessage(WechatMessage wechatMessage) {
         if (null == wechatMessage) {
             return;
         }
@@ -39,6 +38,11 @@ public class SampleMessageHandler implements MsgHandle {
             String replayMsg = "接收到：" + text;
             wechatMessage.getWechatApi().send_text(replayMsg, toUid);
         }
+    }
+
+    @Override
+    public void groupMessage(WechatMessage wechatMessage) {
+
     }
 
 }

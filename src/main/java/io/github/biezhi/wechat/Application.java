@@ -1,6 +1,6 @@
 package io.github.biezhi.wechat;
 
-import io.github.biezhi.wechat.api.SampleMessageHandler;
+import io.github.biezhi.wechat.handle.SampleMessageHandler;
 import io.github.biezhi.wechat.ui.StartUI;
 import io.github.biezhi.wechat.util.Environment;
 

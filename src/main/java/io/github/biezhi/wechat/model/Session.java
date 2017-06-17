@@ -1,10 +1,14 @@
-package io.github.biezhi.wechat.api;
+package io.github.biezhi.wechat.model;
+
+import java.io.Serializable;
 
 /**
+ * 微信登录session
+ *
  * @author biezhi
  *         17/06/2017
  */
-public class Session {
+public class Session implements Serializable {
 
     private String uuid;
     private String skey;
@@ -50,5 +54,16 @@ public class Session {
 
     public void setPassTicket(String passTicket) {
         this.passTicket = passTicket;
+    }
+
+    @Override
+    public String toString() {
+        return "Session(" +
+                "uuid='" + uuid + '\'' +
+                ", skey='" + skey + '\'' +
+                ", sid='" + sid + '\'' +
+                ", uin='" + uin + '\'' +
+                ", passTicket='" + passTicket + '\'' +
+                ')';
     }
 }

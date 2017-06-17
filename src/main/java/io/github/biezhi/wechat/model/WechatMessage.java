@@ -1,6 +1,7 @@
-package io.github.biezhi.wechat.api;
+package io.github.biezhi.wechat.model;
 
 import com.google.gson.JsonObject;
+import io.github.biezhi.wechat.api.WechatApi;
 
 /**
  * @author biezhi
@@ -53,5 +54,14 @@ public class WechatMessage {
 
     public void setWechatApi(WechatApi wechatApi) {
         this.wechatApi = wechatApi;
+    }
+
+    @Override
+    public String toString() {
+        return "WechatMessage(" +
+                "location='" + location + '\'' +
+                ", log='" + log + '\'' +
+                ", text='" + text + '\'' +
+                ')';
     }
 }

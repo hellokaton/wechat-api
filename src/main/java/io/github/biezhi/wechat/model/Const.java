@@ -1,4 +1,4 @@
-package io.github.biezhi.wechat.api;
+package io.github.biezhi.wechat.model;
 
 import io.github.biezhi.wechat.util.Utils;
 

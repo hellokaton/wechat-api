@@ -3,10 +3,10 @@ package io.github.biezhi.wechat.ui;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.github.biezhi.wechat.api.Const;
-import io.github.biezhi.wechat.api.MsgHandle;
+import io.github.biezhi.wechat.model.Const;
+import io.github.biezhi.wechat.handle.MessageHandle;
 import io.github.biezhi.wechat.api.WechatApi;
-import io.github.biezhi.wechat.api.WechatMessage;
+import io.github.biezhi.wechat.model.WechatMessage;
 import io.github.biezhi.wechat.util.Environment;
 import io.github.biezhi.wechat.util.Utils;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class StartUI extends WechatApi {
 
     private static final Logger log = LoggerFactory.getLogger(StartUI.class);
 
-    private MsgHandle msgHandle;
+    private MessageHandle messageHandle;
 
     private QRCodeFrame qrCodeFrame;
 
@@ -32,8 +32,8 @@ public class StartUI extends WechatApi {
         super(environment);
     }
 
-    public void setMsgHandle(MsgHandle msgHandle) {
-        this.msgHandle = msgHandle;
+    public void setMsgHandle(MessageHandle messageHandle) {
+        this.messageHandle = messageHandle;
     }
 
     public void start() {
@@ -135,8 +135,8 @@ public class StartUI extends WechatApi {
 
     public void handle_msg(JsonObject dic) {
         log.debug("handle message");
-        if (null != msgHandle) {
-            msgHandle.handleWxsync(dic);
+        if (null != messageHandle) {
+            messageHandle.wxSync(dic);
         }
 
         int n = dic.getAsJsonArray("AddMsgList").size();
@@ -175,14 +175,13 @@ public class StartUI extends WechatApi {
             if (isGroupMsg) {
 
             } else {
-                if (null != msgHandle) {
-                    msgHandle.handleUserMessage(wechatMessage);
+                if (null != messageHandle) {
+                    messageHandle.userMessage(wechatMessage);
                 }
             }
             this.show_msg(wechatMessage);
         }
     }
-
 
     private void show_msg(WechatMessage wechatMessage) {
 

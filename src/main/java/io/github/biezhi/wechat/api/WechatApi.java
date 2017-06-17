@@ -3,6 +3,8 @@ package io.github.biezhi.wechat.api;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import io.github.biezhi.wechat.model.Const;
+import io.github.biezhi.wechat.model.Session;
 import io.github.biezhi.wechat.util.Environment;
 import io.github.biezhi.wechat.util.Utils;
 import org.slf4j.Logger;
