@@ -72,7 +72,7 @@ public final class Utils {
     }
 
     public static boolean isNotBlank(String str) {
-        return !isBlank(str);
+        return !isBlank(str) && !"null".equalsIgnoreCase(str);
     }
 
     public static String getRandomNumber(int size) {

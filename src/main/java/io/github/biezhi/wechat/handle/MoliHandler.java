@@ -47,7 +47,8 @@ public class MoliHandler extends AbstractMessageHandler {
     @Override
     public void groupMessage(GroupMessage groupMessage) {
         System.out.println(groupMessage);
-        if (groupMessage.getGroup_name().equals("测试群聊567")) {
+        String text = groupMessage.getText();
+        if (groupMessage.getGroup_name().equals("测试群聊567") && Utils.isNotBlank(text)) {
 //            groupMessage.sendText(groupMessage.toString(), groupMessage.getGroupId());
             String result = getResult(groupMessage.getText());
             groupMessage.sendText(result, groupMessage.getGroupId());
