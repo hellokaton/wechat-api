@@ -510,9 +510,11 @@ public class WechatApi {
         }
 
         JsonObject dic = response.getAsJsonObject();
-        JsonObject baseResponse = dic.getAsJsonObject("BaseResponse");
-        if (baseResponse.get("Ret").getAsInt() == 0) {
-            this.makeSynckey(dic);
+        if (null != dic) {
+            JsonObject baseResponse = dic.getAsJsonObject("BaseResponse");
+            if (null != baseResponse && baseResponse.get("Ret").getAsInt() == 0) {
+                this.makeSynckey(dic);
+            }
         }
         return dic;
     }
