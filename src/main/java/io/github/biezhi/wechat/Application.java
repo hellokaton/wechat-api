@@ -1,6 +1,6 @@
 package io.github.biezhi.wechat;
 
-import io.github.biezhi.wechat.handle.MoliHandler;
+import io.github.biezhi.wechat.robot.MoliRobot;
 import io.github.biezhi.wechat.model.Environment;
 import io.github.biezhi.wechat.ui.StartUI;
 
@@ -17,7 +17,7 @@ public class Application {
 
         StartUI startUI = new StartUI(environment);
 
-        startUI.setMsgHandle(new MoliHandler(environment));
+        startUI.setMsgHandle(new MoliRobot(environment));
         startUI.start();
     }
 

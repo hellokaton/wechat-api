@@ -1,7 +1,8 @@
-package io.github.biezhi.wechat.handle;
+package io.github.biezhi.wechat.robot;
 
 import com.google.gson.JsonObject;
 import io.github.biezhi.wechat.Utils;
+import io.github.biezhi.wechat.handle.AbstractMessageHandler;
 import io.github.biezhi.wechat.model.Environment;
 import io.github.biezhi.wechat.model.GroupMessage;
 import io.github.biezhi.wechat.model.UserMessage;
@@ -18,11 +19,11 @@ import java.util.concurrent.TimeUnit;
  * @author biezhi
  *         17/06/2017
  */
-public class MoliHandler extends AbstractMessageHandler {
+public class MoliRobot extends AbstractMessageHandler {
 
     private String baseUrl = "http://i.itpk.cn/api.php";
 
-    public MoliHandler(Environment environment) {
+    public MoliRobot(Environment environment) {
         String apiKey = environment.get("moli.api_key");
         String apiSecret = environment.get("moli.api_secret");
         if (Utils.isNotBlank(apiKey) && Utils.isNotBlank(apiSecret)) {
