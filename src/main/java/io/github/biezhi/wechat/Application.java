@@ -1,9 +1,8 @@
 package io.github.biezhi.wechat;
 
 import io.github.biezhi.wechat.handle.MoliHandler;
-import io.github.biezhi.wechat.handle.SampleMessageHandler;
-import io.github.biezhi.wechat.ui.StartUI;
 import io.github.biezhi.wechat.model.Environment;
+import io.github.biezhi.wechat.ui.StartUI;
 
 /**
  * wechat启动程序
@@ -17,7 +16,8 @@ public class Application {
         Environment environment = Environment.of("classpath:config.properties");
 
         StartUI startUI = new StartUI(environment);
-        startUI.setMsgHandle(new MoliHandler("*", "*"));
+
+        startUI.setMsgHandle(new MoliHandler());
         startUI.start();
     }
 

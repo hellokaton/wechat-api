@@ -18,11 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MoliHandler extends AbstractMessageHandler {
 
-    private String baseUrl;
-
-    public MoliHandler(String api_key, String api_secret) {
-        this.baseUrl = "http://i.itpk.cn/api.php?api_key=" + api_key + "&api_secret=" + api_secret;
-    }
+    private String baseUrl = "http://i.itpk.cn/api.php";
 
     @Override
     public void userMessage(UserMessage userMessage) {
@@ -52,7 +48,7 @@ public class MoliHandler extends AbstractMessageHandler {
             .build();
 
     private String getResult(String question) {
-        String url = baseUrl + "&question=" + question;
+        String url = baseUrl + "?question=" + question;
         Request request = new Request.Builder().url(url).build();
         try {
             Response response = okHttpClient.newCall(request).execute();
