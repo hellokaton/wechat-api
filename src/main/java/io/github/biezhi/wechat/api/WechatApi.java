@@ -442,6 +442,34 @@ public class WechatApi {
         return true;
     }
 
+    /**
+     * 批量获取群成员
+     *
+     * @param groupIds
+     * @return
+     */
+    public JsonArray batchGetContact(List<String> groupIds) {
+        String url = conf.get("API_webwxbatchgetcontact") + "?type=ex&r=%s&pass_ticket=%s";
+        url = String.format(url, System.currentTimeMillis(), session.getPassTicket());
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("BaseRequest", this.baseRequest);
+        params.put("Count", groupIds.size());
+
+        List<Map> list = new ArrayList<Map>();
+        for (String groupId : groupIds) {
+            list.add(Utils.createMap("UserName", groupId, "EncryChatRoomId", ""));
+        }
+        params.put("List", list);
+
+        JsonElement response = doPost(url, params);
+        if (null == response) {
+            return null;
+        }
+        JsonObject dic = response.getAsJsonObject();
+        return dic.get("ContactList").getAsJsonArray();
+    }
+
     public JsonObject webwxsync() {
         String url = conf.get("API_webwxsync") + "?sid=%s&skey=%s&pass_ticket=%s";
         url = String.format(url, session.getSid(), session.getSkey(), session.getPassTicket());
@@ -548,8 +576,28 @@ public class WechatApi {
      *
      * @return
      */
-    public boolean fetch_group_contacts() {
-        return false;
+    public void fetchGroupContacts() {
+        log.debug("fetchGroupContacts");
+
+        List<String> groupIds = new ArrayList<String>();
+
+        Map<String, JsonObject> g_dict = new HashMap<String, JsonObject>();
+
+        for (JsonElement element : groupList) {
+            JsonObject group = element.getAsJsonObject();
+            groupIds.add(group.get("UserName").getAsString());
+            g_dict.put(group.get("UserName").getAsString(), group);
+        }
+
+        JsonArray groupMembers = batchGetContact(groupIds);
+        for (JsonElement element : groupMembers) {
+            JsonObject member_list = element.getAsJsonObject();
+            String g_id = member_list.get("UserName").getAsString();
+            JsonObject group = g_dict.get(g_id);
+            group.addProperty("MemberCount", member_list.get("MemberCount").getAsInt());
+            group.addProperty("OwnerUin", member_list.get("OwnerUin").getAsInt());
+            this.groupMemeberList.put(g_id, member_list.get("MemberList").getAsJsonArray());
+        }
     }
 
     public boolean snapshot() {
@@ -584,13 +632,19 @@ public class WechatApi {
         return arr;
     }
 
-    public Map<String, String> get_group_user_by_id(String userId, String g_id) {
+    public Map<String, String> getGroupUserById(String userId, String g_id) {
         String unknownPeople = Const.LOG_MSG_UNKNOWN_NAME + userId;
         Map<String, String> user = new HashMap<String, String>();
+        // 微信动态ID
         user.put("UserName", userId);
-        user.put("RemarkName", "");
+        // 微信昵称
         user.put("NickName", "");
+        // 群聊显示名称
+        user.put("DisplayName", "");
+        // Log显示用的
         user.put("ShowName", unknownPeople);
+        // 群用户id
+        user.put("AttrStatus", unknownPeople);
 
         // 群友
         if (!groupMemeberList.containsKey(g_id)) {
@@ -601,20 +655,19 @@ public class WechatApi {
         for (JsonElement element : memebers) {
             JsonObject member = element.getAsJsonObject();
             if (member.get("UserName").getAsString().equals(userId)) {
-                user.put("RemarkName", member.get("RemarkName").getAsString());
-                user.put("NickName", member.get("NickName").getAsString());
-                if (Utils.isNotBlank(user.get("RemarkName"))) {
-                    user.put("ShowName", user.get("RemarkName"));
-                } else {
-                    user.put("ShowName", user.get("NickName"));
-                }
+                String n = Utils.emptyOr(member.get("NickName").getAsString(), "");
+                String d = Utils.emptyOr(member.get("DisplayName").getAsString(), "");
+                user.put("NickName", n);
+                user.put("DisplayName", d);
+                user.put("AttrStatus", Utils.emptyOr(member.get("AttrStatus").getAsString(), ""));
+                user.put("ShowName", Utils.emptyOr(d, n));
                 break;
             }
         }
         return user;
     }
 
-    public Map<String, String> get_group_by_id(String groupId) {
+    public Map<String, String> getGroupById(String groupId) {
         String unknownGroup = Const.LOG_MSG_UNKNOWN_GROUP_NAME + groupId;
         Map<String, String> group = new HashMap<String, String>();
         group.put("UserName", groupId);
@@ -627,11 +680,11 @@ public class WechatApi {
         for (JsonElement element : groupList) {
             JsonObject member = element.getAsJsonObject();
             if (member.get("UserName").getAsString().equals(groupId)) {
-                group.put("NickName", member.get("NickName").getAsString());
-                group.put("DisplayName", member.get("DisplayName").getAsString());
-                group.put("ShowName", member.get("NickName").getAsString());
-                group.put("OwnerUin", member.get("OwnerUin").getAsString());
-                group.put("MemberCount", member.get("MemberCount").getAsString());
+                group.put("NickName", Utils.emptyOr(member.get("NickName").getAsString(), ""));
+                group.put("DisplayName", Utils.emptyOr(member.get("DisplayName").getAsString(), ""));
+                group.put("ShowName", Utils.emptyOr(member.get("NickName").getAsString(), ""));
+                group.put("OwnerUin", Utils.emptyOr(member.get("OwnerUin").getAsString(), ""));
+                group.put("MemberCount", Utils.emptyOr(member.get("MemberCount").getAsString(), "0"));
                 break;
             }
         }
@@ -639,7 +692,7 @@ public class WechatApi {
         return group;
     }
 
-    public Map<String, String> get_user_by_id(String userId) {
+    public Map<String, String> getUserById(String userId) {
         String unknownPeople = Const.LOG_MSG_UNKNOWN_NAME + userId;
         Map<String, String> user = new HashMap<String, String>();
         user.put("UserName", userId);
@@ -656,8 +709,8 @@ public class WechatApi {
             for (JsonElement element : memberList) {
                 JsonObject item = element.getAsJsonObject();
                 if (item.get("UserName").getAsString().equals(userId)) {
-                    user.put("RemarkName", item.get("RemarkName").getAsString());
-                    user.put("NickName", item.get("NickName").getAsString());
+                    user.put("RemarkName", Utils.emptyOr(item.get("RemarkName").getAsString(), ""));
+                    user.put("NickName", Utils.emptyOr(item.get("NickName").getAsString(), ""));
                     if (Utils.isNotBlank(user.get("RemarkName"))) {
                         user.put("ShowName", user.get("RemarkName"));
                     } else {

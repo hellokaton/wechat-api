@@ -17,6 +17,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author biezhi
@@ -25,6 +27,8 @@ import java.util.Map;
 public class StartUI extends WechatApi {
 
     private static final Logger log = LoggerFactory.getLogger(StartUI.class);
+
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(3);
 
     private MessageHandle messageHandle;
 
@@ -64,9 +68,13 @@ public class StartUI extends WechatApi {
             }
             break;
         }
+        qrCodeFrame.setVisible(false);
         qrCodeFrame.dispose();
     }
 
+    /**
+     * 启动机器人
+     */
     public void start() {
         log.info(Const.LOG_MSG_START);
         log.info(Const.LOG_MSG_TRY_INIT);
@@ -97,11 +105,16 @@ public class StartUI extends WechatApi {
         log.info(Const.LOG_MSG_OTHER_CONTACT_COUNT, groupList.size(), contactList.size(), specialUsersList.size(), publicUsersList.size());
 
         if (groupList.size() > 0) {
-            log.info(Const.LOG_MSG_GET_GROUP_MEMBER);
-            fetch_group_contacts();
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    log.info(Const.LOG_MSG_GET_GROUP_MEMBER);
+                    StartUI.super.fetchGroupContacts();
+                }
+            });
         }
         log.info(Const.LOG_MSG_SNAPSHOT);
-        this.snapshot();
+        super.snapshot();
         this.listen();
     }
 
@@ -262,18 +275,18 @@ public class StartUI extends WechatApi {
             //接收到来自群的消息
             String g_id = groupMessage.getFromUserName();
             groupMessage.setGroupId(g_id);
-            group = this.get_group_by_id(g_id);
+            group = this.getGroupById(g_id);
             if (content.contains(":<br/>")) {
                 String u_id = content.split(":<br/>")[0];
-                src = get_group_user_by_id(u_id, g_id);
+                src = getGroupUserById(u_id, g_id);
             }
         } else if (groupMessage.getToUserName().startsWith("@@")) {
             // 自己发给群的消息
             String g_id = groupMessage.getToUserName();
             groupMessage.setGroupId(g_id);
             String u_id = groupMessage.getFromUserName();
-            src = this.get_group_user_by_id(u_id, g_id);
-            group = this.get_group_by_id(g_id);
+            src = this.getGroupUserById(u_id, g_id);
+            group = this.getGroupById(g_id);
         }
 
         if (null != src) {
@@ -306,20 +319,20 @@ public class StartUI extends WechatApi {
         // 接收到来自群的消息
         if (msg.get("FromUserName").getAsString().substring(2).equals("@@")) {
             String groupId = msg.get("FromUserName").getAsString();
-            group = this.get_group_by_id(groupId);
+            group = this.getGroupById(groupId);
             if (content.contains(":<br/>")) {
                 String u_id = content.split(":<br/>")[0];
-                src = new HashMap<String, Object>(this.get_group_user_by_id(u_id, groupId));
+                src = new HashMap<String, Object>(this.getGroupUserById(u_id, groupId));
                 dst = Utils.createMap("ShowName", "GROUP");
             } else {
                 String u_id = msg.get("ToUserName").getAsString();
                 src = new HashMap<String, Object>(Utils.createMap("ShowName", "SYSTEM"));
-                dst = new HashMap<String, Object>(get_group_user_by_id(u_id, groupId));
+                dst = new HashMap<String, Object>(getGroupUserById(u_id, groupId));
             }
         } else {
             // 非群聊消息
-            src = new HashMap<String, Object>(this.get_user_by_id(msg.get("FromUserName").getAsString()));
-            dst = new HashMap<String, Object>(this.get_user_by_id(msg.get("ToUserName").getAsString()));
+            src = new HashMap<String, Object>(this.getUserById(msg.get("FromUserName").getAsString()));
+            dst = new HashMap<String, Object>(this.getUserById(msg.get("ToUserName").getAsString()));
         }
         if (null != group) {
             log.info("{} |{}| {} -> {}: {}\n", msg_id, group.get("ShowName"),

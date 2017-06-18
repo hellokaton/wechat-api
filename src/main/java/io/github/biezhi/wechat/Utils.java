@@ -35,6 +35,13 @@ public final class Utils {
         return map;
     }
 
+    public static String emptyOr(String str1, String str2) {
+        if (isBlank(str1)) {
+            return str2;
+        }
+        return str1;
+    }
+
     public static void sleep(long timeout) {
         try {
             TimeUnit.MILLISECONDS.sleep(timeout);
