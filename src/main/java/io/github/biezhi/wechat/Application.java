@@ -17,7 +17,7 @@ public class Application {
 
         StartUI startUI = new StartUI(environment);
 
-        startUI.setMsgHandle(new MoliHandler());
+        startUI.setMsgHandle(new MoliHandler(environment));
         startUI.start();
     }
 
