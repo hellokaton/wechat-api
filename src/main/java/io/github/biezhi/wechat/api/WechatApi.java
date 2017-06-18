@@ -70,8 +70,13 @@ public class WechatApi {
     // 特殊账号
     protected JsonArray specialUsersList;
 
+    private int readTimeout, connTimeout, writeTimeout;
+
     public WechatApi(Environment environment) {
         this.wxHost = environment.get("wxHost", "wx.qq.com");
+        this.connTimeout = environment.getInt("http.conn-time-out", 10);
+        this.readTimeout = environment.getInt("http.read-time-out", 10);
+        this.writeTimeout = environment.getInt("http.write-time-out", 10);
         this.conf_factory();
     }
 
@@ -459,16 +464,13 @@ public class WechatApi {
         return dic;
     }
 
-
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
-    private final HashMap<String, List<Cookie>> cookieStore = new HashMap<String, List<Cookie>>();
-
     OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(connTimeout, TimeUnit.SECONDS)
+            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
             .build();
 
     private String doGet(String url, Map<String, Object>... params) {
