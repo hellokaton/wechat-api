@@ -51,6 +51,7 @@ public class StartUI extends WechatApi {
             EventQueue.invokeLater(new Runnable() {
                 public void run() {
                     try {
+                        if (null != qrCodeFrame) qrCodeFrame.dispose();
                         UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
                         qrCodeFrame = new QRCodeFrame(qrCodePath);
                     } catch (Exception e) {
@@ -139,7 +140,7 @@ public class StartUI extends WechatApi {
                     this.handle(selector);
                     break;
                 default:
-                    log.debug("webwxsync: {}\n", webwxsync().toString());
+                    log.debug("wxSync: {}\n", wxSync().toString());
                     break;
             }
         }
@@ -346,13 +347,13 @@ public class StartUI extends WechatApi {
     private void handle(int selector) {
         switch (selector) {
             case 2:
-                JsonObject dic = webwxsync();
+                JsonObject dic = wxSync();
                 if (null != dic) {
                     handle_msg(dic);
                 }
                 break;
             case 7:
-                webwxsync();
+                wxSync();
                 break;
             case 0:
                 Utils.sleep(1000);
@@ -362,7 +363,7 @@ public class StartUI extends WechatApi {
                 // 修改群名称
                 // 新增或删除联系人
                 // 群聊成员数目变化
-                dic = webwxsync();
+                dic = wxSync();
                 if (null != dic) {
                     handle_mod(dic);
                 }

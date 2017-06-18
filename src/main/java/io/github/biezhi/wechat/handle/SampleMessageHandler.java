@@ -32,7 +32,7 @@ public class SampleMessageHandler implements MessageHandle {
         String toUid = raw_msg.get("FromUserName").getAsString();
         // 撤回消息
         if ("test_revoke".equals(text)) {
-            JsonObject dic = userMessage.getWechatApi().webwxsendmsg("这条消息将被撤回", toUid);
+            JsonObject dic = userMessage.getWechatApi().wxSendMessage("这条消息将被撤回", toUid);
         } else if ("reply".equals(text)) {
             userMessage.sendText("自动回复", toUid);
         } else {
