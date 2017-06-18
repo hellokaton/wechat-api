@@ -92,7 +92,7 @@ public class TulingRobot extends AbstractMessageHandler {
         try {
             Response response = okHttpClient.newCall(request).execute();
             TulingRet tulingRet = Utils.fromJson(response.body().string(), TulingRet.class);
-            if (tulingRet.code == 00000) {
+            if (tulingRet.code == 100000) {
                 return tulingRet.text;
             }
         } catch (Exception e) {
