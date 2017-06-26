@@ -4,18 +4,34 @@ import com.google.gson.JsonObject;
 import io.github.biezhi.wechat.api.WechatApi;
 
 /**
+ * 用户消息
+ *
  * @author biezhi
  *         17/06/2017
  */
 public class UserMessage {
 
+    // 元消息
     private JsonObject rawMsg;
+
+    // 位置信息
     private String location;
+
+    // 消息id
     private String msgId;
+
+    // 消息类型
     private String msgType;
+
     private String log;
+
+    // 文本消息内容
     private String text;
+
+    // 谁发的
     private String fromUserName;
+
+    // 发给谁
     private String toUserName;
 
     private WechatApi wechatApi;

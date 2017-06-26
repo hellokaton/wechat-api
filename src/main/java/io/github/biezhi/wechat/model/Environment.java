@@ -19,7 +19,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * properties environment env
+ * 环境配置读取
  *
  * @author biezhi
  *         2017/6/1

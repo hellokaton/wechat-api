@@ -4,15 +4,25 @@ import com.google.gson.JsonObject;
 import io.github.biezhi.wechat.api.WechatApi;
 
 /**
+ * 群消息
+ *
  * @author biezhi
  *         17/06/2017
  */
 public class GroupMessage extends UserMessage {
 
+    // 群id
     private String groupId;
+
+    // 群所有者
     private String group_owner_uin;
+
+    // 群名
     private String group_name;
+
+    // 群内成员数
     private String group_count;
+
     private String user_attrstatus;
     private String user_display_name;
     private String user_nickname;

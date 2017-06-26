@@ -50,7 +50,7 @@ public class TulingRobot extends AbstractMessageHandler {
     public void groupMessage(GroupMessage groupMessage) {
         System.out.println(groupMessage);
         String text = groupMessage.getText();
-        if (groupMessage.getGroup_name().equals("测试群聊567") && Utils.isNotBlank(text)) {
+        if (Utils.isNotBlank(text)) {
             String result = getResult(groupMessage.getText());
             groupMessage.sendText(result, groupMessage.getGroupId());
         }

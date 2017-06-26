@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 常量信息
+ */
 public interface Const {
 
     String[] SERVER_UPLOAD_ALLOWED_EXTENSIONS = {"txt", "pdf", "png", "jpg", "jpeg", "gif"};
