@@ -59,7 +59,7 @@
                 <filtering>false</filtering>
             </resource>
             <resource>
-                <directory>src/main/test</directory>
+                <directory>src/test</directory>
                 <filtering>false</filtering>
             </resource>
             <resource>
