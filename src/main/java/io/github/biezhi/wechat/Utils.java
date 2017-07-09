@@ -15,6 +15,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 工具类
+ *
  * @author biezhi
  *         17/06/2017
  */
@@ -27,6 +29,12 @@ public final class Utils {
     private Utils() {
     }
 
+    /**
+     * 按顺序创建一个Map
+     *
+     * @param values
+     * @return
+     */
     public static Map<String, Object> createMap(Object... values) {
         Map<String, Object> map = new HashMap<String, Object>(values.length / 2);
         for (int i = 0; i < values.length; i++) {
@@ -35,6 +43,13 @@ public final class Utils {
         return map;
     }
 
+    /**
+     * 当str1为null或者空则使用str2
+     *
+     * @param str1
+     * @param str2
+     * @return
+     */
     public static String emptyOr(String str1, String str2) {
         if (isBlank(str1)) {
             return str2;
@@ -42,6 +57,11 @@ public final class Utils {
         return str1;
     }
 
+    /**
+     * 让JVM休眠timeout毫秒
+     *
+     * @param timeout
+     */
     public static void sleep(long timeout) {
         try {
             TimeUnit.MILLISECONDS.sleep(timeout);
@@ -50,6 +70,13 @@ public final class Utils {
         }
     }
 
+    /**
+     * 正则匹配
+     *
+     * @param p
+     * @param str
+     * @return
+     */
     public static String match(String p, String str) {
         Pattern pattern = Pattern.compile(p);
         Matcher m = pattern.matcher(str);
@@ -59,6 +86,11 @@ public final class Utils {
         return null;
     }
 
+    /**
+     * 关闭Closeable
+     *
+     * @param closeable
+     */
     public static void closeQuietly(Closeable closeable) {
         try {
             closeable.close();
@@ -67,14 +99,32 @@ public final class Utils {
         }
     }
 
+    /**
+     * 判断str是否为空
+     *
+     * @param str
+     * @return
+     */
     public static boolean isBlank(String str) {
         return null == str || "".equals(str.trim());
     }
 
+    /**
+     * 判断str是否不为空
+     *
+     * @param str
+     * @return
+     */
     public static boolean isNotBlank(String str) {
         return !isBlank(str) && !"null".equalsIgnoreCase(str);
     }
 
+    /**
+     * 获取size个随机字符
+     *
+     * @param size
+     * @return
+     */
     public static String getRandomNumber(int size) {
         String num = "";
         for (int i = 0; i < size; i++) {
@@ -110,46 +160,35 @@ public final class Utils {
         return null;
     }
 
-    public static String utf8ToUnicode(String inStr) {
-        char[] myBuffer = inStr.toCharArray();
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < inStr.length(); i++) {
-            Character.UnicodeBlock ub = Character.UnicodeBlock.of(myBuffer[i]);
-            if (ub == Character.UnicodeBlock.BASIC_LATIN) {
-                //英文及数字等
-                sb.append(myBuffer[i]);
-            } else if (ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
-                //全角半角字符
-                int j = (int) myBuffer[i] - 65248;
-                sb.append((char) j);
-            } else {
-                //汉字
-                short s = (short) myBuffer[i];
-                String hexS = Integer.toHexString(s);
-                String unicode = "\\u" + hexS;
-                sb.append(unicode.toLowerCase());
-            }
-        }
-        return sb.toString();
-    }
-
-    public static String unicodeToUtf8(String string) {
+    /**
+     * Unicode字符串转为UTF8
+     *
+     * @param str
+     * @return
+     */
+    public static String unicodeToUtf8(String str) {
         try {
-            if (null == string) {
-                return string;
+            if (null == str) {
+                return str;
             }
-            if (string.indexOf("\\u") == -1) {
-                return string;
+            if (str.indexOf("\\u") == -1) {
+                return str;
             }
-            byte[] utf8 = string.getBytes("UTF-8");
+            byte[] utf8 = str.getBytes("UTF-8");
             // Convert from UTF-8 to Unicode
-            string = new String(utf8, "UTF-8");
-            return string;
+            str = new String(utf8, "UTF-8");
+            return str;
         } catch (UnsupportedEncodingException e) {
         }
-        return string;
+        return str;
     }
 
+    /**
+     * 将List Cookie转为String
+     *
+     * @param cookies
+     * @return
+     */
     public static String getCookie(List<String> cookies) {
         StringBuilder sBuffer = new StringBuilder();
         for (String value : cookies) {
