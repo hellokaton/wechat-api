@@ -135,6 +135,9 @@ public final class Utils {
 
     public static String unicodeToUtf8(String string) {
         try {
+            if (null == string) {
+                return string;
+            }
             if (string.indexOf("\\u") == -1) {
                 return string;
             }
