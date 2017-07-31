@@ -9,7 +9,7 @@ import io.github.biezhi.wechat.model.UserMessage;
  * 一个默认的消息处理实现
  *
  * @author biezhi
- *         17/06/2017
+ * 17/06/2017
  */
 public class SampleMessageHandler implements MessageHandle {
 
@@ -27,9 +27,9 @@ public class SampleMessageHandler implements MessageHandle {
         if (null == userMessage || userMessage.isEmpty()) {
             return;
         }
-        String text = userMessage.getText();
+        String     text    = userMessage.getText();
         JsonObject raw_msg = userMessage.getRawMsg();
-        String toUid = raw_msg.get("FromUserName").getAsString();
+        String     toUid   = raw_msg.get("FromUserName").getAsString();
         // 撤回消息
         if ("test_revoke".equals(text)) {
             JsonObject dic = userMessage.getWechatApi().wxSendMessage("这条消息将被撤回", toUid);

@@ -7,7 +7,7 @@ import io.github.biezhi.wechat.api.WechatApi;
  * 用户消息
  *
  * @author biezhi
- *         17/06/2017
+ * 17/06/2017
  */
 public class UserMessage {
 

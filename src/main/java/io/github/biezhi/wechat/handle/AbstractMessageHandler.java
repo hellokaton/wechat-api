@@ -9,7 +9,7 @@ import io.github.biezhi.wechat.model.UserMessage;
  * 一个默认的消息处理实现
  *
  * @author biezhi
- *         17/06/2017
+ * 17/06/2017
  */
 public abstract class AbstractMessageHandler implements MessageHandle {
 

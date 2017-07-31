@@ -22,7 +22,7 @@ import java.util.Set;
  * 环境配置读取
  *
  * @author biezhi
- *         2017/6/1
+ * 2017/6/1
  */
 public class Environment {
 
@@ -57,7 +57,7 @@ public class Environment {
      */
     public static Environment of(Map<String, String> map) {
         Environment environment = new Environment();
-        Set<String> keySet = map.keySet();
+        Set<String> keySet      = map.keySet();
         for (String key : keySet) {
             environment.props.setProperty(key, map.get(key));
         }
@@ -268,8 +268,8 @@ public class Environment {
     }
 
     public Map<String, String> toMap() {
-        Map<String, String> map = new HashMap<String, String>(props.size());
-        Set<String> keySet = props.stringPropertyNames();
+        Map<String, String> map    = new HashMap<String, String>(props.size());
+        Set<String>         keySet = props.stringPropertyNames();
         for (String key : keySet) {
             map.put(key, props.getProperty(key));
         }

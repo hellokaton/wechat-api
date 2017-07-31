@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 
 /**
  * @author biezhi
- *         17/06/2017
+ * 17/06/2017
  */
 public class StartUI extends WechatApi {
 
@@ -123,8 +123,8 @@ public class StartUI extends WechatApi {
         while (true) {
             // retcode, selector
             int[] checkResponse = synccheck();
-            int retcode = checkResponse[0];
-            int selector = checkResponse[1];
+            int   retcode       = checkResponse[0];
+            int   selector      = checkResponse[1];
             log.debug("retcode: {}, selector: {}", retcode, selector);
             switch (retcode) {
                 case 1100:
@@ -155,7 +155,7 @@ public class StartUI extends WechatApi {
             JsonObject m = element.getAsJsonObject();
             if (m.get("UserName").getAsString().startsWith("@@")) {
                 boolean in_list = false;
-                String g_id = m.get("UserName").getAsString();
+                String  g_id    = m.get("UserName").getAsString();
                 for (JsonElement ge : groupList) {
                     JsonObject group = ge.getAsJsonObject();
                     if (g_id.equals(group.get("UserName").getAsString())) {
@@ -180,8 +180,8 @@ public class StartUI extends WechatApi {
             } else if (m.get("UserName").getAsString().equals("@")) {
                 boolean in_list = false;
                 for (JsonElement ue : memberList) {
-                    JsonObject u = ue.getAsJsonObject();
-                    String u_id = m.get("UserName").getAsString();
+                    JsonObject u    = ue.getAsJsonObject();
+                    String     u_id = m.get("UserName").getAsString();
                     if (u_id.equals(u.get("UserName").getAsString())) {
                         u = m;
                         in_list = true;
@@ -212,9 +212,9 @@ public class StartUI extends WechatApi {
         for (JsonElement element : msgs) {
             JsonObject msg = element.getAsJsonObject();
 
-            String msgType = msg.get("MsgType").getAsString();
-            String msgId = msg.get("MsgId").getAsString();
-            String content = msg.get("Content").getAsString().replace("&lt;", "<").replace("&gt;", ">");
+            String      msgType     = msg.get("MsgType").getAsString();
+            String      msgId       = msg.get("MsgId").getAsString();
+            String      content     = msg.get("Content").getAsString().replace("&lt;", "<").replace("&gt;", ">");
             UserMessage userMessage = new UserMessage(this);
             userMessage.setRawMsg(msg);
 
@@ -307,10 +307,10 @@ public class StartUI extends WechatApi {
 
     private void show_msg(UserMessage userMessage) {
 
-        Map<String, Object> src = null;
-        Map<String, Object> dst = null;
+        Map<String, Object> src   = null;
+        Map<String, Object> dst   = null;
         Map<String, String> group = null;
-        JsonObject msg = userMessage.getRawMsg();
+        JsonObject          msg   = userMessage.getRawMsg();
 
         String content = msg.get("Content").getAsString();
         content = content.replace("&lt;", "<").replace("&gt;", ">");
