@@ -394,7 +394,9 @@ public class WechatApi {
             JsonObject item = element.getAsJsonObject();
             synckey.append("|" + item.get("Key").getAsInt() + "_" + item.get("Val").getAsInt());
         }
-        this.synckey = synckey.substring(1);
+        if (synckey.length() > 0) {
+            this.synckey = synckey.substring(1);
+        }
     }
 
     /**
