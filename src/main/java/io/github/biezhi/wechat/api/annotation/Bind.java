@@ -1,5 +1,6 @@
 package io.github.biezhi.wechat.api.annotation;
 
+import io.github.biezhi.wechat.api.enums.AccountType;
 import io.github.biezhi.wechat.api.enums.MsgType;
 
 import java.lang.annotation.ElementType;
@@ -19,6 +20,18 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Bind {
 
+    /**
+     * 接受聊天的消息类型
+     *
+     * @return
+     */
     MsgType[] msgType() default {MsgType.TEXT};
+
+    /**
+     * 接受聊天的账户类型
+     *
+     * @return
+     */
+    AccountType[] accountType() default {AccountType.TYPE_FRIEND};
 
 }

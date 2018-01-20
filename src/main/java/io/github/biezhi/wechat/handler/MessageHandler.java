@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageHandler {
 
     private final WeChatBot bot;
-    private final Map<MsgType, List<Method>> mapping = new ConcurrentHashMap<MsgType, List<Method>>();
+    private final Map<MsgType, List<Invoke>> mapping = new ConcurrentHashMap<MsgType, List<Invoke>>();
 
     public MessageHandler(WeChatBot bot) {
         this.bot = bot;
@@ -49,13 +49,13 @@ public class MessageHandler {
             if (null != bind) {
                 MsgType[] msgTypes = bind.msgType();
                 for (MsgType msgType : msgTypes) {
-                    List<Method> methodList = mapping.get(msgType);
+                    List<Invoke> invokes = mapping.get(msgType);
                     if (null == mapping.get(msgType)) {
-                        methodList = new ArrayList<Method>();
+                        invokes = new ArrayList<Invoke>();
                     }
-                    methodList.add(method);
+                    invokes.add(new Invoke(method, Arrays.asList(bind.accountType())));
                     log.info("绑定函数 [{}] - [{}]", method.getName(), msgType);
-                    mapping.put(msgType, methodList);
+                    mapping.put(msgType, invokes);
                 }
             }
         }
@@ -71,6 +71,10 @@ public class MessageHandler {
                 String  content     = message.getContent().replace("&lt;", "<").replace("&gt;", ">");
                 String  msgId       = message.getId();
                 Account fromAccount = bot.getContactHandler().getUserById(message.getFromUserName());
+                if (null == fromAccount) {
+                    log.warn("未知消息类型: {}", WeChatUtils.toJson(message));
+                    return;
+                }
 
                 log.debug("收到消息JSON: {}", WeChatUtils.toJson(message));
 
@@ -81,9 +85,9 @@ public class MessageHandler {
                         .fromUserName(message.getFromUserName())
                         .text(content);
 
-                List<Method> methods = mapping.get(MsgType.ALL);
-                if (null != methods && methods.size() > 0) {
-                    this.callBack(methods, weChatMessageBuilder.build());
+                List<Invoke> invokes = mapping.get(MsgType.ALL);
+                if (null != invokes && invokes.size() > 0) {
+                    this.callBack(invokes, weChatMessageBuilder.build());
                 }
 
                 switch (msgType) {
@@ -91,26 +95,26 @@ public class MessageHandler {
                         if (bot.autoReply()) {
                             this.sendTextMsg("自动回复: " + content, message.getFromUserName());
                         } else {
-                            methods = mapping.get(MsgType.TEXT);
-                            if (null != methods && methods.size() > 0) {
-                                this.callBack(methods, weChatMessageBuilder.build());
+                            invokes = mapping.get(MsgType.TEXT);
+                            if (null != invokes && invokes.size() > 0) {
+                                this.callBack(invokes, weChatMessageBuilder.build());
                             }
                         }
                         break;
                     // 聊天图片
                     case 3:
                         String imgPath = this.downloadMsgImg(msgId);
-                        methods = mapping.get(MsgType.IMAGE);
-                        if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, weChatMessageBuilder.imagePath(imgPath).build());
+                        invokes = mapping.get(MsgType.IMAGE);
+                        if (null != invokes && invokes.size() > 0) {
+                            this.callBack(invokes, weChatMessageBuilder.imagePath(imgPath).build());
                         }
                         break;
                     // 语音
                     case 34:
                         String voicePath = this.downloadVoice(msgId);
-                        methods = mapping.get(MsgType.VOICE);
-                        if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, weChatMessageBuilder.voicePath(voicePath).build());
+                        invokes = mapping.get(MsgType.VOICE);
+                        if (null != invokes && invokes.size() > 0) {
+                            this.callBack(invokes, weChatMessageBuilder.voicePath(voicePath).build());
                         }
                         break;
                     // 名片
@@ -122,26 +126,26 @@ public class MessageHandler {
                         log.info("= 地区: {}-{}", message.getRecommend().getProvince(), message.getRecommend().getCity());
                         log.info("= 性别: {}", message.getRecommend().getSex());
                         log.info("=========================");
-                        methods = mapping.get(MsgType.PERSON_CARD);
-                        if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, weChatMessageBuilder.build());
+                        invokes = mapping.get(MsgType.PERSON_CARD);
+                        if (null != invokes && invokes.size() > 0) {
+                            this.callBack(invokes, weChatMessageBuilder.build());
                         }
                         break;
                     // 视频
                     case 43:
                         String videoPath = this.downloadVideo(msgId);
-                        methods = mapping.get(MsgType.VIDEO);
-                        if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, weChatMessageBuilder.videoPath(videoPath).build());
+                        invokes = mapping.get(MsgType.VIDEO);
+                        if (null != invokes && invokes.size() > 0) {
+                            this.callBack(invokes, weChatMessageBuilder.videoPath(videoPath).build());
                         }
                         break;
                     // 动画表情
                     case 47:
                         log.info("{} 发了一个动画表情");
                         imgPath = this.downloadMsgImg(message.getNewMsgId().toString());
-                        methods = mapping.get(MsgType.IMAGE);
-                        if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, weChatMessageBuilder.imagePath(imgPath).build());
+                        invokes = mapping.get(MsgType.IMAGE);
+                        if (null != invokes && invokes.size() > 0) {
+                            this.callBack(invokes, weChatMessageBuilder.imagePath(imgPath).build());
                         }
                         break;
                     // 分享
@@ -153,17 +157,17 @@ public class MessageHandler {
                     // 视频
                     case 62:
                         videoPath = this.downloadVideo(msgId);
-                        methods = mapping.get(MsgType.VIDEO);
-                        if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, weChatMessageBuilder.videoPath(videoPath).build());
+                        invokes = mapping.get(MsgType.VIDEO);
+                        if (null != invokes && invokes.size() > 0) {
+                            this.callBack(invokes, weChatMessageBuilder.videoPath(videoPath).build());
                         }
                         break;
                     // 撤回消息
                     case 10002:
                         log.info("{} 撤回了一条消息: {}", name, content);
-                        methods = mapping.get(MsgType.REVOKE);
-                        if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, weChatMessageBuilder.build());
+                        invokes = mapping.get(MsgType.REVOKE);
+                        if (null != invokes && invokes.size() > 0) {
+                            this.callBack(invokes, weChatMessageBuilder.build());
                         }
                         break;
                     default:
@@ -199,19 +203,15 @@ public class MessageHandler {
     /**
      * 回调微信消息给客户端、存储器
      *
-     * @param methods
+     * @param invokes
      * @param message
      */
-    private void callBack(List<Method> methods, WeChatMessage message) {
+    private void callBack(List<Invoke> invokes, WeChatMessage message) {
         if (null != bot.storageMessage()) {
             bot.storageMessage().save(message);
         }
-        for (Method method : methods) {
-            try {
-                method.invoke(bot, message);
-            } catch (Exception e) {
-                throw new WeChatException(e);
-            }
+        for (Invoke invoke : invokes) {
+            invoke.call(bot, message);
         }
     }
 

@@ -118,29 +118,7 @@ public class ContactHandler {
     }
 
     public Account getUserById(String id) {
-        if (id.equals(this.bot.session().getUserName())) {
-            return this.bot.session().getAccount();
-        }
-
-        // 特殊账号
-        for (Account account : specialUsersList) {
-            if (account.getUserName().equals(id)) {
-                return account;
-            }
-        }
-        // 公众号或服务号
-        for (Account account : publicUsersList) {
-            if (account.getUserName().equals(id)) {
-                return account;
-            }
-        }
-        // 联系人
-        for (Account account : contactList) {
-            if (account.getUserName().equals(id)) {
-                return account;
-            }
-        }
-        return null;
+        return accountMap.get(id);
     }
 
     public String getUserRemarkName(String id) {

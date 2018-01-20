@@ -1,5 +1,6 @@
 package io.github.biezhi.wechat.api.model;
 
+import io.github.biezhi.wechat.api.enums.AccountType;
 import io.github.biezhi.wechat.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -65,6 +66,10 @@ public class WeChatMessage {
      */
     public String getName() {
         return StringUtils.isEmpty(fromRemarkName) ? this.fromNickName : this.fromRemarkName;
+    }
+
+    public AccountType getAccountType() {
+        return fromUserName.contains("@@") ? AccountType.TYPE_GROUP : AccountType.TYPE_FRIEND;
     }
 
 }
