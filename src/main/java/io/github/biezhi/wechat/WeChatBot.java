@@ -1,8 +1,8 @@
 package io.github.biezhi.wechat;
 
 import com.google.gson.Gson;
-import io.github.biezhi.wechat.api.BotClient;
-import io.github.biezhi.wechat.api.Callback;
+import io.github.biezhi.wechat.api.client.BotClient;
+import io.github.biezhi.wechat.api.client.Callback;
 import io.github.biezhi.wechat.api.WeChatApi;
 import io.github.biezhi.wechat.api.WeChatApiImpl;
 import io.github.biezhi.wechat.api.constant.Config;

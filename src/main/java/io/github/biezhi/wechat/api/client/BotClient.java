@@ -1,4 +1,4 @@
-package io.github.biezhi.wechat.api;
+package io.github.biezhi.wechat.api.client;
 
 import com.google.gson.Gson;
 import io.github.biezhi.wechat.api.constant.Constant;

@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.github.biezhi.wechat.api.constant.Constant.*;
 
@@ -37,9 +38,14 @@ import static io.github.biezhi.wechat.api.constant.Constant.*;
 @Slf4j
 public class WeChatApiImpl implements WeChatApi {
 
-    private int     memberCount;
+    private static final Pattern UUID_PATTERN          = Pattern.compile("window.QRLogin.code = (\\d+); window.QRLogin.uuid = \"(\\S+?)\";");
+    private static final Pattern CHECK_LOGIN_PATTERN   = Pattern.compile("window.code=(\\d+)");
+    private static final Pattern PROCESS_LOGIN_PATTERN = Pattern.compile("window.redirect_uri=\"(\\S+)\";");
+    private static final Pattern SYNC_CHECK_PATTERN    = Pattern.compile("window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"}");
+
     private String  uuid;
     private boolean logging;
+    private int     memberCount;
 
     private final WeChatBot bot;
     private final Map<String, Account>       accountMap = new HashMap<String, Account>();
@@ -128,6 +134,7 @@ public class WeChatApiImpl implements WeChatApi {
 
         log.info("应有 {} 个联系人，读取到联系人 {} 个", this.memberCount, this.accountMap.size());
         System.out.println();
+
         log.info("共有 {} 个群 | {} 个直接联系人 | {} 个特殊账号 ｜ {} 公众号或服务号",
                 this.groupList.size(), this.contactList.size(),
                 this.specialUsersList.size(), this.publicUsersList.size());
@@ -144,7 +151,7 @@ public class WeChatApiImpl implements WeChatApi {
      *
      * @return
      */
-    public String getUUID() {
+    private String getUUID() {
         log.info("获取二维码UUID");
         // 登录
         ApiResponse response = bot.execute(new StringRequest("https://login.weixin.qq.com/jslogin")
@@ -163,7 +170,7 @@ public class WeChatApiImpl implements WeChatApi {
      * @param uuid
      * @param terminalShow 是否在终端显示输出
      */
-    public void getQrImage(String uuid, boolean terminalShow) {
+    private void getQrImage(String uuid, boolean terminalShow) {
         String uid    = null != uuid ? uuid : this.uuid;
         String imgDir = bot.config().assetsDir();
 
@@ -182,7 +189,7 @@ public class WeChatApiImpl implements WeChatApi {
      * @param uuid
      * @return
      */
-    public String checkLogin(String uuid) {
+    private String checkLogin(String uuid) {
         String uid  = null != uuid ? uuid : this.uuid;
         String url  = String.format("%s/cgi-bin/mmwebwx-bin/login", Constant.BASE_URL);
         Long   time = System.currentTimeMillis();
@@ -212,7 +219,7 @@ public class WeChatApiImpl implements WeChatApi {
      * @param loginContent
      * @return
      */
-    public boolean processLoginSession(String loginContent) {
+    private boolean processLoginSession(String loginContent) {
         LoginSession loginSession = bot.session();
         Matcher      matcher      = PROCESS_LOGIN_PATTERN.matcher(loginContent);
         if (matcher.find()) {
@@ -267,7 +274,7 @@ public class WeChatApiImpl implements WeChatApi {
      *
      * @return
      */
-    public String pushLogin() {
+    private String pushLogin() {
         String uin = bot.client().cookie("wxUin");
         if (StringUtils.isEmpty(uin)) {
             return null;
@@ -284,7 +291,7 @@ public class WeChatApiImpl implements WeChatApi {
      *
      * @return
      */
-    public void statusNotify() {
+    private void statusNotify() {
         log.info("开启状态通知");
 
         String url = String.format("%s/webwxstatusnotify?lang=zh_CN&pass_ticket=%s",
@@ -301,7 +308,7 @@ public class WeChatApiImpl implements WeChatApi {
     /**
      * web 初始化
      */
-    public WebInitResponse webInit() {
+    private WebInitResponse webInit() {
         log.info("微信初始化...");
         int r = (int) (-System.currentTimeMillis() / 1000) / 1579;
         String url = String.format("%s/webwxinit?r=%d&pass_ticket=%s",
@@ -329,58 +336,10 @@ public class WeChatApiImpl implements WeChatApi {
 
     private void startRevice() {
         bot.setRunning(true);
-        Thread thread = new Thread(new Loop(bot));
+        Thread thread = new Thread(new ChatLoop(bot));
         thread.setName("wechat-listener");
         thread.setDaemon(true);
         thread.start();
-    }
-
-    class Loop implements Runnable {
-        private WeChatBot bot;
-        private long      lastCheckTs;
-
-        Loop(WeChatBot bot) {
-            this.bot = bot;
-        }
-
-        @Override
-        public void run() {
-            while (bot.isRunning()) {
-                this.lastCheckTs = System.currentTimeMillis();
-                SyncCheckRet syncCheckRet = WeChatApiImpl.this.syncCheck();
-
-                if (syncCheckRet.getCode() == 1100) {
-                    log.info("你在手机上登出了微信，债见");
-                    break;
-                }
-                if (syncCheckRet.getCode() == 1101) {
-                    log.info("你在其他地方登录了 WEB 版微信，债见");
-                    break;
-                }
-                if (syncCheckRet.getCode() == 0) {
-                    switch (syncCheckRet.getSelector()) {
-                        case 2:
-                            WebSyncResponse webSyncResponse = WeChatApiImpl.this.webSync();
-                            if (null != webSyncResponse) {
-                                WeChatApiImpl.this.handleMsg(webSyncResponse);
-                            }
-                            break;
-                        case 6:
-                            log.info("收到疑似红包消息");
-                            break;
-                        case 7:
-                            log.info("你在手机上玩微信被我发现了");
-                            break;
-                        default:
-                            DateUtils.sleep(100);
-                            break;
-                    }
-                }
-                if (System.currentTimeMillis() - this.lastCheckTs <= 20) {
-                    DateUtils.sleep(System.currentTimeMillis() - this.lastCheckTs);
-                }
-            }
-        }
     }
 
     /**
@@ -388,6 +347,7 @@ public class WeChatApiImpl implements WeChatApi {
      *
      * @return
      */
+    @Override
     public SyncCheckRet syncCheck() {
         String url = String.format("%s/synccheck", bot.session().getSyncOrUrl());
         try {
@@ -418,7 +378,8 @@ public class WeChatApiImpl implements WeChatApi {
     /**
      * 获取消息
      */
-    private WebSyncResponse webSync() {
+    @Override
+    public WebSyncResponse webSync() {
         String url = String.format("%s/webwxsync?sid=%s&sKey=%s&passTicket=%s",
                 bot.session().getUrl(), bot.session().getWxSid(),
                 bot.session().getSKey(), bot.session().getPassTicket());
@@ -605,6 +566,7 @@ public class WeChatApiImpl implements WeChatApi {
      *
      * @param webSyncResponse
      */
+    @Override
     public void handleMsg(WebSyncResponse webSyncResponse) {
         List<Message> addMessageList = webSyncResponse.getAddMessageList();
         if (null != addMessageList && addMessageList.size() > 0) {

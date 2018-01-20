@@ -1,4 +1,4 @@
-package io.github.biezhi.wechat.api;
+package io.github.biezhi.wechat.api.client;
 
 import io.github.biezhi.wechat.api.request.ApiRequest;
 import io.github.biezhi.wechat.api.response.ApiResponse;

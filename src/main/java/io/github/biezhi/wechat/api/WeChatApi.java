@@ -1,20 +1,18 @@
 package io.github.biezhi.wechat.api;
 
 import io.github.biezhi.wechat.api.model.Account;
-import io.github.biezhi.wechat.utils.StringUtils;
+import io.github.biezhi.wechat.api.model.SyncCheckRet;
+import io.github.biezhi.wechat.api.response.WebSyncResponse;
 
 import java.util.regex.Pattern;
 
 /**
+ * 微信API
+ *
  * @author biezhi
  * @date 2018/1/21
  */
 public interface WeChatApi {
-
-    Pattern UUID_PATTERN          = Pattern.compile("window.QRLogin.code = (\\d+); window.QRLogin.uuid = \"(\\S+?)\";");
-    Pattern CHECK_LOGIN_PATTERN   = Pattern.compile("window.code=(\\d+)");
-    Pattern PROCESS_LOGIN_PATTERN = Pattern.compile("window.redirect_uri=\"(\\S+)\";");
-    Pattern SYNC_CHECK_PATTERN    = Pattern.compile("window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"}");
 
     /**
      * 扫码登录
@@ -27,6 +25,27 @@ public interface WeChatApi {
      * 退出登录
      */
     void logout();
+
+    /**
+     * 心跳检测
+     *
+     * @return
+     */
+    SyncCheckRet syncCheck();
+
+    /**
+     * 拉取新消息
+     *
+     * @return
+     */
+    WebSyncResponse webSync();
+
+    /**
+     * 处理消息
+     *
+     * @param webSyncResponse
+     */
+    void handleMsg(WebSyncResponse webSyncResponse);
 
     /**
      * 发送文本消息
