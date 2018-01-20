@@ -8,11 +8,10 @@ import io.github.biezhi.wechat.components.LoginComponent;
 import io.github.biezhi.wechat.components.MessageComponent;
 import io.github.biezhi.wechat.constant.Config;
 import io.github.biezhi.wechat.model.LoginSession;
-import io.github.biezhi.wechat.model.StorageClass;
 import io.github.biezhi.wechat.model.User;
 import io.github.biezhi.wechat.request.ApiRequest;
 import io.github.biezhi.wechat.response.ApiResponse;
-import io.github.biezhi.wechat.utils.OkHttpUtil;
+import io.github.biezhi.wechat.utils.OkHttpUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -81,10 +80,6 @@ public class WeChatBot {
         return loginSession;
     }
 
-    public void login() {
-        loginComponent.login();
-    }
-
     public WeChatBotClient api() {
         return api;
     }
@@ -93,7 +88,7 @@ public class WeChatBot {
         loginComponent = new LoginComponent(this);
         contactComponent = new ContactComponent(this);
         messageComponent = new MessageComponent(this);
-        this.login();
+        loginComponent.login();
     }
 
     public boolean autoReply() {
@@ -136,7 +131,7 @@ public class WeChatBot {
 
         private static OkHttpClient client(Interceptor interceptor) {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            OkHttpUtil.configureToIgnoreCertificate(builder);
+            OkHttpUtils.configureToIgnoreCertificate(builder);
             if (interceptor != null) {
                 builder.addInterceptor(interceptor);
             }

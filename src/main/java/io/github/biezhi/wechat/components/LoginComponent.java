@@ -312,36 +312,14 @@ public class LoginComponent {
         bot.loginSession().setSyncKey(syncKey);
 
         bot.getMemberList().add(bot.loginSession().getUser());
-
-        List<User> contactList  = webInitResponse.getContactList();
-        List<User> chatRoomList = new ArrayList();
-        List<User> otherList    = new ArrayList();
-
-        for (User m : contactList) {
-            if (m.getSex().equals(0)) {
-                otherList.add(m);
-            } else if (m.getUserName().contains("@@")) {
-                m.setMembers(new ArrayList<Member>());
-                chatRoomList.add(m);
-            } else if (m.getUserName().contains("@")) {
-                otherList.add(m);
-            }
-        }
-
-        if (chatRoomList.size() > 0) {
-            //bot.getContactComponent().updateLocalChatRooms(chatRoomList);
-        }
-
-        if (otherList.size() > 0) {
-            //bot.getContactComponent().updateLocalFriends(otherList);
-        }
-
+        
         return webInitResponse;
     }
 
     public void startRevice() {
         bot.setRunning(true);
         Thread thread = new Thread(new Loop(bot));
+        thread.setName("wechat-listener");
         thread.setDaemon(true);
         thread.start();
     }
