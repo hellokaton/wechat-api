@@ -87,6 +87,9 @@ public class WeChatBotClient {
                 if (!"file.web.wechat.com".equals(okHttpRequest.url().host())) {
                     cookieStore.put("file.web.wechat.com", cookies);
                 }
+                if (!"file.wx2.qq.com".equals(okHttpRequest.url().host())) {
+                    cookieStore.put("file.wx2.qq.com", cookies);
+                }
             }
 
             if (ApiResponse.class.equals(request.getResponseType())) {

@@ -1,5 +1,6 @@
 package io.github.biezhi.wechat.handler;
 
+import com.google.gson.JsonObject;
 import io.github.biezhi.wechat.WeChatBot;
 import io.github.biezhi.wechat.api.annotation.Bind;
 import io.github.biezhi.wechat.api.enums.MsgType;
@@ -12,7 +13,7 @@ import io.github.biezhi.wechat.api.request.JsonRequest;
 import io.github.biezhi.wechat.api.request.StringRequest;
 import io.github.biezhi.wechat.api.response.ApiResponse;
 import io.github.biezhi.wechat.api.response.FileResponse;
-import io.github.biezhi.wechat.api.response.JsonResponse;
+import io.github.biezhi.wechat.api.response.MediaResponse;
 import io.github.biezhi.wechat.api.response.WebSyncResponse;
 import io.github.biezhi.wechat.exception.WeChatException;
 import io.github.biezhi.wechat.utils.MD5Checksum;
@@ -24,8 +25,8 @@ import okhttp3.RequestBody;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -290,14 +291,20 @@ public class MessageHandler {
         return WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/video", id).getPath();
     }
 
-    public String uploadMedia(String toUser, String filePath) {
+    /**
+     * 上传附件
+     *
+     * @param toUser
+     * @param filePath
+     * @return
+     */
+    public MediaResponse uploadMedia(String toUser, String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {
             throw new WeChatException("文件[" + filePath + "]不存在");
         }
 
         String url           = String.format("%s/webwxuploadmedia?f=json", bot.session().getFileUrl());
-        String contentType   = "multipart/form-data; boundary=----WebKitFormBoundaryER4WmF74ynAXV91T";
         String clientMediaId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
         String mimeType      = "image/jpeg";
 
@@ -320,43 +327,37 @@ public class MessageHandler {
             throw new WeChatException("缺少了附件Cookie");
         }
 
-        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
-
-        System.out.println(bot.api().cookies());
+        String      lastModifieDate = new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date());
+        RequestBody filePart        = RequestBody.create(MediaType.parse("image/jpeg"), file);
 
         ApiResponse response = bot.execute(new StringRequest(url).post().multipart()
-                .header("Host", "file.web.wechat.com")
-                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
-                .header("Accept-Encoding", "gzip, deflate, br")
-                .header("Referer", "https://web.wechat.com/?&lang=zh_CN")
-                .header("Content-Type", contentType)
-                .header("Origin", "https://web.wechat.com")
-                .header("Connection", "keep-alive")
                 .fileName(file.getName())
                 .add("id", "WU_FILE_0")
-                .add("name", file.getName())
+                .add("name", filePath)
                 .add("type", mimeType)
-                .add("lastModifiedDate", new Date().toLocaleString())
-                .add("size", size)
-                .add("mediatype", "pic")
+                .add("lastModifieDate", lastModifieDate)
+                .add("size", String.valueOf(size))
+                .add("mediatype", mimeType)
                 .add("uploadmediarequest", WeChatUtils.toJson(uploadMediaRequest))
                 .add("webwx_data_ticket", dataTicket)
                 .add("pass_ticket", bot.session().getPassTicket())
-                .add("filename", requestBody));
+                .add("filename", filePart));
 
-        System.out.println(response.getRawBody());
-
-        return "";
+        MediaResponse mediaResponse = response.parse(MediaResponse.class);
+        if (!mediaResponse.success()) {
+            log.warn("上传附件失败: {}", mediaResponse.getMsg());
+        }
+        return mediaResponse;
     }
 
     public void sendImgMsg(String toUserName, String filePath) {
 
-        String mediaId = this.uploadMedia(toUserName, filePath);
+        String mediaId = this.uploadMedia(toUserName, filePath).getMediaId();
         if (StringUtils.isEmpty(mediaId)) {
-            log.info("Media为空");
+            log.warn("Media为空");
             return;
         }
+
         String url = String.format("%s/webwxsendmsgimg?fun=async&f=json&pass_ticket=%s",
                 bot.session().getFileUrl(), bot.session().getPassTicket());
 

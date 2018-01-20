@@ -42,4 +42,8 @@ public class JsonResponse extends ApiResponse {
         return this.get(key).toString();
     }
 
+    public boolean success() {
+        return null != baseResponse && baseResponse.getRet().equals(0);
+    }
+
 }
