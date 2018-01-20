@@ -6,6 +6,8 @@ import io.github.biezhi.wechat.enums.MsgType;
 import io.github.biezhi.wechat.exception.WeChatException;
 import io.github.biezhi.wechat.model.Message;
 import io.github.biezhi.wechat.model.SendMessage;
+import io.github.biezhi.wechat.model.User;
+import io.github.biezhi.wechat.model.WeChatMessage;
 import io.github.biezhi.wechat.request.FileRequest;
 import io.github.biezhi.wechat.request.JsonRequest;
 import io.github.biezhi.wechat.response.FileResponse;
@@ -15,6 +17,7 @@ import io.github.biezhi.wechat.utils.StringUtils;
 import io.github.biezhi.wechat.utils.WeChatUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -59,43 +62,51 @@ public class MessageHandler {
         if (null != addMessageList && addMessageList.size() > 0) {
             log.info("你有新的消息");
             for (Message message : addMessageList) {
-                Integer msgType = message.getMsgType();
-                String  name    = bot.getContactHandler().getUserRemarkName(message.getFromUserName());
-                String  content = message.getContent().replace("&lt;", "<").replace("&gt;", ">");
-                String  msgId   = message.getId();
+                Integer msgType  = message.getMsgType();
+                String  name     = bot.getContactHandler().getUserRemarkName(message.getFromUserName());
+                String  content  = message.getContent().replace("&lt;", "<").replace("&gt;", ">");
+                String  msgId    = message.getId();
+                User    fromUser = bot.getContactHandler().getUserById(message.getFromUserName());
 
-                log.info("Message: {}", WeChatUtils.toJson(message));
+                log.debug("收到消息JSON: {}", WeChatUtils.toJson(message));
+
+                WeChatMessage.WeChatMessageBuilder weChatMessageBuilder = WeChatMessage.builder()
+                        .raw(message)
+                        .fromNickName(fromUser.getNickName())
+                        .fromRemarkName(fromUser.getRemarkName())
+                        .fromUserName(message.getFromUserName())
+                        .text(content);
 
                 List<Method> methods = mapping.get(MsgType.ALL);
                 if (null != methods && methods.size() > 0) {
-                    this.callBack(methods, message);
+                    this.callBack(methods, weChatMessageBuilder.build());
                 }
 
                 switch (msgType) {
                     case 1:
                         if (bot.autoReply()) {
-                            this.sendMsg("自动回复: " + content, message.getFromUserName());
+                            this.sendTextMsg("自动回复: " + content, message.getFromUserName());
                         } else {
                             methods = mapping.get(MsgType.TEXT);
                             if (null != methods && methods.size() > 0) {
-                                this.callBack(methods, message);
+                                this.callBack(methods, weChatMessageBuilder.build());
                             }
                         }
                         break;
                     // 聊天图片
                     case 3:
-                        this.downloadMsgImg(msgId);
+                        String imgPath = this.downloadMsgImg(msgId);
                         methods = mapping.get(MsgType.IMAGE);
                         if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, message);
+                            this.callBack(methods, weChatMessageBuilder.imagePath(imgPath).build());
                         }
                         break;
                     // 语音
                     case 34:
-                        this.donwloadVoice(msgId);
+                        String voicePath = this.donwloadVoice(msgId);
                         methods = mapping.get(MsgType.VOICE);
                         if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, message);
+                            this.callBack(methods, weChatMessageBuilder.voicePath(voicePath).build());
                         }
                         break;
                     // 名片
@@ -109,27 +120,25 @@ public class MessageHandler {
                         log.info("=========================");
                         methods = mapping.get(MsgType.PERSON_CARD);
                         if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, message);
+                            this.callBack(methods, weChatMessageBuilder.build());
                         }
                         break;
                     // 视频
                     case 43:
-                        this.downloadVideo(msgId);
+                        String videoPath = this.downloadVideo(msgId);
                         methods = mapping.get(MsgType.VIDEO);
                         if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, message);
+                            this.callBack(methods, weChatMessageBuilder.videoPath(videoPath).build());
                         }
                         break;
                     // 动画表情
                     case 47:
                         log.info("{} 发了一个动画表情");
-                        this.downloadMsgImg(message.getNewMsgId().toString());
+                        imgPath = this.downloadMsgImg(message.getNewMsgId().toString());
                         methods = mapping.get(MsgType.IMAGE);
                         if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, message);
+                            this.callBack(methods, weChatMessageBuilder.imagePath(imgPath).build());
                         }
-//                        String url = this.searchContent("cdnurl", content, "attr");
-//                        WeChatUtils.localOpen(url);
                         break;
                     // 分享
                     case 49:
@@ -139,10 +148,10 @@ public class MessageHandler {
                         break;
                     // 视频
                     case 62:
-                        this.downloadVideo(msgId);
+                        videoPath = this.downloadVideo(msgId);
                         methods = mapping.get(MsgType.VIDEO);
                         if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, message);
+                            this.callBack(methods, weChatMessageBuilder.videoPath(videoPath).build());
                         }
                         break;
                     // 撤回消息
@@ -150,7 +159,7 @@ public class MessageHandler {
                         log.info("{} 撤回了一条消息: {}", name, content);
                         methods = mapping.get(MsgType.REVOKE);
                         if (null != methods && methods.size() > 0) {
-                            this.callBack(methods, message);
+                            this.callBack(methods, weChatMessageBuilder.build());
                         }
                         break;
                     default:
@@ -183,7 +192,7 @@ public class MessageHandler {
         return result;
     }
 
-    private void callBack(List<Method> methods, Message message) {
+    private void callBack(List<Method> methods, WeChatMessage message) {
         for (Method method : methods) {
             try {
                 method.invoke(bot, message);
@@ -198,14 +207,15 @@ public class MessageHandler {
      *
      * @param msgId
      */
-    private void downloadMsgImg(String msgId) {
+    private String downloadMsgImg(String msgId) {
         String url = String.format("%s/webwxgetmsgimg?msgid=%s&skey=%s", bot.session().getUrl(), msgId, bot.session().getSKey());
 
         FileResponse response    = bot.download(new FileRequest(url));
         InputStream  inputStream = response.getInputStream();
 
-        String id = msgId + ".jpg";
-        WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/images", id);
+        String id   = msgId + ".jpg";
+        File   file = WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/images", id);
+        return file.getPath();
     }
 
     /**
@@ -213,14 +223,14 @@ public class MessageHandler {
      *
      * @param msgId
      */
-    private void downloadIconImg(String msgId) {
+    private String downloadIconImg(String msgId) {
         String url = String.format("%s/webwxgeticon?username=%s&skey=%s", bot.session().getUrl(), msgId, bot.session().getSKey());
 
         FileResponse response    = bot.download(new FileRequest(url));
         InputStream  inputStream = response.getInputStream();
 
         String id = msgId + ".jpg";
-        WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/icons", id);
+        return WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/icons", id).getPath();
     }
 
     /**
@@ -228,13 +238,13 @@ public class MessageHandler {
      *
      * @param userName
      */
-    private void downloadHeadImg(String userName) {
+    private String downloadHeadImg(String userName) {
         String       url         = String.format("%s/webwxgetheadimg?username=%s&skey=%s", bot.session().getUrl(), userName, bot.session().getSKey());
         FileResponse response    = bot.download(new FileRequest(url));
         InputStream  inputStream = response.getInputStream();
 
         String id = userName + ".jpg";
-        WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/head", id);
+        return WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/head", id).getPath();
     }
 
     /**
@@ -242,14 +252,14 @@ public class MessageHandler {
      *
      * @param msgId
      */
-    private void downloadVideo(String msgId) {
+    private String downloadVideo(String msgId) {
         String url = String.format("%s/webwxgetvideo?msgid=%s&skey=%s", bot.session().getUrl(), msgId, bot.session().getSKey());
 
         FileResponse response    = bot.download(new FileRequest(url));
         InputStream  inputStream = response.getInputStream();
 
         String id = msgId + ".mp4";
-        WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/video", id);
+        return WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/video", id).getPath();
     }
 
     /**
@@ -257,17 +267,18 @@ public class MessageHandler {
      *
      * @param msgId
      */
-    private void donwloadVoice(String msgId) {
+    private String donwloadVoice(String msgId) {
         String url = String.format("%s/webwxgetvoice?msgid=%s&skey=%s", bot.session().getUrl(), msgId, bot.session().getSKey());
 
         FileResponse response    = bot.download(new FileRequest(url));
         InputStream  inputStream = response.getInputStream();
 
         String id = msgId + ".mp3";
-        WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/video", id);
+        return WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/video", id).getPath();
     }
 
-    private void sendMsg(String msg, String toUserName) {
+    public void sendTextMsg(String msg, String toUserName) {
+
         String url = String.format("%s/webwxsendmsg?pass_ticket=%s", bot.session().getUrl(), bot.session().getPassTicket());
 
         String clientMsgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);

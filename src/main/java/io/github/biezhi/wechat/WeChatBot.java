@@ -93,6 +93,16 @@ public class WeChatBot {
         return config.autoReply();
     }
 
+    /**
+     * 发送文本消息
+     *
+     * @param fromUserName 发给谁
+     * @param msg          消息内容
+     */
+    public void sendText(String fromUserName, String msg) {
+        messageHandler.sendTextMsg(msg, fromUserName);
+    }
+
     public static final class Builder {
 
         private Config config = Config.me();

@@ -2,6 +2,7 @@ package io.github.biezhi.wechat.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.github.biezhi.wechat.exception.WeChatException;
 import io.github.biezhi.wechat.model.User;
 
 import java.awt.*;
@@ -55,7 +56,17 @@ public class WeChatUtils {
         return gson.fromJson(json, typeToken.getType());
     }
 
-    public static void saveFile(InputStream inputStream, String dirPath, String id) {
+    public static String escapeHTML(String s) {
+        String escapedHtml = s
+                .replaceAll("&", "&amp;")
+                .replaceAll("\"", "&quot;")
+                .replaceAll("\"", "&quot;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;");
+        return escapedHtml;
+    }
+
+    public static File saveFile(InputStream inputStream, String dirPath, String id) {
         FileOutputStream fileOutputStream = null;
         try {
             File dir = new File(dirPath + "/" + DateUtils.getDateString());
@@ -70,9 +81,9 @@ public class WeChatUtils {
                 fileOutputStream.write(buffer, 0, len);
             }
             fileOutputStream.flush();
-            fileOutputStream.close();
+            return path;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new WeChatException(e);
         } finally {
             try {
                 if (null != fileOutputStream) {

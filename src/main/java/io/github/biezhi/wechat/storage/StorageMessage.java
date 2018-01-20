@@ -3,6 +3,7 @@ package io.github.biezhi.wechat.storage;
 import io.github.biezhi.wechat.enums.MsgType;
 import io.github.biezhi.wechat.model.Message;
 import io.github.biezhi.wechat.model.StorageResponse;
+import io.github.biezhi.wechat.model.WeChatMessage;
 
 import java.util.List;
 
@@ -29,6 +30,6 @@ public interface StorageMessage {
      * @param messages
      * @return
      */
-    StorageResponse saveBatch(List<Message> messages);
+    StorageResponse saveBatch(List<WeChatMessage> messages);
 
 }

@@ -76,6 +76,31 @@ public class ContactHandler {
         return true;
     }
 
+    public User getUserById(String id) {
+        if (id.equals(this.bot.session().getUserName())) {
+            return this.bot.session().getUser();
+        }
+
+        // 特殊账号
+        for (User user : specialUsersList) {
+            if (user.getUserName().equals(id)) {
+                return user;
+            }
+        }
+        // 公众号或服务号
+        for (User user : publicUsersList) {
+            if (user.getUserName().equals(id)) {
+                return user;
+            }
+        }
+        // 联系人
+        for (User user : contactList) {
+            if (user.getUserName().equals(id)) {
+                return user;
+            }
+        }
+        return null;
+    }
 
     public String getUserRemarkName(String id) {
         String name = id.contains("@@") ? "未知群" : "陌生人";
@@ -97,7 +122,7 @@ public class ContactHandler {
                 return StringUtils.isNotEmpty(user.getRemarkName()) ? user.getRemarkName() : user.getNickName();
             }
         }
-        // 群友
+        // 联系人
         for (User user : contactList) {
             if (user.getUserName().equals(id)) {
                 return StringUtils.isNotEmpty(user.getRemarkName()) ? user.getRemarkName() : user.getNickName();
