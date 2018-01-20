@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import io.github.biezhi.wechat.api.WeChatBotClient;
 import io.github.biezhi.wechat.api.Callback;
 import io.github.biezhi.wechat.api.constant.Config;
+import io.github.biezhi.wechat.api.constant.Constant;
 import io.github.biezhi.wechat.handler.ContactHandler;
+import io.github.biezhi.wechat.handler.GroupHandler;
 import io.github.biezhi.wechat.handler.LoginHandler;
 import io.github.biezhi.wechat.handler.MessageHandler;
 import io.github.biezhi.wechat.api.model.LoginSession;
@@ -34,6 +36,8 @@ public class WeChatBot {
     private ContactHandler contactHandler;
     @Getter
     private MessageHandler messageHandler;
+    @Getter
+    private GroupHandler   groupHandler;
 
     private WeChatBotClient api;
     private Config          config;
@@ -78,10 +82,14 @@ public class WeChatBot {
         return api;
     }
 
+    /**
+     * 启动微信监听
+     */
     public void start() {
         loginHandler = new LoginHandler(this);
         contactHandler = new ContactHandler(this);
         messageHandler = new MessageHandler(this);
+        log.info("wechat-api: {}", Constant.VERSION);
         loginHandler.login();
     }
 

@@ -5,6 +5,9 @@ import okhttp3.OkHttpClient;
 
 import javax.net.ssl.*;
 
+/**
+ * OkHttp SSL 工具类
+ */
 @Slf4j
 public class OkHttpUtils {
 

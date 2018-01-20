@@ -5,6 +5,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 
+/**
+ * 随机字符串生成
+ */
 public class RandomString {
 
     /**

@@ -15,13 +15,19 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * QRCode Utils
+ * 二维码工具类
  *
  * @author biezhi
  * @date 2018/1/18
  */
 public class QRCodeUtils {
 
+    /**
+     * 显示二维码，Linux会显示在终端
+     *
+     * @param qrCode
+     * @param terminal
+     */
     public static void showQrCode(File qrCode, boolean terminal) {
         if (!terminal) {
             String os = System.getProperty("os.name").toLowerCase();
@@ -52,6 +58,12 @@ public class QRCodeUtils {
         }
     }
 
+    /**
+     * 将二维码输出为 ASCII
+     *
+     * @param bitMatrix
+     * @return
+     */
     private static String toAscii(BitMatrix bitMatrix) {
         StringBuilder sb = new StringBuilder();
         for (int rows = 0; rows < bitMatrix.getHeight(); rows++) {
@@ -69,6 +81,13 @@ public class QRCodeUtils {
         return sb.toString();
     }
 
+    /**
+     * 读取二维码信息
+     *
+     * @param filePath
+     * @param hintMap
+     * @return
+     */
     private static String readQRCode(File filePath, Map hintMap) {
         try {
             BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(

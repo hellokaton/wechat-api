@@ -18,10 +18,6 @@ public class Config {
         return new Config();
     }
 
-    public String get(String key) {
-        return props.getProperty(key);
-    }
-
     public String assetsDir() {
         return props.getProperty(CONF_ASSETS_DIR, CONF_ASSETS_DIR_DEFAULT);
     }

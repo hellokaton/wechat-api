@@ -22,9 +22,4 @@ public class StorageResponse {
      */
     private boolean success;
 
-    /**
-     * 保存成功的个数
-     */
-    private Integer count;
-
 }

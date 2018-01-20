@@ -1,7 +1,6 @@
 package io.github.biezhi.wechat.handler;
 
 import io.github.biezhi.wechat.WeChatBot;
-import io.github.biezhi.wechat.api.response.*;
 import io.github.biezhi.wechat.api.constant.Constant;
 import io.github.biezhi.wechat.api.constant.StateCode;
 import io.github.biezhi.wechat.api.model.LoginSession;
@@ -20,8 +19,6 @@ import io.github.biezhi.wechat.utils.WeChatUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +28,14 @@ import java.util.regex.Pattern;
 import static io.github.biezhi.wechat.api.constant.Constant.*;
 
 /**
+ * 登录处理
+ * <p>
+ * 1. 扫码
+ * 2. 微信初始化
+ * 3. 开启状态通知
+ * 4. 获取联系人
+ * 5. 开启消息监听
+ *
  * @author biezhi
  * @date 2018/1/18
  */
@@ -91,7 +96,6 @@ public class LoginHandler {
                 log.info("登录超时，重新加载二维码");
             }
         }
-        log.info("正在加载联系人，请稍等...");
         this.webInit();
         this.statusNotify();
         bot.getContactHandler().loadContact();
@@ -110,14 +114,11 @@ public class LoginHandler {
         log.info("获取二维码UUID");
         // 登录
         ApiResponse response = bot.execute(new StringRequest("https://login.weixin.qq.com/jslogin")
-                .add("appid", "wx782c26e4c19acffb")
-                .add("fun", "new"));
+                .add("appid", "wx782c26e4c19acffb").add("fun", "new"));
 
         Matcher matcher = UUID_PATTERN.matcher(response.getRawBody());
-        if (matcher.find()) {
-            if (StateCode.SUCCESS.equals(matcher.group(1))) {
-                this.uuid = matcher.group(2);
-            }
+        if (matcher.find() && StateCode.SUCCESS.equals(matcher.group(1))) {
+            this.uuid = matcher.group(2);
         }
         return this.uuid;
     }
@@ -130,39 +131,15 @@ public class LoginHandler {
      */
     public void getQrImage(String uuid, boolean terminalShow) {
         String uid    = null != uuid ? uuid : this.uuid;
-        String imgDir = bot.config().assetsDir() + "/qrcode/";
+        String imgDir = bot.config().assetsDir();
+
         FileResponse fileResponse = bot.download(
                 new FileRequest(String.format("%s/qrcode/%s", Constant.BASE_URL, uid)));
 
-        InputStream      inputStream      = fileResponse.getInputStream();
-        FileOutputStream fileOutputStream = null;
-        try {
-            if (!new File(imgDir).isDirectory()) {
-                new File(imgDir).mkdirs();
-            }
-            File qrCode = new File(imgDir, "qr.png");
-            fileOutputStream = new FileOutputStream(qrCode);
-            byte[] buffer = new byte[2048];
-            int    len    = 0;
-            while ((len = inputStream.read(buffer)) != -1) {
-                fileOutputStream.write(buffer, 0, len);
-            }
-            fileOutputStream.flush();
-            DateUtils.sleep(500);
-            QRCodeUtils.showQrCode(qrCode, terminalShow);
-        } catch (IOException e) {
-            log.error("读取二维码失败", e);
-        } finally {
-            try {
-                if (null != fileOutputStream) {
-                    fileOutputStream.close();
-                }
-                if (null != inputStream) {
-                    inputStream.close();
-                }
-            } catch (Exception e) {
-            }
-        }
+        InputStream inputStream = fileResponse.getInputStream();
+        File        qrCode      = WeChatUtils.saveFile(inputStream, imgDir, "qrcode.png");
+        DateUtils.sleep(500);
+        QRCodeUtils.showQrCode(qrCode, terminalShow);
     }
 
     /**
@@ -177,11 +154,9 @@ public class LoginHandler {
         Long   time = System.currentTimeMillis();
 
         ApiResponse response = bot.execute(new StringRequest(url)
-                .add("loginicon", "true")
-                .add("uuid", uid)
-                .add("tip", "1")
+                .add("loginicon", true).add("uuid", uid)
+                .add("tip", "1").add("_", time)
                 .add("r", (int) (-time / 1000) / 1579)
-                .add("_", time)
                 .timeout(30));
 
         Matcher matcher = CHECK_LOGIN_PATTERN.matcher(response.getRawBody());
@@ -234,6 +209,7 @@ public class LoginHandler {
             loginSession.setFileUrl(loginSession.getUrl());
             loginSession.setSyncUrl(loginSession.getUrl());
         }
+
         loginSession.setDeviceId("e" + String.valueOf(System.currentTimeMillis()));
 
         BaseRequest baseRequest = new BaseRequest();
@@ -314,7 +290,7 @@ public class LoginHandler {
         return webInitResponse;
     }
 
-    public void startRevice() {
+    private void startRevice() {
         bot.setRunning(true);
         Thread thread = new Thread(new Loop(bot));
         thread.setName("wechat-listener");
@@ -326,7 +302,7 @@ public class LoginHandler {
         private WeChatBot bot;
         private long      lastCheckTs;
 
-        public Loop(WeChatBot bot) {
+        Loop(WeChatBot bot) {
             this.bot = bot;
         }
 
@@ -406,7 +382,7 @@ public class LoginHandler {
     /**
      * 获取消息
      */
-    public WebSyncResponse webSync() {
+    private WebSyncResponse webSync() {
         String url = String.format("%s/webwxsync?sid=%s&sKey=%s&passTicket=%s",
                 bot.session().getUrl(), bot.session().getWxSid(),
                 bot.session().getSKey(), bot.session().getPassTicket());

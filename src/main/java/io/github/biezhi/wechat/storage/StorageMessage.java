@@ -1,10 +1,7 @@
 package io.github.biezhi.wechat.storage;
 
-import io.github.biezhi.wechat.api.enums.MsgType;
 import io.github.biezhi.wechat.api.model.StorageResponse;
 import io.github.biezhi.wechat.api.model.WeChatMessage;
-
-import java.util.List;
 
 /**
  * 消息存储接口
@@ -17,18 +14,11 @@ import java.util.List;
 public interface StorageMessage {
 
     /**
-     * 要存储的消息类型列表
+     * 保存消息
      *
+     * @param message
      * @return
      */
-    MsgType[] bindMsgType();
-
-    /**
-     * 保存一批消息
-     *
-     * @param messages
-     * @return
-     */
-    StorageResponse saveBatch(List<WeChatMessage> messages);
+    StorageResponse save(WeChatMessage message);
 
 }

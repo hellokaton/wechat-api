@@ -3,16 +3,18 @@ package io.github.biezhi.wechat.utils;
 import java.util.Random;
 
 /**
+ * 字符串工具类
+ *
  * @author biezhi
  * @date 2018/1/19
  */
 public class StringUtils {
 
-    public static boolean isEmpty(String value){
+    public static boolean isEmpty(String value) {
         return null == value || value.isEmpty();
     }
 
-    public static boolean isNotEmpty(String value){
+    public static boolean isNotEmpty(String value) {
         return null != value && !value.isEmpty();
     }
 

@@ -192,7 +192,16 @@ public class MessageHandler {
         return result;
     }
 
+    /**
+     * 回调微信消息给客户端、存储器
+     *
+     * @param methods
+     * @param message
+     */
     private void callBack(List<Method> methods, WeChatMessage message) {
+        if(null != bot.storageMessage()){
+            bot.storageMessage().save(message);
+        }
         for (Method method : methods) {
             try {
                 method.invoke(bot, message);
@@ -277,6 +286,21 @@ public class MessageHandler {
         return WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/video", id).getPath();
     }
 
+    public void uploadMedia(){
+        String url = "https://file2.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json";
+
+    }
+
+    public void sendImgMsg(){
+
+    }
+
+    /**
+     * 发送文本消息
+     *
+     * @param msg
+     * @param toUserName
+     */
     public void sendTextMsg(String msg, String toUserName) {
 
         String url = String.format("%s/webwxsendmsg?pass_ticket=%s", bot.session().getUrl(), bot.session().getPassTicket());

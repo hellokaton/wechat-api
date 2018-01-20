@@ -8,8 +8,6 @@ import io.github.biezhi.wechat.api.model.WeChatMessage;
 import io.github.biezhi.wechat.storage.StorageMessage;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-
 /**
  * @author biezhi
  * @date 2018/1/19
@@ -25,13 +23,8 @@ public class MyBot extends WeChatBot {
     public StorageMessage storageMessage() {
         return new StorageMessage() {
             @Override
-            public MsgType[] bindMsgType() {
-                return new MsgType[]{MsgType.TEXT};
-            }
-
-            @Override
-            public StorageResponse saveBatch(List<WeChatMessage> messages) {
-                log.info("存储器接收到 {} 条消息", messages.size());
+            public StorageResponse save(WeChatMessage message) {
+                log.info("存储器接收到消息: ", message.getText());
                 return StorageResponse.builder().success(true).build();
             }
         };
