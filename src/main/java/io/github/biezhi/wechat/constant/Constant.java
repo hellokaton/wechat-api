@@ -72,4 +72,10 @@ public interface Constant {
      */
     String CONF_PRINT_TERMINAL         = "wechat.print-terminal";
     String CONF_PRINT_TERMINAL_DEFAULT = "false";
+
+    /**
+     * 自动回复消息，测试时用
+     */
+    String CONF_AUTO_REPLY         = "wechat.autoreply";
+    String CONF_AUTO_REPLY_DEFAULT = "false";
 }

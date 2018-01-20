@@ -40,4 +40,12 @@ public class Config {
         return this;
     }
 
+    public boolean autoReply() {
+        return Boolean.valueOf(props.getProperty(CONF_AUTO_REPLY, CONF_AUTO_REPLY_DEFAULT));
+    }
+
+    public Config autoReply(boolean flag) {
+        props.setProperty(CONF_AUTO_REPLY, String.valueOf(flag));
+        return this;
+    }
 }

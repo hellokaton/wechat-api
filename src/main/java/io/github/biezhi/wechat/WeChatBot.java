@@ -90,7 +90,7 @@ public class WeChatBot {
     }
 
     public boolean autoReply() {
-        return true;
+        return config.autoReply();
     }
 
     public static final class Builder {
