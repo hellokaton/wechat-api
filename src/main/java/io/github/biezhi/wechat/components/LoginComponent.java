@@ -9,8 +9,8 @@ import io.github.biezhi.wechat.request.FileRequest;
 import io.github.biezhi.wechat.request.JsonRequest;
 import io.github.biezhi.wechat.request.StringRequest;
 import io.github.biezhi.wechat.response.*;
-import io.github.biezhi.wechat.utils.DateUtil;
-import io.github.biezhi.wechat.utils.QRCodeUtil;
+import io.github.biezhi.wechat.utils.DateUtils;
+import io.github.biezhi.wechat.utils.QRCodeUtils;
 import io.github.biezhi.wechat.utils.WeChatUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,7 +59,7 @@ public class LoginComponent {
             if (null == this.uuid) {
                 log.info("Getting uuid of QR code.");
                 while (null == this.getUUID()) {
-                    DateUtil.sleep(10);
+                    DateUtils.sleep(10);
                 }
                 log.info("Download QR Code.");
                 this.getQrImage(this.uuid, bot.config().showTerminal());
@@ -78,7 +78,7 @@ public class LoginComponent {
                 } else if ("408".equals(status)) {
                     break;
                 }
-                DateUtil.sleep(300);
+                DateUtils.sleep(300);
             }
             if (null != isLoggedIn && isLoggedIn) {
                 break;
@@ -97,7 +97,7 @@ public class LoginComponent {
         log.info("Login successfully as {}", bot.loginSession().getNickName());
         this.startRevice();
         logging = false;
-        DateUtil.sleep(9999999999999L);
+        DateUtils.sleep(9999999999999L);
     }
 
     /**
@@ -128,7 +128,7 @@ public class LoginComponent {
      */
     public void getQrImage(String uuid, boolean terminalShow) {
         String uid    = null != uuid ? uuid : this.uuid;
-        String imgDir = bot.config().imgDir();
+        String imgDir = bot.config().assetsDir() + "/qrcode/";
         FileResponse fileResponse = bot.download(
                 new FileRequest(String.format("%s/qrcode/%s", Constant.BASE_URL, uid)));
 
@@ -146,8 +146,8 @@ public class LoginComponent {
                 fileOutputStream.write(buffer, 0, len);
             }
             fileOutputStream.flush();
-            DateUtil.sleep(500);
-            QRCodeUtil.showQrCode(qrCode, terminalShow);
+            DateUtils.sleep(500);
+            QRCodeUtils.showQrCode(qrCode, terminalShow);
         } catch (IOException e) {
             log.error("读取二维码失败", e);
         } finally {
@@ -383,13 +383,13 @@ public class LoginComponent {
                             log.info("你在手机上玩微信被我发现了");
                             break;
                         case 0:
-                            DateUtil.sleep(100);
+                            DateUtils.sleep(100);
                         default:
                             break;
                     }
                 }
                 if (System.currentTimeMillis() - this.lastCheckTs <= 20) {
-                    DateUtil.sleep(System.currentTimeMillis() - this.lastCheckTs);
+                    DateUtils.sleep(System.currentTimeMillis() - this.lastCheckTs);
                 }
             }
         }
