@@ -21,14 +21,14 @@ import java.util.concurrent.TimeUnit;
  * @date 2018/1/18
  */
 @Slf4j
-public class WeChatBotClient {
+public class BotClient {
 
     private final OkHttpClient client;
     private       OkHttpClient clientWithTimeout;
     private final Gson         gson;
     private static final ConcurrentHashMap<String, List<Cookie>> cookieStore = new ConcurrentHashMap<String, List<Cookie>>();
 
-    public WeChatBotClient(OkHttpClient client, Gson gson) {
+    public BotClient(OkHttpClient client, Gson gson) {
         this.client = client;
         this.gson = gson;
         System.setProperty("https.protocols", "TLSv1");

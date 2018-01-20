@@ -1,14 +1,12 @@
 package io.github.biezhi.wechat;
 
 import com.google.gson.Gson;
-import io.github.biezhi.wechat.api.WeChatBotClient;
+import io.github.biezhi.wechat.api.BotClient;
 import io.github.biezhi.wechat.api.Callback;
+import io.github.biezhi.wechat.api.WeChatApi;
+import io.github.biezhi.wechat.api.WeChatApiImpl;
 import io.github.biezhi.wechat.api.constant.Config;
 import io.github.biezhi.wechat.api.constant.Constant;
-import io.github.biezhi.wechat.handler.ContactHandler;
-import io.github.biezhi.wechat.handler.GroupHandler;
-import io.github.biezhi.wechat.handler.LoginHandler;
-import io.github.biezhi.wechat.handler.MessageHandler;
 import io.github.biezhi.wechat.api.model.LoginSession;
 import io.github.biezhi.wechat.api.request.ApiRequest;
 import io.github.biezhi.wechat.api.response.ApiResponse;
@@ -34,18 +32,11 @@ import java.util.Scanner;
 public class WeChatBot {
 
     @Getter
-    private LoginHandler   loginHandler;
-    @Getter
-    private ContactHandler contactHandler;
-    @Getter
-    private MessageHandler messageHandler;
-    @Getter
-    private GroupHandler   groupHandler;
-
-    private WeChatBotClient api;
-    private Config          config;
-    private LoginSession    session;
-    private StorageMessage  storageMessage;
+    private WeChatApi      api;
+    private BotClient      botClient;
+    private Config         config;
+    private LoginSession   session;
+    private StorageMessage storageMessage;
 
     @Getter
     @Setter
@@ -53,7 +44,7 @@ public class WeChatBot {
 
     public WeChatBot(Builder builder) {
         this.config = builder.config;
-        this.api = builder.api;
+        this.botClient = builder.api;
         this.session = new LoginSession();
     }
 
@@ -62,15 +53,15 @@ public class WeChatBot {
     }
 
     public <T extends ApiRequest, R extends ApiResponse> R execute(ApiRequest<T, R> request) {
-        return api.send(request);
+        return botClient.send(request);
     }
 
     public <T extends ApiRequest, R extends ApiResponse> R download(ApiRequest<T, R> request) {
-        return api.download(request);
+        return botClient.download(request);
     }
 
     public <T extends ApiRequest<T, R>, R extends ApiResponse> void execute(T request, Callback<T, R> callback) {
-        api.send(request, callback);
+        botClient.send(request, callback);
     }
 
     public Config config() {
@@ -81,25 +72,27 @@ public class WeChatBot {
         return session;
     }
 
-    public WeChatBotClient api() {
-        return api;
+    public BotClient client() {
+        return botClient;
+    }
+
+    public WeChatApi api(){
+        return this.api;
     }
 
     /**
      * 启动微信监听
      */
     public void start() {
-        loginHandler = new LoginHandler(this);
-        contactHandler = new ContactHandler(this);
-        messageHandler = new MessageHandler(this);
-        log.info("wechat-api: {}", Constant.VERSION);
-        loginHandler.login();
+        this.api = new WeChatApiImpl(this);
+        log.info("wechat-botClient: {}", Constant.VERSION);
+        api.login();
         while (true) {
             Scanner scanner = new Scanner(System.in);
             if (scanner.hasNext()) {
                 String text = scanner.next();
                 if ("quit".equals(text) || "exit".equals(text)) {
-                    this.running = false;
+                    api.logout();
                     break;
                 }
             }
@@ -122,7 +115,7 @@ public class WeChatBot {
      * @param msg  消息内容
      */
     public void sendText(String from, String msg) {
-        messageHandler.sendTextMsg(from, msg);
+        api.sendText(from, msg);
     }
 
     /**
@@ -131,19 +124,19 @@ public class WeChatBot {
      * @param from
      * @param filePath
      */
-    public void sendImage(String from, String filePath) {
-        messageHandler.sendImgMsg(from, filePath);
+    public void sendFile(String from, String filePath) {
+        api.sendFile(from, filePath);
     }
 
     public static final class Builder {
 
         private Config config = Config.me();
-        private WeChatBotClient api;
+        private BotClient api;
 
         private OkHttpClient okHttpClient;
 
         public Builder() {
-            api = new WeChatBotClient(client(null), gson());
+            api = new BotClient(client(null), gson());
         }
 
         public Builder debug() {
@@ -164,7 +157,7 @@ public class WeChatBot {
         public WeChatBot build() {
             if (okHttpClient != null) {
                 OkHttpClient client = okHttpClient;
-                api = new WeChatBotClient(client, gson());
+                api = new BotClient(client, gson());
             }
             return new WeChatBot(this);
         }
