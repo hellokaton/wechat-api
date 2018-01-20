@@ -3,9 +3,9 @@ package io.github.biezhi.wechat;
 import com.google.gson.Gson;
 import io.github.biezhi.wechat.api.WeChatBotClient;
 import io.github.biezhi.wechat.callback.Callback;
-import io.github.biezhi.wechat.components.ContactComponent;
-import io.github.biezhi.wechat.components.LoginComponent;
-import io.github.biezhi.wechat.components.MessageComponent;
+import io.github.biezhi.wechat.handler.ContactHandler;
+import io.github.biezhi.wechat.handler.LoginHandler;
+import io.github.biezhi.wechat.handler.MessageHandler;
 import io.github.biezhi.wechat.constant.Config;
 import io.github.biezhi.wechat.model.LoginSession;
 import io.github.biezhi.wechat.model.User;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * WeChat Bot
+ * 微信机器人
  *
  * @author biezhi
  * @date 2018/1/18
@@ -32,11 +32,11 @@ import java.util.List;
 public class WeChatBot {
 
     @Getter
-    private LoginComponent   loginComponent;
+    private LoginHandler   loginHandler;
     @Getter
-    private ContactComponent contactComponent;
+    private ContactHandler contactHandler;
     @Getter
-    private MessageComponent messageComponent;
+    private MessageHandler messageHandler;
 
     private Config          config;
     private LoginSession    loginSession;
@@ -85,10 +85,10 @@ public class WeChatBot {
     }
 
     public void start() {
-        loginComponent = new LoginComponent(this);
-        contactComponent = new ContactComponent(this);
-        messageComponent = new MessageComponent(this);
-        loginComponent.login();
+        loginHandler = new LoginHandler(this);
+        contactHandler = new ContactHandler(this);
+        messageHandler = new MessageHandler(this);
+        loginHandler.login();
     }
 
     public boolean autoReply() {

@@ -1,9 +1,8 @@
-package io.github.biezhi.wechat.components;
+package io.github.biezhi.wechat.handler;
 
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import io.github.biezhi.wechat.WeChatBot;
-import io.github.biezhi.wechat.model.DetailMember;
 import io.github.biezhi.wechat.model.Member;
 import io.github.biezhi.wechat.model.User;
 import io.github.biezhi.wechat.request.JsonRequest;
@@ -17,11 +16,13 @@ import java.util.*;
 import static io.github.biezhi.wechat.constant.Constant.API_SPECIAL_USER;
 
 /**
+ * 联系人处理
+ *
  * @author biezhi
  * @date 2018/1/18
  */
 @Slf4j
-public class ContactComponent {
+public class ContactHandler {
 
     private WeChatBot bot;
 
@@ -31,34 +32,12 @@ public class ContactComponent {
     private List<Member> groupMemeberList = new ArrayList<Member>();
     private List<User>   groupList        = new ArrayList<User>();
 
-    public ContactComponent(WeChatBot weChatBot) {
+    public ContactHandler(WeChatBot weChatBot) {
         this.bot = weChatBot;
     }
 
-    private List<Member> getDetailedMemberInfo(String encryChatroomId, List<Member> memberList) {
-        String url = String.format("%s/webwxbatchgetcontact?type=ex&r=%d", bot.loginSession().getUrl(), System.currentTimeMillis() / 1000);
-
-        List<DetailMember> list = new ArrayList<DetailMember>();
-        for (Member member : memberList) {
-            list.add(DetailMember.builder().userName(member.getUserName()).encryChatRoomId(encryChatroomId).build());
-        }
-
-        JsonResponse response = bot.execute(new JsonRequest(url).post().jsonBody()
-                .add("BaseRequest", bot.loginSession().getBaseRequest())
-                .add("Count", memberList.size())
-                .add("List", list));
-
-        Object chatroomList = response.get("ContactList");
-        System.out.println(chatroomList);
-        return null;
-    }
-
-    public void updateFriend() {
-        // TODO
-    }
-
-    public boolean getContact() {
-        log.info("获取联系人信息");
+    public boolean loadContact() {
+        log.info("开始获取联系人信息");
 
         int        seq = 0;
         List<User> memberList;
@@ -167,51 +146,4 @@ public class ContactComponent {
         return contactUser;
     }
 
-    public void getFriends() {
-        // TODO
-    }
-
-    public void getChatrooms() {
-        // TODO
-    }
-
-    public void getMps() {
-        // TODO
-    }
-
-    public void setAlias() {
-        // TODO
-    }
-
-    public void setPinned() {
-        // TODO
-    }
-
-    public void addFriend() {
-        // TODO
-    }
-
-    public void getHeadImg() {
-        // TODO
-    }
-
-    public void createChatroom() {
-        // TODO
-    }
-
-    public void setChatroomName() {
-        // TODO
-    }
-
-    public void deleteMemberFromChatroom() {
-        // TODO
-    }
-
-    public void addMemberIntoChatroom() {
-        // TODO
-    }
-
-    public void updateLocalFriends(List<User> otherList) {
-
-    }
 }

@@ -1,4 +1,4 @@
-package io.github.biezhi.wechat.components;
+package io.github.biezhi.wechat.handler;
 
 import io.github.biezhi.wechat.WeChatBot;
 import io.github.biezhi.wechat.constant.Constant;
@@ -30,7 +30,7 @@ import static io.github.biezhi.wechat.constant.Constant.*;
  * @date 2018/1/18
  */
 @Slf4j
-public class LoginComponent {
+public class LoginHandler {
 
     private static final Pattern UUID_PATTERN          = Pattern.compile("window.QRLogin.code = (\\d+); window.QRLogin.uuid = \"(\\S+?)\";");
     private static final Pattern CHECK_LOGIN_PATTERN   = Pattern.compile("window.code=(\\d+)");
@@ -41,7 +41,7 @@ public class LoginComponent {
     private String    uuid;
     private boolean   logging;
 
-    public LoginComponent(WeChatBot weChatBot) {
+    public LoginHandler(WeChatBot weChatBot) {
         this.bot = weChatBot;
     }
 
@@ -50,20 +50,19 @@ public class LoginComponent {
      */
     public void login() {
         if (bot.isRunning() || logging) {
-            log.warn("WeChatBot has already logged in.");
+            log.warn("微信已经登录");
             return;
         }
         this.logging = true;
         while (logging) {
             this.uuid = pushLogin();
             if (null == this.uuid) {
-                log.info("Getting uuid of QR code.");
                 while (null == this.getUUID()) {
                     DateUtils.sleep(10);
                 }
-                log.info("Download QR Code.");
+                log.info("开始下载二维码");
                 this.getQrImage(this.uuid, bot.config().showTerminal());
-                log.info("Please scan the QR code to log in.");
+                log.info("请使用手机扫描屏幕二维码");
             }
             Boolean isLoggedIn = false;
             while (null == isLoggedIn || !isLoggedIn) {
@@ -72,7 +71,7 @@ public class LoginComponent {
                     isLoggedIn = true;
                 } else if ("201".equals(status)) {
                     if (null != isLoggedIn) {
-                        log.info("Please press confirm on your phone.");
+                        log.info("请在手机上确认登录");
                         isLoggedIn = null;
                     }
                 } else if ("408".equals(status)) {
@@ -84,17 +83,14 @@ public class LoginComponent {
                 break;
             }
             if (logging) {
-                log.info("Log in time out, reloading QR code.");
+                log.info("登录超时，重新加载二维码");
             }
         }
-        log.info("Loading the contact, this may take a little while.");
+        log.info("正在加载联系人，请稍等...");
         this.webInit();
-        this.showMobileLogin();
-        bot.getContactComponent().getContact();
-//        utils.clear_screen()
-//        if os.path.exists(picDir or config.DEFAULT_QR):
-//        os.remove(picDir or config.DEFAULT_QR)
-        log.info("Login successfully as {}", bot.loginSession().getNickName());
+        this.statusNotify();
+        bot.getContactHandler().loadContact();
+        log.info("[{}] 登录成功.", bot.loginSession().getNickName());
         this.startRevice();
         logging = false;
         DateUtils.sleep(9999999999999L);
@@ -106,6 +102,7 @@ public class LoginComponent {
      * @return
      */
     public String getUUID() {
+        log.info("获取二维码UUID");
         // 登录
         ApiResponse response = bot.execute(new StringRequest("https://login.weixin.qq.com/jslogin")
                 .add("appid", "wx782c26e4c19acffb")
@@ -268,12 +265,12 @@ public class LoginComponent {
     }
 
     /**
-     * 显示手机登录
+     * 开启状态通知
      *
      * @return
      */
-    public ReturnValue showMobileLogin() {
-        log.info("Show Mobile Login Start");
+    public ReturnValue statusNotify() {
+        log.info("开启状态通知");
 
         String url = String.format("%s/webwxstatusnotify?lang=zh_CN&pass_ticket=%s",
                 bot.loginSession().getUrl(), bot.loginSession().getPassTicket());
@@ -292,7 +289,7 @@ public class LoginComponent {
      * web 初始化
      */
     public WebInitResponse webInit() {
-        log.info("Web Init Start");
+        log.info("微信初始化...");
         int r = (int) (-System.currentTimeMillis() / 1000) / 1579;
         String url = String.format("%s/webwxinit?r=%d&pass_ticket=%s",
                 bot.loginSession().getUrl(), r, bot.loginSession().getPassTicket());
@@ -312,7 +309,7 @@ public class LoginComponent {
         bot.loginSession().setSyncKey(syncKey);
 
         bot.getMemberList().add(bot.loginSession().getUser());
-        
+
         return webInitResponse;
     }
 
@@ -336,7 +333,7 @@ public class LoginComponent {
         public void run() {
             while (bot.isRunning()) {
                 this.lastCheckTs = System.currentTimeMillis();
-                SyncCheckRet syncCheckRet = LoginComponent.this.syncCheck();
+                SyncCheckRet syncCheckRet = LoginHandler.this.syncCheck();
 
                 if (syncCheckRet.getCode() == 1100) {
                     log.info("你在手机上登出了微信，债见");
@@ -349,9 +346,9 @@ public class LoginComponent {
                 if (syncCheckRet.getCode() == 0) {
                     switch (syncCheckRet.getSelector()) {
                         case 2:
-                            WebSyncResponse webSyncResponse = LoginComponent.this.webSync();
+                            WebSyncResponse webSyncResponse = LoginHandler.this.webSync();
                             if (null != webSyncResponse) {
-                                bot.getMessageComponent().handleMsg(webSyncResponse);
+                                bot.getMessageHandler().handleMsg(webSyncResponse);
                             }
                             break;
                         case 6:

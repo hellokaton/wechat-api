@@ -4,9 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.github.biezhi.wechat.model.User;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,6 +80,14 @@ public class WeChatUtils {
                 }
             } catch (Exception e) {
             }
+        }
+    }
+
+    public static void localOpen(String url) {
+        try {
+            Desktop.getDesktop().open(new File(new URI(url)));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

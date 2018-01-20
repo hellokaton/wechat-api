@@ -1,4 +1,4 @@
-package io.github.biezhi.wechat.components;
+package io.github.biezhi.wechat.handler;
 
 import io.github.biezhi.wechat.WeChatBot;
 import io.github.biezhi.wechat.model.Message;
@@ -16,15 +16,17 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
+ * 消息处理
+ *
  * @author biezhi
  * @date 2018/1/20
  */
 @Slf4j
-public class MessageComponent {
+public class MessageHandler {
 
     private final WeChatBot bot;
 
-    public MessageComponent(WeChatBot bot) {this.bot = bot;}
+    public MessageHandler(WeChatBot bot) {this.bot = bot;}
 
     public void handleMsg(WebSyncResponse webSyncResponse) {
         List<Message> addMessageList = webSyncResponse.getAddMessageList();
@@ -32,7 +34,7 @@ public class MessageComponent {
             log.info("你有新的消息");
             for (Message message : addMessageList) {
                 Integer msgType = message.getMsgType();
-                String  name    = bot.getContactComponent().getUserRemarkName(message.getFromUserName());
+                String  name    = bot.getContactHandler().getUserRemarkName(message.getFromUserName());
                 String  content = message.getContent().replace("&lt;", "<").replace("&gt;", ">");
                 String  msgId   = message.getId();
 
@@ -156,8 +158,7 @@ public class MessageComponent {
      * @param userName
      */
     private void downloadHeadImg(String userName) {
-        String url = String.format("%s/webwxgetheadimg?username=%s&skey=%s", bot.loginSession().getUrl(), userName, bot.loginSession().getSKey());
-
+        String       url         = String.format("%s/webwxgetheadimg?username=%s&skey=%s", bot.loginSession().getUrl(), userName, bot.loginSession().getSKey());
         FileResponse response    = bot.download(new FileRequest(url));
         InputStream  inputStream = response.getInputStream();
 

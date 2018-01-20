@@ -1,4 +1,4 @@
-package io.github.biezhi.wechat.components;
+package io.github.biezhi.wechat.handler;
 
 /**
  * @author biezhi
