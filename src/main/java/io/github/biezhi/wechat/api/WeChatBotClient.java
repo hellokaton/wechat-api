@@ -15,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 微信机器人 HTTP 发送端
+ *
  * @author biezhi
  * @date 2018/1/18
  */
@@ -40,7 +42,9 @@ public class WeChatBotClient {
             public void onResponse(Call call, Response response) {
                 try {
                     String body = response.body().string();
-                    log.info("Response: {}", body);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Response: {}", body);
+                    }
                     if (ApiResponse.class.equals(request.getResponseType())) {
                         callback.onResponse(request, (R) new ApiResponse(body));
                     } else {
@@ -69,8 +73,7 @@ public class WeChatBotClient {
             String       body          = response.body().string();
 
             if (log.isDebugEnabled()) {
-                log.info("Response : {}", body);
-                log.info("Cookie: {}", response.header("Set-Cookie"));
+                log.debug("Response : {}", body);
             }
 
             // 获取头部的Cookie,注意：可以通过Cooke.parseAll()来获取
@@ -184,7 +187,7 @@ public class WeChatBotClient {
         }
         builder.url(request.getUrl());
         if (log.isDebugEnabled()) {
-            log.info("Request : {}", request.getUrl());
+            log.debug("Request : {}", request.getUrl());
         }
         if (null != request.getHeaders()) {
             builder.headers(request.getHeaders());
