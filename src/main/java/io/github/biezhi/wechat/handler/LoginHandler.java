@@ -334,9 +334,8 @@ public class LoginHandler {
                         case 7:
                             log.info("你在手机上玩微信被我发现了");
                             break;
-                        case 0:
-                            DateUtils.sleep(100);
                         default:
+                            DateUtils.sleep(100);
                             break;
                     }
                 }

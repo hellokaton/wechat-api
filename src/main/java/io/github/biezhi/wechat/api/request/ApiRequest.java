@@ -19,12 +19,15 @@ import java.util.Map;
 @Getter
 public abstract class ApiRequest<T extends ApiRequest, R extends ApiResponse> {
 
-    protected String  url;
+    protected int timeout = 10;
     protected boolean noRedirect;
     protected boolean jsonBody;
-    protected String method      = "GET";
+    protected boolean multipart;
+
+    protected String url;
+    protected String method = "GET";
+    protected String fileName;
     protected String contentType = ContentTypes.GENERAL_MIME_TYPE;
-    protected int    timeout     = 10;
     protected Headers headers;
     @SuppressWarnings("unchecked")
     protected final T thisAsT = (T) this;
@@ -35,12 +38,7 @@ public abstract class ApiRequest<T extends ApiRequest, R extends ApiResponse> {
         this.url = url;
         this.responseClass = responseClass;
         this.parameters = new HashMap<String, Object>();
-        this.headers = Headers.of("User-Agent", Constant.USER_AGENT, "ContentType", this.contentType);
-    }
-
-    public T headers(String... nameValues) {
-        this.headers = Headers.of(nameValues);
-        return thisAsT;
+        this.headers = Headers.of("User-Agent", Constant.USER_AGENT, "Content-Type", this.contentType);
     }
 
     public T header(String name, String value) {
@@ -53,13 +51,13 @@ public abstract class ApiRequest<T extends ApiRequest, R extends ApiResponse> {
         return thisAsT;
     }
 
-    public T addAll(Map<String, Object> values) {
-        parameters.putAll(values);
+    public T noRedirect() {
+        this.noRedirect = true;
         return thisAsT;
     }
 
-    public T noRedirect() {
-        this.noRedirect = true;
+    public T multipart() {
+        this.multipart = true;
         return thisAsT;
     }
 
@@ -77,19 +75,9 @@ public abstract class ApiRequest<T extends ApiRequest, R extends ApiResponse> {
         return thisAsT;
     }
 
-    public T jsonBody() {
-        this.jsonBody = true;
-        this.contentType = ContentTypes.GENERAL_JSON_TYPE;
-        this.header("ContentType", this.contentType);
+    public T fileName(String fileName) {
+        this.fileName = fileName;
         return thisAsT;
-    }
-
-    public boolean isMultipart() {
-        return false;
-    }
-
-    public String getFileName() {
-        return ContentTypes.GENERAL_FILE_NAME;
     }
 
     public T post() {
@@ -97,5 +85,11 @@ public abstract class ApiRequest<T extends ApiRequest, R extends ApiResponse> {
         return thisAsT;
     }
 
+    public T jsonBody() {
+        this.jsonBody = true;
+        this.contentType = ContentTypes.GENERAL_JSON_TYPE;
+        this.header("Content-Type", this.contentType);
+        return thisAsT;
+    }
 
 }

@@ -104,11 +104,21 @@ public class WeChatBot {
     /**
      * 发送文本消息
      *
-     * @param fromUserName 发给谁
+     * @param from 发给谁
      * @param msg          消息内容
      */
-    public void sendText(String fromUserName, String msg) {
-        messageHandler.sendTextMsg(msg, fromUserName);
+    public void sendText(String from, String msg) {
+        messageHandler.sendTextMsg(from, msg);
+    }
+
+    /**
+     * 发送图片文件
+     *
+     * @param from
+     * @param filePath
+     */
+    public void sendImage(String from, String filePath) {
+        messageHandler.sendImgMsg(from, filePath);
     }
 
     public static final class Builder {

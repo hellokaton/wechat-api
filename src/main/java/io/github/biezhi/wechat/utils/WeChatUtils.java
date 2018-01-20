@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.github.biezhi.wechat.exception.WeChatException;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,4 +86,56 @@ public class WeChatUtils {
         }
     }
 
+    public static String fileMd5(File file) {
+        InputStream       is  = null;
+        DigestInputStream dis = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            is = new FileInputStream(file);
+            dis = new DigestInputStream(is, md);
+            byte[] digest = md.digest();
+            return new String(digest, "UTF-8");
+        } catch (Exception e) {
+            return "";
+        } finally {
+            try {
+                if (null != dis) {
+                    dis.close();
+                }
+                if (null != is) {
+                    is.close();
+                }
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    public static byte[] fileToBytes(File file) {
+        byte[]                b           = new byte[1024];
+        InputStream           inputStream = null;
+        ByteArrayOutputStream os          = null;
+        try {
+            inputStream = new FileInputStream(file);
+            os = new ByteArrayOutputStream();
+            int c;
+            while ((c = inputStream.read(b)) != -1) {
+                os.write(b, 0, c);
+            }
+            return os.toByteArray();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            try {
+                if(null != os){
+                    os.close();
+                }
+                if(null != inputStream){
+                    inputStream.close();
+                }
+            } catch (Exception e){
+
+            }
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package io.github.biezhi.wechat.api.model;
 
 import io.github.biezhi.wechat.api.request.BaseRequest;
+import io.github.biezhi.wechat.utils.StringUtils;
 import lombok.Data;
 
 /**
@@ -31,11 +32,17 @@ public class LoginSession {
     private SyncKey     syncKey;
 
     public String getSyncOrUrl() {
-        String url = this.getSyncUrl();
-        if (null == url || url.isEmpty()) {
-            return this.getUrl();
+        if (StringUtils.isNotEmpty(this.syncUrl)) {
+            return this.syncUrl;
         }
-        return url;
+        return this.url;
+    }
+
+    public String getFileUrl() {
+        if (StringUtils.isNotEmpty(this.fileUrl)) {
+            return this.fileUrl;
+        }
+        return this.url;
     }
 
     public void setSyncKey(SyncKey syncKey) {

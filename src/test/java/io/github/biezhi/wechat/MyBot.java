@@ -3,12 +3,12 @@ package io.github.biezhi.wechat;
 import io.github.biezhi.wechat.api.annotation.Bind;
 import io.github.biezhi.wechat.api.constant.Config;
 import io.github.biezhi.wechat.api.enums.MsgType;
-import io.github.biezhi.wechat.api.model.StorageResponse;
 import io.github.biezhi.wechat.api.model.WeChatMessage;
-import io.github.biezhi.wechat.storage.StorageMessage;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 我的小机器人
+ *
  * @author biezhi
  * @date 2018/1/19
  */
@@ -19,21 +19,11 @@ public class MyBot extends WeChatBot {
         super(config);
     }
 
-    @Override
-    public StorageMessage storageMessage() {
-        return new StorageMessage() {
-            @Override
-            public StorageResponse save(WeChatMessage message) {
-                log.info("存储器接收到消息: ", message.getText());
-                return StorageResponse.builder().success(true).build();
-            }
-        };
-    }
-
     @Bind(msgType = MsgType.TEXT)
     public void handleText(WeChatMessage message) {
         log.info("接收到 [{}] 的消息: {}", message.getName(), message.getText());
         this.sendText(message.getFromUserName(), message.getText() + " : 嘻嘻嘻 [坏笑]");
+        this.sendImage(message.getFromUserName(), "/Users/biezhi/Desktop/3849072.jpeg");
     }
 
     public static void main(String[] args) {

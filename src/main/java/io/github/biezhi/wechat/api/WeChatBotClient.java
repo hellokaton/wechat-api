@@ -84,6 +84,9 @@ public class WeChatBotClient {
                 if (!"webpush.web.wechat.com".equals(okHttpRequest.url().host())) {
                     cookieStore.put("webpush.web.wechat.com", cookies);
                 }
+                if (!"file.web.wechat.com".equals(okHttpRequest.url().host())) {
+                    cookieStore.put("file.web.wechat.com", cookies);
+                }
             }
 
             if (ApiResponse.class.equals(request.getResponseType())) {
@@ -201,6 +204,7 @@ public class WeChatBotClient {
         if (request.isMultipart()) {
             MediaType             contentType = MediaType.parse(request.getContentType());
             MultipartBody.Builder builder     = new MultipartBody.Builder().setType(MultipartBody.FORM);
+
             for (Map.Entry<String, Object> parameter : request.getParameters().entrySet()) {
                 String name  = parameter.getKey();
                 Object value = parameter.getValue();
@@ -208,6 +212,8 @@ public class WeChatBotClient {
                     builder.addFormDataPart(name, request.getFileName(), RequestBody.create(contentType, (byte[]) value));
                 } else if (value instanceof File) {
                     builder.addFormDataPart(name, request.getFileName(), RequestBody.create(contentType, (File) value));
+                } else if (value instanceof RequestBody) {
+                    builder.addFormDataPart(name, request.getFileName(), (RequestBody) value);
                 } else {
                     builder.addFormDataPart(name, String.valueOf(value));
                 }

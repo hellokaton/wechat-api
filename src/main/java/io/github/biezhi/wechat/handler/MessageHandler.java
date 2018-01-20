@@ -9,20 +9,24 @@ import io.github.biezhi.wechat.api.model.User;
 import io.github.biezhi.wechat.api.model.WeChatMessage;
 import io.github.biezhi.wechat.api.request.FileRequest;
 import io.github.biezhi.wechat.api.request.JsonRequest;
+import io.github.biezhi.wechat.api.request.StringRequest;
+import io.github.biezhi.wechat.api.response.ApiResponse;
 import io.github.biezhi.wechat.api.response.FileResponse;
 import io.github.biezhi.wechat.api.response.JsonResponse;
 import io.github.biezhi.wechat.api.response.WebSyncResponse;
 import io.github.biezhi.wechat.exception.WeChatException;
+import io.github.biezhi.wechat.utils.MD5Checksum;
 import io.github.biezhi.wechat.utils.StringUtils;
 import io.github.biezhi.wechat.utils.WeChatUtils;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -103,7 +107,7 @@ public class MessageHandler {
                         break;
                     // 语音
                     case 34:
-                        String voicePath = this.donwloadVoice(msgId);
+                        String voicePath = this.downloadVoice(msgId);
                         methods = mapping.get(MsgType.VOICE);
                         if (null != methods && methods.size() > 0) {
                             this.callBack(methods, weChatMessageBuilder.voicePath(voicePath).build());
@@ -199,7 +203,7 @@ public class MessageHandler {
      * @param message
      */
     private void callBack(List<Method> methods, WeChatMessage message) {
-        if(null != bot.storageMessage()){
+        if (null != bot.storageMessage()) {
             bot.storageMessage().save(message);
         }
         for (Method method : methods) {
@@ -276,7 +280,7 @@ public class MessageHandler {
      *
      * @param msgId
      */
-    private String donwloadVoice(String msgId) {
+    private String downloadVoice(String msgId) {
         String url = String.format("%s/webwxgetvoice?msgid=%s&skey=%s", bot.session().getUrl(), msgId, bot.session().getSKey());
 
         FileResponse response    = bot.download(new FileRequest(url));
@@ -286,13 +290,90 @@ public class MessageHandler {
         return WeChatUtils.saveFile(inputStream, bot.config().assetsDir() + "/video", id).getPath();
     }
 
-    public void uploadMedia(){
-        String url = "https://file2.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json";
+    public String uploadMedia(String toUser, String filePath) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            throw new WeChatException("文件[" + filePath + "]不存在");
+        }
 
+        String url           = String.format("%s/webwxuploadmedia?f=json", bot.session().getFileUrl());
+        String contentType   = "multipart/form-data; boundary=----WebKitFormBoundaryER4WmF74ynAXV91T";
+        String clientMediaId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
+        String mimeType      = "image/jpeg";
+
+        long size = file.length();
+
+        Map<String, Object> uploadMediaRequest = new HashMap<String, Object>();
+        uploadMediaRequest.put("UploadType", 2);
+        uploadMediaRequest.put("BaseRequest", bot.session().getBaseRequest());
+        uploadMediaRequest.put("ClientMediaId", clientMediaId);
+        uploadMediaRequest.put("TotalLen", size);
+        uploadMediaRequest.put("StartPos", 0);
+        uploadMediaRequest.put("DataLen", size);
+        uploadMediaRequest.put("MediaType", 4);
+        uploadMediaRequest.put("FromUserName", bot.session().getUserName());
+        uploadMediaRequest.put("ToUserName", toUser);
+        uploadMediaRequest.put("FileMd5", MD5Checksum.getMD5Checksum(file.getPath()));
+
+        String dataTicket = bot.api().cookie("webwx_data_ticket");
+        if (StringUtils.isEmpty(dataTicket)) {
+            throw new WeChatException("缺少了附件Cookie");
+        }
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
+
+        System.out.println(bot.api().cookies());
+
+        ApiResponse response = bot.execute(new StringRequest(url).post().multipart()
+                .header("Host", "file.web.wechat.com")
+                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                .header("Accept-Encoding", "gzip, deflate, br")
+                .header("Referer", "https://web.wechat.com/?&lang=zh_CN")
+                .header("Content-Type", contentType)
+                .header("Origin", "https://web.wechat.com")
+                .header("Connection", "keep-alive")
+                .fileName(file.getName())
+                .add("id", "WU_FILE_0")
+                .add("name", file.getName())
+                .add("type", mimeType)
+                .add("lastModifiedDate", new Date().toLocaleString())
+                .add("size", size)
+                .add("mediatype", "pic")
+                .add("uploadmediarequest", WeChatUtils.toJson(uploadMediaRequest))
+                .add("webwx_data_ticket", dataTicket)
+                .add("pass_ticket", bot.session().getPassTicket())
+                .add("filename", requestBody));
+
+        System.out.println(response.getRawBody());
+
+        return "";
     }
 
-    public void sendImgMsg(){
+    public void sendImgMsg(String toUserName, String filePath) {
 
+        String mediaId = this.uploadMedia(toUserName, filePath);
+        if (StringUtils.isEmpty(mediaId)) {
+            log.info("Media为空");
+            return;
+        }
+        String url = String.format("%s/webwxsendmsgimg?fun=async&f=json&pass_ticket=%s",
+                bot.session().getFileUrl(), bot.session().getPassTicket());
+
+        String clientMsgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
+
+        Map<String, Object> msg = new HashMap<String, Object>();
+        msg.put("Type", 3);
+        msg.put("MediaId", mediaId);
+        msg.put("FromUserName", bot.session().getUserName());
+        msg.put("ToUserName", toUserName);
+        msg.put("LocalID", clientMsgId);
+        msg.put("ClientMsgId", clientMsgId);
+
+        bot.execute(new JsonRequest(url).post().jsonBody()
+                .add("BaseRequest", bot.session().getBaseRequest())
+                .add("Msg", msg)
+        );
     }
 
     /**
@@ -301,13 +382,13 @@ public class MessageHandler {
      * @param msg
      * @param toUserName
      */
-    public void sendTextMsg(String msg, String toUserName) {
+    public void sendTextMsg(String toUserName, String msg) {
 
         String url = String.format("%s/webwxsendmsg?pass_ticket=%s", bot.session().getUrl(), bot.session().getPassTicket());
 
         String clientMsgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
 
-        JsonResponse response = bot.execute(new JsonRequest(url).post().jsonBody()
+        bot.execute(new JsonRequest(url).post().jsonBody()
                 .add("BaseRequest", bot.session().getBaseRequest())
                 .add("Msg", new SendMessage(1, msg,
                         bot.session().getUserName(), toUserName,
