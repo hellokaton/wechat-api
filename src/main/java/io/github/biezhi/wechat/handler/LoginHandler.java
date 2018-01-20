@@ -286,6 +286,9 @@ public class LoginHandler {
 
         WebInitResponse webInitResponse = response.parse(WebInitResponse.class);
 
+        List<Account> contactList = webInitResponse.getContactList();
+        bot.getContactHandler().syncRecentContact(contactList);
+
         Account account = webInitResponse.getAccount();
         SyncKey syncKey = webInitResponse.getSyncKey();
 

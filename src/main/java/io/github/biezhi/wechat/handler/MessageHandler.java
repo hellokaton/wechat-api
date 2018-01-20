@@ -3,9 +3,9 @@ package io.github.biezhi.wechat.handler;
 import io.github.biezhi.wechat.WeChatBot;
 import io.github.biezhi.wechat.api.annotation.Bind;
 import io.github.biezhi.wechat.api.enums.MsgType;
+import io.github.biezhi.wechat.api.model.Account;
 import io.github.biezhi.wechat.api.model.Message;
 import io.github.biezhi.wechat.api.model.SendMessage;
-import io.github.biezhi.wechat.api.model.Account;
 import io.github.biezhi.wechat.api.model.WeChatMessage;
 import io.github.biezhi.wechat.api.request.FileRequest;
 import io.github.biezhi.wechat.api.request.JsonRequest;
@@ -61,16 +61,29 @@ public class MessageHandler {
         }
     }
 
+    /**
+     * 处理新消息
+     *
+     * @param webSyncResponse
+     */
     public void handleMsg(WebSyncResponse webSyncResponse) {
         List<Message> addMessageList = webSyncResponse.getAddMessageList();
         if (null != addMessageList && addMessageList.size() > 0) {
             log.info("你有新的消息");
             for (Message message : addMessageList) {
-                Integer msgType     = message.getMsgType();
-                String  name        = bot.getContactHandler().getUserRemarkName(message.getFromUserName());
-                String  content     = message.getContent().replace("&lt;", "<").replace("&gt;", ">");
+                Integer msgType = message.getMsgType();
+                String  name    = bot.getContactHandler().getUserRemarkName(message.getFromUserName());
+                String content = message.getContent().replace("&lt;", "<")
+                        .replace("&gt;", ">");
+
+                if (message.isGroup()) {
+                    if (content.contains(":<br/>")) {
+                        content = content.split(":<br/>")[1];
+                    }
+                }
+
                 String  msgId       = message.getId();
-                Account fromAccount = bot.getContactHandler().getUserById(message.getFromUserName());
+                Account fromAccount = bot.getContactHandler().getAccountById(message.getFromUserName());
                 if (null == fromAccount) {
                     log.warn("未知消息类型: {}", WeChatUtils.toJson(message));
                     return;
@@ -161,6 +174,10 @@ public class MessageHandler {
                         if (null != invokes && invokes.size() > 0) {
                             this.callBack(invokes, weChatMessageBuilder.videoPath(videoPath).build());
                         }
+                        break;
+                    // 邀请好友进群
+                    case 10000:
+                        log.info("{}", content);
                         break;
                     // 撤回消息
                     case 10002:

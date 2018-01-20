@@ -23,8 +23,16 @@ public class Invoke {
     private Method            method;
     private List<AccountType> accountTypes;
 
+    /**
+     * 回调给客户端
+     *
+     * @param bot
+     * @param message
+     * @param <T>
+     */
     public <T extends WeChatBot> void call(T bot, WeChatMessage message) {
-        if (accountTypes.contains(message.getAccountType())) {
+        AccountType accountType = bot.getContactHandler().getAccountById(message.getFromUserName()).getAccountType();
+        if (accountTypes.contains(accountType)) {
             try {
                 method.invoke(bot, message);
             } catch (Exception e) {

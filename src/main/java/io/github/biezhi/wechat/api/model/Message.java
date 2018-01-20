@@ -96,6 +96,8 @@ public class Message {
     @SerializedName("EncryFileName")
     private String encryFileName;
 
-    private Account account;
+    public boolean isGroup() {
+        return fromUserName.contains("@@");
+    }
 
 }

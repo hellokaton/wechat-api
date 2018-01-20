@@ -72,7 +72,9 @@ public class ContactHandler {
             List<Account> memberList = WeChatUtils.fromJson(WeChatUtils.toJson(jsonObject.getAsJsonArray("MemberList")), new TypeToken<List<Account>>() {});
 
             for (Account account : memberList) {
-                accountMap.put(account.getUserName(), account);
+                if (null == account.getUserName()) {
+                    accountMap.put(account.getUserName(), account);
+                }
             }
             // 查看seq是否为0，0表示好友列表已全部获取完毕，若大于0，则表示好友列表未获取完毕，当前的字节数（断点续传）
             if (seq == 0) {
@@ -117,7 +119,13 @@ public class ContactHandler {
 
     }
 
-    public Account getUserById(String id) {
+    /**
+     * 根据UserName查询Account
+     *
+     * @param id
+     * @return
+     */
+    public Account getAccountById(String id) {
         return accountMap.get(id);
     }
 
@@ -171,4 +179,18 @@ public class ContactHandler {
         return accountSet;
     }
 
+    /**
+     * 同步最近联系人
+     * <p>
+     * 避免新建群聊无法同步
+     *
+     * @param contactList
+     */
+    public void syncRecentContact(List<Account> contactList) {
+        if (null != contactList && contactList.size() > 0) {
+            for (Account account : contactList) {
+                accountMap.put(account.getUserName(), account);
+            }
+        }
+    }
 }

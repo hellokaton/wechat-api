@@ -2,6 +2,7 @@ package io.github.biezhi.wechat;
 
 import io.github.biezhi.wechat.api.annotation.Bind;
 import io.github.biezhi.wechat.api.constant.Config;
+import io.github.biezhi.wechat.api.enums.AccountType;
 import io.github.biezhi.wechat.api.enums.MsgType;
 import io.github.biezhi.wechat.api.model.WeChatMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class MyBot extends WeChatBot {
         super(config);
     }
 
-    @Bind(msgType = MsgType.TEXT)
+    @Bind(msgType = MsgType.ALL, accountType = {AccountType.TYPE_FRIEND, AccountType.TYPE_GROUP})
     public void handleText(WeChatMessage message) {
         log.info("接收到 [{}] 的消息: {}", message.getName(), message.getText());
         this.sendText(message.getFromUserName(), message.getText() + " : 嘻嘻嘻 [坏笑]");

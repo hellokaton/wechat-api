@@ -68,8 +68,4 @@ public class WeChatMessage {
         return StringUtils.isEmpty(fromRemarkName) ? this.fromNickName : this.fromRemarkName;
     }
 
-    public AccountType getAccountType() {
-        return fromUserName.contains("@@") ? AccountType.TYPE_GROUP : AccountType.TYPE_FRIEND;
-    }
-
 }
