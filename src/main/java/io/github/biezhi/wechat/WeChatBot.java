@@ -1,6 +1,7 @@
 package io.github.biezhi.wechat;
 
 import com.google.gson.Gson;
+import io.github.biezhi.wechat.api.StorageMessage;
 import io.github.biezhi.wechat.api.WeChatApi;
 import io.github.biezhi.wechat.api.WeChatApiImpl;
 import io.github.biezhi.wechat.api.client.BotClient;
@@ -10,7 +11,6 @@ import io.github.biezhi.wechat.api.constant.Constant;
 import io.github.biezhi.wechat.api.model.LoginSession;
 import io.github.biezhi.wechat.api.request.ApiRequest;
 import io.github.biezhi.wechat.api.response.ApiResponse;
-import io.github.biezhi.wechat.api.StorageMessage;
 import io.github.biezhi.wechat.utils.DateUtils;
 import io.github.biezhi.wechat.utils.OkHttpUtils;
 import lombok.Getter;
@@ -18,7 +18,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.util.Scanner;
 
@@ -43,7 +42,7 @@ public class WeChatBot {
 
     public WeChatBot(Builder builder) {
         this.config = builder.config;
-        this.botClient = builder.api;
+        this.botClient = builder.botClient;
         this.session = new LoginSession();
     }
 
@@ -75,7 +74,7 @@ public class WeChatBot {
         return botClient;
     }
 
-    public WeChatApi api(){
+    public WeChatApi api() {
         return this.api;
     }
 
@@ -110,17 +109,11 @@ public class WeChatBot {
     public static final class Builder {
 
         private Config config = Config.me();
-        private BotClient api;
-
+        private BotClient    botClient;
         private OkHttpClient okHttpClient;
 
         public Builder() {
-            api = new BotClient(client(null), gson());
-        }
-
-        public Builder debug() {
-            okHttpClient = client(httpLoggingInterceptor());
-            return this;
+            botClient = new BotClient(client(null), gson());
         }
 
         public Builder okHttpClient(OkHttpClient client) {
@@ -135,8 +128,7 @@ public class WeChatBot {
 
         public WeChatBot build() {
             if (okHttpClient != null) {
-                OkHttpClient client = okHttpClient;
-                api = new BotClient(client, gson());
+                botClient = new BotClient(okHttpClient, gson());
             }
             return new WeChatBot(this);
         }
@@ -148,10 +140,6 @@ public class WeChatBot {
                 builder.addInterceptor(interceptor);
             }
             return builder.build();
-        }
-
-        private static Interceptor httpLoggingInterceptor() {
-            return new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
         }
 
         private static Gson gson() {
