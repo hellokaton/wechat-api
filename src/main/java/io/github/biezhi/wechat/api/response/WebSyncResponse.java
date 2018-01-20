@@ -5,7 +5,6 @@ import io.github.biezhi.wechat.api.model.Message;
 import io.github.biezhi.wechat.api.model.Profile;
 import io.github.biezhi.wechat.api.model.SyncKey;
 import io.github.biezhi.wechat.api.model.User;
-import io.github.biezhi.wechat.model.*;
 import lombok.Data;
 
 import java.util.List;

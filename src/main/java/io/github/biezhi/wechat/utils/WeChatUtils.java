@@ -3,28 +3,22 @@ package io.github.biezhi.wechat.utils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.github.biezhi.wechat.exception.WeChatException;
-import io.github.biezhi.wechat.api.model.User;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 微信公共静态方法
+ *
  * @author biezhi
  * @date 2018/1/19
  */
 public class WeChatUtils {
 
     private static final Gson gson = new Gson();
-
-    public static User searchDictList(List<User> chatRooms, String key, String name) {
-        return chatRooms.get(0);
-    }
 
     /**
      * 正则匹配
@@ -92,11 +86,4 @@ public class WeChatUtils {
         }
     }
 
-    public static void localOpen(String url) {
-        try {
-            Desktop.getDesktop().open(new File(new URI(url)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

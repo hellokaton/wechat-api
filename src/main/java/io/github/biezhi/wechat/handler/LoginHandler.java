@@ -12,7 +12,7 @@ import io.github.biezhi.wechat.api.request.BaseRequest;
 import io.github.biezhi.wechat.api.request.FileRequest;
 import io.github.biezhi.wechat.api.request.JsonRequest;
 import io.github.biezhi.wechat.api.request.StringRequest;
-import io.github.biezhi.wechat.response.*;
+import io.github.biezhi.wechat.api.response.*;
 import io.github.biezhi.wechat.utils.DateUtils;
 import io.github.biezhi.wechat.utils.QRCodeUtils;
 import io.github.biezhi.wechat.utils.StringUtils;
