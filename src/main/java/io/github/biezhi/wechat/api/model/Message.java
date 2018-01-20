@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 /**
- * 消息体
+ * 微信原始消息体
  *
  * @author biezhi
  * @date 2018/1/20

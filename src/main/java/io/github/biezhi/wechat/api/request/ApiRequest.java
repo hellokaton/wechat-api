@@ -2,7 +2,6 @@
 package io.github.biezhi.wechat.api.request;
 
 import io.github.biezhi.wechat.api.constant.Constant;
-import io.github.biezhi.wechat.api.constant.ContentTypes;
 import io.github.biezhi.wechat.api.response.ApiResponse;
 import lombok.Getter;
 import okhttp3.Headers;
@@ -27,7 +26,7 @@ public abstract class ApiRequest<T extends ApiRequest, R extends ApiResponse> {
     protected String url;
     protected String method = "GET";
     protected String fileName;
-    protected String contentType = ContentTypes.GENERAL_MIME_TYPE;
+    protected String contentType = "application/x-www-form-urlencoded";
     protected Headers headers;
     @SuppressWarnings("unchecked")
     protected final T thisAsT = (T) this;
@@ -87,7 +86,7 @@ public abstract class ApiRequest<T extends ApiRequest, R extends ApiResponse> {
 
     public T jsonBody() {
         this.jsonBody = true;
-        this.contentType = ContentTypes.GENERAL_JSON_TYPE;
+        this.contentType = "application/json; charset=UTF-8";
         this.header("Content-Type", this.contentType);
         return thisAsT;
     }

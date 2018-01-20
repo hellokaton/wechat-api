@@ -16,6 +16,7 @@ import io.github.biezhi.wechat.api.request.StringRequest;
 import io.github.biezhi.wechat.api.response.*;
 import io.github.biezhi.wechat.exception.WeChatException;
 import io.github.biezhi.wechat.utils.*;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -32,6 +33,8 @@ import java.util.regex.Pattern;
 import static io.github.biezhi.wechat.api.constant.Constant.*;
 
 /**
+ * 微信API实现
+ *
  * @author biezhi
  * @date 2018/1/21
  */
@@ -48,25 +51,32 @@ public class WeChatApiImpl implements WeChatApi {
     private int     memberCount;
 
     private final WeChatBot bot;
-    private final Map<String, Account>       accountMap = new HashMap<String, Account>();
-    private final Map<MsgType, List<Invoke>> mapping    = new ConcurrentHashMap<MsgType, List<Invoke>>();
+    private final Map<MsgType, List<Invoke>> mapping = new ConcurrentHashMap<MsgType, List<Invoke>>();
 
+    /**
+     * 所有账号
+     */
+    @Getter
+    private Map<String, Account> accountMap = new HashMap<String, Account>();
     /**
      * 特殊账号
      */
+    @Getter
     private List<Account> specialUsersList;
     /**
      * 公众号、服务号
      */
+    @Getter
     private List<Account> publicUsersList;
-
     /**
      * 好友
      */
+    @Getter
     private List<Account> contactList;
     /**
-     * 群
+     * 群组
      */
+    @Getter
     private List<Account> groupList;
 
     public WeChatApiImpl(WeChatBot bot) {
@@ -422,6 +432,7 @@ public class WeChatApiImpl implements WeChatApi {
      *
      * @return
      */
+    @Override
     public void loadContact(int seq) {
         log.info("开始获取联系人信息");
         while (true) {
@@ -458,7 +469,6 @@ public class WeChatApiImpl implements WeChatApi {
      * 加载群信息
      */
     public void loadGroupList() {
-
         log.info("加载群聊信息");
 
         // 群账号
@@ -496,7 +506,7 @@ public class WeChatApiImpl implements WeChatApi {
         return accountMap.get(id);
     }
 
-    public String getUserRemarkName(String id) {
+    private String getUserRemarkName(String id) {
         String name = id.contains("@@") ? "未知群" : "陌生人";
         if (id.equals(this.bot.session().getUserName())) {
             return this.bot.session().getNickName();
@@ -524,10 +534,7 @@ public class WeChatApiImpl implements WeChatApi {
                 .add("Count", bot.session().getBaseRequest())
                 .add("List", list));
 
-        List<Account> contactAccount = WeChatUtils.fromJson(WeChatUtils.toJson(response.toJsonObject().getAsJsonObject("")),
-                new TypeToken<List<Account>>() {});
-
-        return contactAccount;
+        return WeChatUtils.fromJson(WeChatUtils.toJson(response.toJsonObject().getAsJsonObject("")), new TypeToken<List<Account>>() {});
     }
 
     /**
@@ -572,150 +579,132 @@ public class WeChatApiImpl implements WeChatApi {
         if (null != addMessageList && addMessageList.size() > 0) {
             log.info("你有新的消息");
             for (Message message : addMessageList) {
-                Integer msgType = message.getMsgType();
-                String  name    = this.getUserRemarkName(message.getFromUserName());
-                String content = message.getContent().replace("&lt;", "<")
-                        .replace("&gt;", ">");
-
-                if (message.isGroup()) {
-                    if (content.contains(":<br/>")) {
-                        content = content.split(":<br/>")[1];
-                    }
-                }
-
-                String  msgId       = message.getId();
-                Account fromAccount = this.getAccountById(message.getFromUserName());
-                if (null == fromAccount) {
-                    log.warn("未知消息类型: {}", WeChatUtils.toJson(message));
-                    return;
-                }
-
-                log.debug("收到消息JSON: {}", WeChatUtils.toJson(message));
-
-                WeChatMessage.WeChatMessageBuilder weChatMessageBuilder = WeChatMessage.builder()
-                        .raw(message)
-                        .fromNickName(fromAccount.getNickName())
-                        .fromRemarkName(fromAccount.getRemarkName())
-                        .fromUserName(message.getFromUserName())
-                        .text(content);
-
-                List<Invoke> invokes = mapping.get(MsgType.ALL);
-                if (null != invokes && invokes.size() > 0) {
-                    this.callBack(invokes, weChatMessageBuilder.build());
-                }
-
-                switch (msgType) {
-                    case 1:
-                        if (bot.autoReply()) {
-                            this.sendText("自动回复: " + content, message.getFromUserName());
-                        } else {
-                            invokes = mapping.get(MsgType.TEXT);
-                            if (null != invokes && invokes.size() > 0) {
-                                this.callBack(invokes, weChatMessageBuilder.build());
-                            }
-                        }
-                        break;
-                    // 聊天图片
-                    case 3:
-                        String imgPath = this.downloadMsgImg(msgId);
-                        invokes = mapping.get(MsgType.IMAGE);
-                        if (null != invokes && invokes.size() > 0) {
-                            this.callBack(invokes, weChatMessageBuilder.imagePath(imgPath).build());
-                        }
-                        break;
-                    // 语音
-                    case 34:
-                        String voicePath = this.downloadVoice(msgId);
-                        invokes = mapping.get(MsgType.VOICE);
-                        if (null != invokes && invokes.size() > 0) {
-                            this.callBack(invokes, weChatMessageBuilder.voicePath(voicePath).build());
-                        }
-                        break;
-                    // 名片
-                    case 42:
-                        log.info("{} 发送了一张名片: ", name);
-                        log.info("=========================");
-                        log.info("= 昵称: {}", message.getRecommend().getNickName());
-                        log.info("= 微信号: {}", message.getRecommend().getAlias());
-                        log.info("= 地区: {}-{}", message.getRecommend().getProvince(), message.getRecommend().getCity());
-                        log.info("= 性别: {}", message.getRecommend().getSex());
-                        log.info("=========================");
-                        invokes = mapping.get(MsgType.PERSON_CARD);
-                        if (null != invokes && invokes.size() > 0) {
-                            this.callBack(invokes, weChatMessageBuilder.build());
-                        }
-                        break;
-                    // 视频
-                    case 43:
-                        String videoPath = this.downloadVideo(msgId);
-                        invokes = mapping.get(MsgType.VIDEO);
-                        if (null != invokes && invokes.size() > 0) {
-                            this.callBack(invokes, weChatMessageBuilder.videoPath(videoPath).build());
-                        }
-                        break;
-                    // 动画表情
-                    case 47:
-                        log.info("{} 发了一个动画表情");
-                        imgPath = this.downloadMsgImg(message.getNewMsgId().toString());
-                        invokes = mapping.get(MsgType.IMAGE);
-                        if (null != invokes && invokes.size() > 0) {
-                            this.callBack(invokes, weChatMessageBuilder.imagePath(imgPath).build());
-                        }
-                        break;
-                    // 分享
-                    case 49:
-                        break;
-                    // 联系人初始化
-                    case 51:
-                        break;
-                    // 视频
-                    case 62:
-                        videoPath = this.downloadVideo(msgId);
-                        invokes = mapping.get(MsgType.VIDEO);
-                        if (null != invokes && invokes.size() > 0) {
-                            this.callBack(invokes, weChatMessageBuilder.videoPath(videoPath).build());
-                        }
-                        break;
-                    // 邀请好友进群
-                    case 10000:
-                        log.info("{}", content);
-                        break;
-                    // 撤回消息
-                    case 10002:
-                        log.info("{} 撤回了一条消息: {}", name, content);
-                        invokes = mapping.get(MsgType.REVOKE);
-                        if (null != invokes && invokes.size() > 0) {
-                            this.callBack(invokes, weChatMessageBuilder.build());
-                        }
-                        break;
-                    default:
-                        log.info("该消息类型为: {}, 可能是表情，图片, 链接或红包: %s", msgType, WeChatUtils.toJson(message));
-                        break;
-                }
+                this.processMsg(message);
             }
         }
     }
 
-    private String searchContent(String key, String content, String format) {
-        String result = "未知";
-        if ("attr".equals(format)) {
-            String m = WeChatUtils.match(key + "\\s?=\\s?\"([^\"<]+)\"", content);
-            if (StringUtils.isNotEmpty(m)) {
-                return m;
+    private void processMsg(Message message) {
+        Integer msgType = message.getMsgType();
+        String  name    = this.getUserRemarkName(message.getFromUserName());
+        String content = message.getContent().replace("&lt;", "<")
+                .replace("&gt;", ">");
+
+        if (message.isGroup()) {
+            if (content.contains(":<br/>")) {
+                content = content.split(":<br/>")[1];
             }
         }
-        if ("xml".equals(format)) {
-            String m = WeChatUtils.match(String.format("<%s>([^<]+)</%s>", key), content);
-            if (StringUtils.isNotEmpty(m)) {
-                return m;
-            } else {
-                m = WeChatUtils.match(String.format("<%s><\\!\\[CDATA\\[(.*?)\\]\\]></%s>", key), content);
-                if (StringUtils.isNotEmpty(m)) {
-                    return m;
+
+        String  msgId       = message.getId();
+        Account fromAccount = this.getAccountById(message.getFromUserName());
+        if (null == fromAccount) {
+            log.warn("未知消息类型: {}", WeChatUtils.toJson(message));
+            return;
+        }
+
+        log.debug("收到消息JSON: {}", WeChatUtils.toJson(message));
+
+        WeChatMessage.WeChatMessageBuilder weChatMessageBuilder = WeChatMessage.builder()
+                .raw(message)
+                .fromNickName(fromAccount.getNickName())
+                .fromRemarkName(fromAccount.getRemarkName())
+                .fromUserName(message.getFromUserName())
+                .text(content);
+
+        List<Invoke> invokes = mapping.get(MsgType.ALL);
+        if (null != invokes && invokes.size() > 0) {
+            this.callBack(invokes, weChatMessageBuilder.build());
+        }
+
+        switch (msgType) {
+            case 1:
+                if (bot.autoReply()) {
+                    this.sendText("自动回复: " + content, message.getFromUserName());
+                } else {
+                    invokes = mapping.get(MsgType.TEXT);
+                    if (null != invokes && invokes.size() > 0) {
+                        this.callBack(invokes, weChatMessageBuilder.build());
+                    }
                 }
-            }
+                break;
+            // 聊天图片
+            case 3:
+                String imgPath = this.downloadMsgImg(msgId);
+                invokes = mapping.get(MsgType.IMAGE);
+                if (null != invokes && invokes.size() > 0) {
+                    this.callBack(invokes, weChatMessageBuilder.imagePath(imgPath).build());
+                }
+                break;
+            // 语音
+            case 34:
+                String voicePath = this.downloadVoice(msgId);
+                invokes = mapping.get(MsgType.VOICE);
+                if (null != invokes && invokes.size() > 0) {
+                    this.callBack(invokes, weChatMessageBuilder.voicePath(voicePath).build());
+                }
+                break;
+            // 名片
+            case 42:
+                log.info("{} 发送了一张名片: ", name);
+                log.info("=========================");
+                log.info("= 昵称: {}", message.getRecommend().getNickName());
+                log.info("= 微信号: {}", message.getRecommend().getAlias());
+                log.info("= 地区: {}-{}", message.getRecommend().getProvince(), message.getRecommend().getCity());
+                log.info("= 性别: {}", message.getRecommend().getSex());
+                log.info("=========================");
+                invokes = mapping.get(MsgType.PERSON_CARD);
+                if (null != invokes && invokes.size() > 0) {
+                    this.callBack(invokes, weChatMessageBuilder.build());
+                }
+                break;
+            // 视频
+            case 43:
+                String videoPath = this.downloadVideo(msgId);
+                invokes = mapping.get(MsgType.VIDEO);
+                if (null != invokes && invokes.size() > 0) {
+                    this.callBack(invokes, weChatMessageBuilder.videoPath(videoPath).build());
+                }
+                break;
+            // 动画表情
+            case 47:
+                log.info("{} 发了一个动画表情");
+                imgPath = this.downloadMsgImg(message.getNewMsgId().toString());
+                invokes = mapping.get(MsgType.IMAGE);
+                if (null != invokes && invokes.size() > 0) {
+                    this.callBack(invokes, weChatMessageBuilder.imagePath(imgPath).build());
+                }
+                break;
+            // 分享
+            case 49:
+                break;
+            // 联系人初始化
+            case 51:
+                break;
+            // 视频
+            case 62:
+                videoPath = this.downloadVideo(msgId);
+                invokes = mapping.get(MsgType.VIDEO);
+                if (null != invokes && invokes.size() > 0) {
+                    this.callBack(invokes, weChatMessageBuilder.videoPath(videoPath).build());
+                }
+                break;
+            // 邀请好友进群
+            case 10000:
+                log.info("{}", content);
+                break;
+            // 撤回消息
+            case 10002:
+                log.info("{} 撤回了一条消息: {}", name, content);
+                invokes = mapping.get(MsgType.REVOKE);
+                if (null != invokes && invokes.size() > 0) {
+                    this.callBack(invokes, weChatMessageBuilder.build());
+                }
+                break;
+            default:
+                log.info("该消息类型为: {}, 可能是表情，图片, 链接或红包: %s", msgType, WeChatUtils.toJson(message));
+                break;
         }
-        return result;
     }
 
     /**
@@ -821,16 +810,15 @@ public class WeChatApiImpl implements WeChatApi {
             throw new WeChatException("文件[" + filePath + "]不存在");
         }
 
-        String url           = String.format("%s/webwxuploadmedia?f=json", bot.session().getFileUrl());
-        String clientMediaId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
-        String mimeType      = "image/jpeg";
-
-        long size = file.length();
+        long   size     = file.length();
+        String mimeType = "image/jpeg";
+        String url      = String.format("%s/webwxuploadmedia?f=json", bot.session().getFileUrl());
+        String mediaId  = System.currentTimeMillis() / 1000 + StringUtils.random(6);
 
         Map<String, Object> uploadMediaRequest = new HashMap<String, Object>();
         uploadMediaRequest.put("UploadType", 2);
         uploadMediaRequest.put("BaseRequest", bot.session().getBaseRequest());
-        uploadMediaRequest.put("ClientMediaId", clientMediaId);
+        uploadMediaRequest.put("ClientMediaId", mediaId);
         uploadMediaRequest.put("TotalLen", size);
         uploadMediaRequest.put("StartPos", 0);
         uploadMediaRequest.put("DataLen", size);
@@ -844,21 +832,18 @@ public class WeChatApiImpl implements WeChatApi {
             throw new WeChatException("缺少了附件Cookie");
         }
 
-        String      lastModifieDate = new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date());
-        RequestBody filePart        = RequestBody.create(MediaType.parse("image/jpeg"), file);
-
         ApiResponse response = bot.execute(new StringRequest(url).post().multipart()
                 .fileName(file.getName())
                 .add("id", "WU_FILE_0")
                 .add("name", filePath)
                 .add("type", mimeType)
-                .add("lastModifieDate", lastModifieDate)
+                .add("lastModifieDate", new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date()))
                 .add("size", String.valueOf(size))
                 .add("mediatype", mimeType)
                 .add("uploadmediarequest", WeChatUtils.toJson(uploadMediaRequest))
                 .add("webwx_data_ticket", dataTicket)
                 .add("pass_ticket", bot.session().getPassTicket())
-                .add("filename", filePart));
+                .add("filename", RequestBody.create(MediaType.parse("image/jpeg"), file)));
 
         MediaResponse mediaResponse = response.parse(MediaResponse.class);
         if (!mediaResponse.success()) {
@@ -878,15 +863,15 @@ public class WeChatApiImpl implements WeChatApi {
         String url = String.format("%s/webwxsendmsgimg?fun=async&f=json&pass_ticket=%s",
                 bot.session().getUrl(), bot.session().getPassTicket());
 
-        String clientMsgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
+        String msgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
 
         Map<String, Object> msg = new HashMap<String, Object>();
         msg.put("Type", 3);
         msg.put("MediaId", mediaId);
         msg.put("FromUserName", bot.session().getUserName());
         msg.put("ToUserName", toUserName);
-        msg.put("LocalID", clientMsgId);
-        msg.put("ClientMsgId", clientMsgId);
+        msg.put("LocalID", msgId);
+        msg.put("ClientMsgId", msgId);
 
         bot.execute(new JsonRequest(url).post().jsonBody()
                 .add("BaseRequest", bot.session().getBaseRequest())
@@ -902,15 +887,12 @@ public class WeChatApiImpl implements WeChatApi {
      */
     @Override
     public void sendText(String toUserName, String msg) {
-        String url = String.format("%s/webwxsendmsg?pass_ticket=%s", bot.session().getUrl(), bot.session().getPassTicket());
-
-        String clientMsgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
+        String url   = String.format("%s/webwxsendmsg?pass_ticket=%s", bot.session().getUrl(), bot.session().getPassTicket());
+        String msgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
 
         bot.execute(new JsonRequest(url).post().jsonBody()
                 .add("BaseRequest", bot.session().getBaseRequest())
-                .add("Msg", new SendMessage(1, msg,
-                        bot.session().getUserName(), toUserName,
-                        clientMsgId, clientMsgId))
+                .add("Msg", new SendMessage(1, msg, bot.session().getUserName(), toUserName, msgId, msgId))
         );
 
     }

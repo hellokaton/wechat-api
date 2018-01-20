@@ -4,8 +4,6 @@ import io.github.biezhi.wechat.api.model.Account;
 import io.github.biezhi.wechat.api.model.SyncCheckRet;
 import io.github.biezhi.wechat.api.response.WebSyncResponse;
 
-import java.util.regex.Pattern;
-
 /**
  * 微信API
  *
@@ -25,6 +23,13 @@ public interface WeChatApi {
      * 退出登录
      */
     void logout();
+
+    /**
+     * 加载联系人
+     *
+     * @param seq
+     */
+    void loadContact(int seq);
 
     /**
      * 心跳检测
@@ -63,6 +68,12 @@ public interface WeChatApi {
      */
     void sendFile(String toUser, String filePath);
 
+    /**
+     * 根据UserName获取账号信息
+     *
+     * @param id
+     * @return
+     */
     Account getAccountById(String id);
 
 }

@@ -23,7 +23,7 @@ public class MyBot extends WeChatBot {
     @Bind(msgType = MsgType.ALL, accountType = {AccountType.TYPE_FRIEND, AccountType.TYPE_GROUP})
     public void handleText(WeChatMessage message) {
         log.info("接收到 [{}] 的消息: {}", message.getName(), message.getText());
-        this.sendText(message.getFromUserName(), message.getText() + " : 嘻嘻嘻 [坏笑]");
+        this.api().sendText(message.getFromUserName(), message.getText() + " : 嘻嘻嘻 [坏笑]");
 //        this.sendImage(message.getFromUserName(), "/Users/biezhi/Desktop/3849072.jpeg");
     }
 

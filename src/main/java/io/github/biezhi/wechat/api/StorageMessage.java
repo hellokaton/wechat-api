@@ -1,4 +1,4 @@
-package io.github.biezhi.wechat.storage;
+package io.github.biezhi.wechat.api;
 
 import io.github.biezhi.wechat.api.model.StorageResponse;
 import io.github.biezhi.wechat.api.model.WeChatMessage;

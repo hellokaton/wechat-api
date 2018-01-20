@@ -1,16 +1,16 @@
 package io.github.biezhi.wechat;
 
 import com.google.gson.Gson;
-import io.github.biezhi.wechat.api.client.BotClient;
-import io.github.biezhi.wechat.api.client.Callback;
 import io.github.biezhi.wechat.api.WeChatApi;
 import io.github.biezhi.wechat.api.WeChatApiImpl;
+import io.github.biezhi.wechat.api.client.BotClient;
+import io.github.biezhi.wechat.api.client.Callback;
 import io.github.biezhi.wechat.api.constant.Config;
 import io.github.biezhi.wechat.api.constant.Constant;
 import io.github.biezhi.wechat.api.model.LoginSession;
 import io.github.biezhi.wechat.api.request.ApiRequest;
 import io.github.biezhi.wechat.api.response.ApiResponse;
-import io.github.biezhi.wechat.storage.StorageMessage;
+import io.github.biezhi.wechat.api.StorageMessage;
 import io.github.biezhi.wechat.utils.DateUtils;
 import io.github.biezhi.wechat.utils.OkHttpUtils;
 import lombok.Getter;
@@ -31,7 +31,6 @@ import java.util.Scanner;
 @Slf4j
 public class WeChatBot {
 
-    @Getter
     private WeChatApi      api;
     private BotClient      botClient;
     private Config         config;
@@ -106,26 +105,6 @@ public class WeChatBot {
 
     public boolean autoReply() {
         return config.autoReply();
-    }
-
-    /**
-     * 发送文本消息
-     *
-     * @param from 发给谁
-     * @param msg  消息内容
-     */
-    public void sendText(String from, String msg) {
-        api.sendText(from, msg);
-    }
-
-    /**
-     * 发送图片文件
-     *
-     * @param from
-     * @param filePath
-     */
-    public void sendFile(String from, String filePath) {
-        api.sendFile(from, filePath);
     }
 
     public static final class Builder {

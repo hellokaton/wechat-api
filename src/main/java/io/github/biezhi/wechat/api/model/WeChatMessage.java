@@ -1,6 +1,5 @@
 package io.github.biezhi.wechat.api.model;
 
-import io.github.biezhi.wechat.api.enums.AccountType;
 import io.github.biezhi.wechat.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
