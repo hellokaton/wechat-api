@@ -1,0 +1,9 @@
+language: java
+
+notifications:
+  email: false
+
+sudo: false
+
+before_install:
+    - export TZ='Asia/Shanghai'
