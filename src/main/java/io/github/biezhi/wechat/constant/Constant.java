@@ -12,7 +12,7 @@ public interface Constant {
 
     String VERSION  = "0.1.0";
     String BASE_URL = "https://login.weixin.qq.com";
-    String GET = "GET";
+    String GET      = "GET";
 
     String OS         = System.getenv("os.name");
     String DIR        = "";
@@ -62,10 +62,10 @@ public interface Constant {
             RECORDING, VOICE, ATTACHMENT, VIDEO, FRIENDS, SYSTEM));
 
     /**
-     * 图片存储的文件夹
+     * 资源存储的文件夹，包括图片、视频、音频
      */
-    String CONF_IMG_DIR         = "wechat.img-path";
-    String CONF_IMG_DIR_DEFAULT = "images";
+    String CONF_ASSETS_DIR         = "wechat.asstes-path";
+    String CONF_ASSETS_DIR_DEFAULT = "assets";
 
     /**
      * 是否输出二维码到终端

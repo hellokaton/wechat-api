@@ -22,8 +22,13 @@ public class Config {
         return props.getProperty(key);
     }
 
-    public String imgDir() {
-        return props.getProperty(CONF_IMG_DIR, CONF_IMG_DIR_DEFAULT);
+    public String assetsDir() {
+        return props.getProperty(CONF_ASSETS_DIR, CONF_ASSETS_DIR_DEFAULT);
+    }
+
+    public Config assetsDir(String dir) {
+        props.setProperty(CONF_ASSETS_DIR, dir);
+        return this;
     }
 
     public boolean showTerminal() {
