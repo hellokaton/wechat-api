@@ -20,7 +20,7 @@ import java.util.Map;
  * @author biezhi
  * @date 2018/1/18
  */
-public class QRCodeUtil {
+public class QRCodeUtils {
 
     public static void showQrCode(File qrCode, boolean terminal) {
         if (!terminal) {
@@ -41,7 +41,7 @@ public class QRCodeUtil {
         hintMap.put(EncodeHintType.MARGIN, 1);
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 
-        String       qrContent    = QRCodeUtil.readQRCode(qrCode, hintMap);
+        String       qrContent    = QRCodeUtils.readQRCode(qrCode, hintMap);
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix    bitMatrix;
         try {

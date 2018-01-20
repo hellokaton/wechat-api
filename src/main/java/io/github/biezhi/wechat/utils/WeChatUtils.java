@@ -2,9 +2,11 @@ package io.github.biezhi.wechat.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import io.github.biezhi.wechat.model.ChatRoom;
 import io.github.biezhi.wechat.model.User;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,4 +51,31 @@ public class WeChatUtils {
         return gson.fromJson(json, typeToken.getType());
     }
 
+    public static void saveFile(InputStream inputStream, String dirPath, String id) {
+        FileOutputStream fileOutputStream = null;
+        try {
+            File dir = new File(dirPath + "/" + DateUtils.getDateString());
+            if (!dir.isDirectory()) {
+                dir.mkdirs();
+            }
+            File path = new File(dir, id);
+            fileOutputStream = new FileOutputStream(path);
+            byte[] buffer = new byte[2048];
+            int    len    = 0;
+            while ((len = inputStream.read(buffer)) != -1) {
+                fileOutputStream.write(buffer, 0, len);
+            }
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != fileOutputStream) {
+                    fileOutputStream.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
 }

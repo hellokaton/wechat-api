@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient;
 import javax.net.ssl.*;
 
 @Slf4j
-public class OkHttpUtil {
+public class OkHttpUtils {
 
     /**
      * Setting testMode configuration. If set as testMode, the connection will skip certification check
