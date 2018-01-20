@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import io.github.biezhi.wechat.api.model.Message;
 import io.github.biezhi.wechat.api.model.Profile;
 import io.github.biezhi.wechat.api.model.SyncKey;
-import io.github.biezhi.wechat.api.model.User;
+import io.github.biezhi.wechat.api.model.Account;
 import lombok.Data;
 
 import java.util.List;
@@ -16,10 +16,7 @@ import java.util.List;
  * @date 2018/1/20
  */
 @Data
-public class WebSyncResponse {
-
-    @SerializedName("BaseResponse")
-    private BaseResponse baseResponse;
+public class WebSyncResponse extends JsonResponse {
 
     @SerializedName("AddMsgCount")
     private Integer addMsgCount;
@@ -31,19 +28,19 @@ public class WebSyncResponse {
     private Integer modContactCount;
 
     @SerializedName("ModContactList")
-    private List<User> modContactList;
+    private List<Account> modContactList;
 
     @SerializedName("DelContactCount")
     private Integer delContactCount;
 
     @SerializedName("DelContactList")
-    private List<User> delContactList;
+    private List<Account> delContactList;
 
     @SerializedName("ModChatRoomMemberCount")
     private Integer modChatRoomMemberCount;
 
     @SerializedName("ModChatRoomMemberList")
-    private List<User> modChatRoomMemberList;
+    private List<Account> modChatRoomMemberList;
 
     @SerializedName("Profile")
     private Profile profile;
@@ -59,9 +56,5 @@ public class WebSyncResponse {
 
     @SerializedName("SyncCheckKey")
     private SyncKey syncCheckKey;
-
-    public boolean success() {
-        return null != baseResponse && baseResponse.getRet().equals(0);
-    }
 
 }

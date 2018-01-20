@@ -96,6 +96,6 @@ public class Message {
     @SerializedName("EncryFileName")
     private String encryFileName;
 
-    private User user;
+    private Account account;
 
 }

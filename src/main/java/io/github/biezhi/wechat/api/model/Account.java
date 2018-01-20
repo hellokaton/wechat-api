@@ -1,9 +1,13 @@
 package io.github.biezhi.wechat.api.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import io.github.biezhi.wechat.api.enums.AccountType;
 import lombok.Data;
 
 import java.util.List;
+
+import static io.github.biezhi.wechat.api.constant.Constant.API_SPECIAL_USER;
 
 /**
  * 微信用户
@@ -12,7 +16,7 @@ import java.util.List;
  * @date 2018/1/19
  */
 @Data
-public class User {
+public class Account {
 
     @SerializedName("Uin")
     private Long uin;
@@ -91,9 +95,32 @@ public class User {
     @SerializedName("ChatRoomId")
     private Long chatRoomId;
 
+    /**
+     * 群id
+     */
     @SerializedName("EncryChatRoomId")
     private String encryChatRoomId;
 
     @SerializedName("IsOwner")
     private Integer isOwner;
+
+    @Expose
+    private AccountType accountType;
+
+    public AccountType getAccountType() {
+        if (null != this.accountType) {
+            return this.accountType;
+        }
+        if (verifyFlag > 0 && verifyFlag % 8 == 0) {
+            this.accountType = AccountType.TYPE_MP;
+        }
+        if (API_SPECIAL_USER.contains(this.userName)) {
+            this.accountType = AccountType.TYPE_SPECIAL;
+        }
+        if (this.userName.startsWith("@@")) {
+            this.accountType = AccountType.TYPE_GROUP;
+        }
+        return AccountType.TYPE_FRIEND;
+    }
+
 }

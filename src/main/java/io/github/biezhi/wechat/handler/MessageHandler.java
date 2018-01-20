@@ -1,12 +1,11 @@
 package io.github.biezhi.wechat.handler;
 
-import com.google.gson.JsonObject;
 import io.github.biezhi.wechat.WeChatBot;
 import io.github.biezhi.wechat.api.annotation.Bind;
 import io.github.biezhi.wechat.api.enums.MsgType;
 import io.github.biezhi.wechat.api.model.Message;
 import io.github.biezhi.wechat.api.model.SendMessage;
-import io.github.biezhi.wechat.api.model.User;
+import io.github.biezhi.wechat.api.model.Account;
 import io.github.biezhi.wechat.api.model.WeChatMessage;
 import io.github.biezhi.wechat.api.request.FileRequest;
 import io.github.biezhi.wechat.api.request.JsonRequest;
@@ -67,18 +66,18 @@ public class MessageHandler {
         if (null != addMessageList && addMessageList.size() > 0) {
             log.info("你有新的消息");
             for (Message message : addMessageList) {
-                Integer msgType  = message.getMsgType();
-                String  name     = bot.getContactHandler().getUserRemarkName(message.getFromUserName());
-                String  content  = message.getContent().replace("&lt;", "<").replace("&gt;", ">");
-                String  msgId    = message.getId();
-                User    fromUser = bot.getContactHandler().getUserById(message.getFromUserName());
+                Integer msgType     = message.getMsgType();
+                String  name        = bot.getContactHandler().getUserRemarkName(message.getFromUserName());
+                String  content     = message.getContent().replace("&lt;", "<").replace("&gt;", ">");
+                String  msgId       = message.getId();
+                Account fromAccount = bot.getContactHandler().getUserById(message.getFromUserName());
 
                 log.debug("收到消息JSON: {}", WeChatUtils.toJson(message));
 
                 WeChatMessage.WeChatMessageBuilder weChatMessageBuilder = WeChatMessage.builder()
                         .raw(message)
-                        .fromNickName(fromUser.getNickName())
-                        .fromRemarkName(fromUser.getRemarkName())
+                        .fromNickName(fromAccount.getNickName())
+                        .fromRemarkName(fromAccount.getRemarkName())
                         .fromUserName(message.getFromUserName())
                         .text(content);
 
@@ -359,7 +358,7 @@ public class MessageHandler {
         }
 
         String url = String.format("%s/webwxsendmsgimg?fun=async&f=json&pass_ticket=%s",
-                bot.session().getFileUrl(), bot.session().getPassTicket());
+                bot.session().getUrl(), bot.session().getPassTicket());
 
         String clientMsgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
 

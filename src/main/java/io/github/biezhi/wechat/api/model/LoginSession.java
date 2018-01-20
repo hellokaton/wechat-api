@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 public class LoginSession {
 
-    private User        user;
+    private Account account;
 
     private String userName;
     private String nickName;

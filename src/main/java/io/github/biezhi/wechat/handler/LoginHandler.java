@@ -6,7 +6,7 @@ import io.github.biezhi.wechat.api.constant.StateCode;
 import io.github.biezhi.wechat.api.model.LoginSession;
 import io.github.biezhi.wechat.api.model.SyncCheckRet;
 import io.github.biezhi.wechat.api.model.SyncKey;
-import io.github.biezhi.wechat.api.model.User;
+import io.github.biezhi.wechat.api.model.Account;
 import io.github.biezhi.wechat.api.request.BaseRequest;
 import io.github.biezhi.wechat.api.request.FileRequest;
 import io.github.biezhi.wechat.api.request.JsonRequest;
@@ -98,11 +98,19 @@ public class LoginHandler {
         }
         this.webInit();
         this.statusNotify();
-        bot.getContactHandler().loadContact();
+        bot.getContactHandler().loadContact(0);
+
+        log.info("应有 {} 个联系人，读取到联系人 {} 个", bot.getContactHandler().getMemberCount(), bot.getContactHandler().getAccountMap().size());
+        System.out.println();
+        log.info("共有 {} 个群 | {} 个直接联系人 | {} 个特殊账号 ｜ {} 公众号或服务号",
+                bot.getContactHandler().getGroupList().size(), bot.getContactHandler().getContactList().size(),
+                bot.getContactHandler().getSpecialUsersList().size(), bot.getContactHandler().getPublicUsersList().size());
+
+        bot.getContactHandler().loadGroupList();
+
         log.info("[{}] 登录成功.", bot.session().getNickName());
         this.startRevice();
         logging = false;
-        DateUtils.sleep(9999999999999L);
     }
 
     /**
@@ -278,13 +286,13 @@ public class LoginHandler {
 
         WebInitResponse webInitResponse = response.parse(WebInitResponse.class);
 
-        User    user    = webInitResponse.getUser();
+        Account account = webInitResponse.getAccount();
         SyncKey syncKey = webInitResponse.getSyncKey();
 
         bot.session().setInviteStartCount(webInitResponse.getInviteStartCount());
-        bot.session().setUser(user);
-        bot.session().setUserName(user.getUserName());
-        bot.session().setNickName(user.getNickName());
+        bot.session().setAccount(account);
+        bot.session().setUserName(account.getUserName());
+        bot.session().setNickName(account.getNickName());
         bot.session().setSyncKey(syncKey);
 
         return webInitResponse;
@@ -393,11 +401,10 @@ public class LoginHandler {
 
         WebSyncResponse webSyncResponse = response.parse(WebSyncResponse.class);
         if (!webSyncResponse.success()) {
-            return null;
+            log.warn("获取消息失败");
+            return webSyncResponse;
         }
-
         bot.session().setSyncKey(webSyncResponse.getSyncKey());
-
         return webSyncResponse;
     }
 

@@ -23,7 +23,7 @@ public class MyBot extends WeChatBot {
     public void handleText(WeChatMessage message) {
         log.info("接收到 [{}] 的消息: {}", message.getName(), message.getText());
         this.sendText(message.getFromUserName(), message.getText() + " : 嘻嘻嘻 [坏笑]");
-        this.sendImage(message.getFromUserName(), "/Users/biezhi/Desktop/3849072.jpeg");
+//        this.sendImage(message.getFromUserName(), "/Users/biezhi/Desktop/3849072.jpeg");
     }
 
     public static void main(String[] args) {

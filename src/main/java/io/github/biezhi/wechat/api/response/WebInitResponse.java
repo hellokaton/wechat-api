@@ -2,7 +2,7 @@ package io.github.biezhi.wechat.api.response;
 
 import com.google.gson.annotations.SerializedName;
 import io.github.biezhi.wechat.api.model.SyncKey;
-import io.github.biezhi.wechat.api.model.User;
+import io.github.biezhi.wechat.api.model.Account;
 import lombok.Data;
 
 import java.util.List;
@@ -23,13 +23,13 @@ public class WebInitResponse {
     private Integer count;
 
     @SerializedName("ContactList")
-    private List<User> contactList;
+    private List<Account> contactList;
 
     @SerializedName("SyncKey")
     private SyncKey syncKey;
 
     @SerializedName("User")
-    private User user;
+    private Account account;
 
     @SerializedName("ChatSet")
     private String chatSet;

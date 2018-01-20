@@ -13,6 +13,7 @@ import io.github.biezhi.wechat.api.model.LoginSession;
 import io.github.biezhi.wechat.api.request.ApiRequest;
 import io.github.biezhi.wechat.api.response.ApiResponse;
 import io.github.biezhi.wechat.storage.StorageMessage;
+import io.github.biezhi.wechat.utils.DateUtils;
 import io.github.biezhi.wechat.utils.OkHttpUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+
+import java.util.Scanner;
 
 /**
  * 微信机器人
@@ -91,6 +94,17 @@ public class WeChatBot {
         messageHandler = new MessageHandler(this);
         log.info("wechat-api: {}", Constant.VERSION);
         loginHandler.login();
+        while (true) {
+            Scanner scanner = new Scanner(System.in);
+            if (scanner.hasNext()) {
+                String text = scanner.next();
+                if ("quit".equals(text) || "exit".equals(text)) {
+                    this.running = false;
+                    break;
+                }
+            }
+            DateUtils.sleep(100);
+        }
     }
 
     public StorageMessage storageMessage() {
@@ -105,7 +119,7 @@ public class WeChatBot {
      * 发送文本消息
      *
      * @param from 发给谁
-     * @param msg          消息内容
+     * @param msg  消息内容
      */
     public void sendText(String from, String msg) {
         messageHandler.sendTextMsg(from, msg);
