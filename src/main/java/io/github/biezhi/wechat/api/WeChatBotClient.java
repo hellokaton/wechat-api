@@ -1,10 +1,10 @@
 package io.github.biezhi.wechat.api;
 
 import com.google.gson.Gson;
-import io.github.biezhi.wechat.constant.Constant;
-import io.github.biezhi.wechat.request.ApiRequest;
-import io.github.biezhi.wechat.response.ApiResponse;
-import io.github.biezhi.wechat.response.FileResponse;
+import io.github.biezhi.wechat.api.constant.Constant;
+import io.github.biezhi.wechat.api.request.ApiRequest;
+import io.github.biezhi.wechat.api.response.ApiResponse;
+import io.github.biezhi.wechat.api.response.FileResponse;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
@@ -35,7 +35,7 @@ public class WeChatBotClient {
         System.setProperty("jsse.enableSNIExtension", "false");
     }
 
-    public <T extends ApiRequest, R extends ApiResponse> void send(final T request, final io.github.biezhi.wechat.callback.Callback<T, R> callback) {
+    public <T extends ApiRequest, R extends ApiResponse> void send(final T request, final Callback<T, R> callback) {
         OkHttpClient client = getOkHttpClient(request);
         client.newCall(createRequest(request)).enqueue(new okhttp3.Callback() {
             @Override

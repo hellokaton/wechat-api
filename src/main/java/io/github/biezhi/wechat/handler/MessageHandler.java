@@ -1,18 +1,18 @@
 package io.github.biezhi.wechat.handler;
 
 import io.github.biezhi.wechat.WeChatBot;
-import io.github.biezhi.wechat.annotation.Bind;
-import io.github.biezhi.wechat.enums.MsgType;
+import io.github.biezhi.wechat.api.annotation.Bind;
+import io.github.biezhi.wechat.api.enums.MsgType;
 import io.github.biezhi.wechat.exception.WeChatException;
-import io.github.biezhi.wechat.model.Message;
-import io.github.biezhi.wechat.model.SendMessage;
-import io.github.biezhi.wechat.model.User;
-import io.github.biezhi.wechat.model.WeChatMessage;
-import io.github.biezhi.wechat.request.FileRequest;
-import io.github.biezhi.wechat.request.JsonRequest;
-import io.github.biezhi.wechat.response.FileResponse;
-import io.github.biezhi.wechat.response.JsonResponse;
-import io.github.biezhi.wechat.response.WebSyncResponse;
+import io.github.biezhi.wechat.api.model.Message;
+import io.github.biezhi.wechat.api.model.SendMessage;
+import io.github.biezhi.wechat.api.model.User;
+import io.github.biezhi.wechat.api.model.WeChatMessage;
+import io.github.biezhi.wechat.api.request.FileRequest;
+import io.github.biezhi.wechat.api.request.JsonRequest;
+import io.github.biezhi.wechat.api.response.FileResponse;
+import io.github.biezhi.wechat.api.response.JsonResponse;
+import io.github.biezhi.wechat.api.response.WebSyncResponse;
 import io.github.biezhi.wechat.utils.StringUtils;
 import io.github.biezhi.wechat.utils.WeChatUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -113,10 +113,10 @@ public class MessageHandler {
                     case 42:
                         log.info("{} 发送了一张名片: ", name);
                         log.info("=========================");
-                        log.info("= 昵称: {}", message.getRecommendInfo().getNickName());
-                        log.info("= 微信号: {}", message.getRecommendInfo().getAlias());
-                        log.info("= 地区: {}-{}", message.getRecommendInfo().getProvince(), message.getRecommendInfo().getCity());
-                        log.info("= 性别: {}", message.getRecommendInfo().getSex());
+                        log.info("= 昵称: {}", message.getRecommend().getNickName());
+                        log.info("= 微信号: {}", message.getRecommend().getAlias());
+                        log.info("= 地区: {}-{}", message.getRecommend().getProvince(), message.getRecommend().getCity());
+                        log.info("= 性别: {}", message.getRecommend().getSex());
                         log.info("=========================");
                         methods = mapping.get(MsgType.PERSON_CARD);
                         if (null != methods && methods.size() > 0) {

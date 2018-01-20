@@ -1,10 +1,10 @@
 package io.github.biezhi.wechat;
 
-import io.github.biezhi.wechat.annotation.Bind;
-import io.github.biezhi.wechat.constant.Config;
-import io.github.biezhi.wechat.enums.MsgType;
-import io.github.biezhi.wechat.model.StorageResponse;
-import io.github.biezhi.wechat.model.WeChatMessage;
+import io.github.biezhi.wechat.api.annotation.Bind;
+import io.github.biezhi.wechat.api.constant.Config;
+import io.github.biezhi.wechat.api.enums.MsgType;
+import io.github.biezhi.wechat.api.model.StorageResponse;
+import io.github.biezhi.wechat.api.model.WeChatMessage;
 import io.github.biezhi.wechat.storage.StorageMessage;
 import lombok.extern.slf4j.Slf4j;
 

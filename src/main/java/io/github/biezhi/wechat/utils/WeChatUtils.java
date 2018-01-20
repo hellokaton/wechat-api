@@ -3,15 +3,13 @@ package io.github.biezhi.wechat.utils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.github.biezhi.wechat.exception.WeChatException;
-import io.github.biezhi.wechat.model.User;
+import io.github.biezhi.wechat.api.model.User;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

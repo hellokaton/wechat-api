@@ -1,16 +1,17 @@
 package io.github.biezhi.wechat.handler;
 
 import io.github.biezhi.wechat.WeChatBot;
-import io.github.biezhi.wechat.constant.Constant;
-import io.github.biezhi.wechat.constant.StateCode;
-import io.github.biezhi.wechat.model.LoginSession;
-import io.github.biezhi.wechat.model.SyncCheckRet;
-import io.github.biezhi.wechat.model.SyncKey;
-import io.github.biezhi.wechat.model.User;
-import io.github.biezhi.wechat.request.BaseRequest;
-import io.github.biezhi.wechat.request.FileRequest;
-import io.github.biezhi.wechat.request.JsonRequest;
-import io.github.biezhi.wechat.request.StringRequest;
+import io.github.biezhi.wechat.api.response.*;
+import io.github.biezhi.wechat.api.constant.Constant;
+import io.github.biezhi.wechat.api.constant.StateCode;
+import io.github.biezhi.wechat.api.model.LoginSession;
+import io.github.biezhi.wechat.api.model.SyncCheckRet;
+import io.github.biezhi.wechat.api.model.SyncKey;
+import io.github.biezhi.wechat.api.model.User;
+import io.github.biezhi.wechat.api.request.BaseRequest;
+import io.github.biezhi.wechat.api.request.FileRequest;
+import io.github.biezhi.wechat.api.request.JsonRequest;
+import io.github.biezhi.wechat.api.request.StringRequest;
 import io.github.biezhi.wechat.response.*;
 import io.github.biezhi.wechat.utils.DateUtils;
 import io.github.biezhi.wechat.utils.QRCodeUtils;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static io.github.biezhi.wechat.constant.Constant.*;
+import static io.github.biezhi.wechat.api.constant.Constant.*;
 
 /**
  * @author biezhi

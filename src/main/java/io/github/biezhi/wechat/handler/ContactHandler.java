@@ -3,17 +3,17 @@ package io.github.biezhi.wechat.handler;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import io.github.biezhi.wechat.WeChatBot;
-import io.github.biezhi.wechat.model.Member;
-import io.github.biezhi.wechat.model.User;
-import io.github.biezhi.wechat.request.JsonRequest;
-import io.github.biezhi.wechat.response.JsonResponse;
+import io.github.biezhi.wechat.api.model.Member;
+import io.github.biezhi.wechat.api.model.User;
+import io.github.biezhi.wechat.api.request.JsonRequest;
+import io.github.biezhi.wechat.api.response.JsonResponse;
 import io.github.biezhi.wechat.utils.StringUtils;
 import io.github.biezhi.wechat.utils.WeChatUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
-import static io.github.biezhi.wechat.constant.Constant.API_SPECIAL_USER;
+import static io.github.biezhi.wechat.api.constant.Constant.API_SPECIAL_USER;
 
 /**
  * 联系人处理
