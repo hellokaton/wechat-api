@@ -1,5 +1,6 @@
 package io.github.biezhi.wechat.storage;
 
+import io.github.biezhi.wechat.enums.MsgType;
 import io.github.biezhi.wechat.model.Message;
 import io.github.biezhi.wechat.model.StorageResponse;
 
@@ -14,6 +15,13 @@ import java.util.List;
  * @date 2018/1/20
  */
 public interface StorageMessage {
+
+    /**
+     * 要存储的消息类型列表
+     *
+     * @return
+     */
+    MsgType[] bindMsgType();
 
     /**
      * 保存一批消息

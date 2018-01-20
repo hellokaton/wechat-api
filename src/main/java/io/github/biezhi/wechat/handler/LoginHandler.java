@@ -3,7 +3,10 @@ package io.github.biezhi.wechat.handler;
 import io.github.biezhi.wechat.WeChatBot;
 import io.github.biezhi.wechat.constant.Constant;
 import io.github.biezhi.wechat.constant.StateCode;
-import io.github.biezhi.wechat.model.*;
+import io.github.biezhi.wechat.model.LoginSession;
+import io.github.biezhi.wechat.model.SyncCheckRet;
+import io.github.biezhi.wechat.model.SyncKey;
+import io.github.biezhi.wechat.model.User;
 import io.github.biezhi.wechat.request.BaseRequest;
 import io.github.biezhi.wechat.request.FileRequest;
 import io.github.biezhi.wechat.request.JsonRequest;
@@ -11,6 +14,7 @@ import io.github.biezhi.wechat.request.StringRequest;
 import io.github.biezhi.wechat.response.*;
 import io.github.biezhi.wechat.utils.DateUtils;
 import io.github.biezhi.wechat.utils.QRCodeUtils;
+import io.github.biezhi.wechat.utils.StringUtils;
 import io.github.biezhi.wechat.utils.WeChatUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -90,7 +94,7 @@ public class LoginHandler {
         this.webInit();
         this.statusNotify();
         bot.getContactHandler().loadContact();
-        log.info("[{}] 登录成功.", bot.loginSession().getNickName());
+        log.info("[{}] 登录成功.", bot.session().getNickName());
         this.startRevice();
         logging = false;
         DateUtils.sleep(9999999999999L);
@@ -199,7 +203,7 @@ public class LoginHandler {
      * @return
      */
     public boolean processLoginSession(String loginContent) {
-        LoginSession loginSession = bot.loginSession();
+        LoginSession loginSession = bot.session();
         Matcher      matcher      = PROCESS_LOGIN_PATTERN.matcher(loginContent);
         if (matcher.find()) {
             loginSession.setUrl(matcher.group(1));
@@ -253,12 +257,12 @@ public class LoginHandler {
      * @return
      */
     public String pushLogin() {
-        String wxuin = bot.api().cookie("wxUin");
-        if (null == wxuin || wxuin.isEmpty()) {
+        String uin = bot.api().cookie("wxUin");
+        if (StringUtils.isEmpty(uin)) {
             return null;
         }
         String url = String.format("%s/cgi-bin/mmwebwx-bin/webwxpushloginurl?uin=%s",
-                Constant.BASE_URL, wxuin);
+                Constant.BASE_URL, uin);
 
         JsonResponse jsonResponse = bot.execute(new JsonRequest(url));
         return jsonResponse.getString("uuid");
@@ -269,20 +273,18 @@ public class LoginHandler {
      *
      * @return
      */
-    public ReturnValue statusNotify() {
+    public void statusNotify() {
         log.info("开启状态通知");
 
         String url = String.format("%s/webwxstatusnotify?lang=zh_CN&pass_ticket=%s",
-                bot.loginSession().getUrl(), bot.loginSession().getPassTicket());
+                bot.session().getUrl(), bot.session().getPassTicket());
 
-        JsonResponse response = bot.execute(new JsonRequest(url).post().jsonBody()
-                .add("BaseRequest", bot.loginSession().getBaseRequest())
+        bot.execute(new JsonRequest(url).post().jsonBody()
+                .add("BaseRequest", bot.session().getBaseRequest())
                 .add("Code", 3)
-                .add("FromUserName", bot.loginSession().getUserName())
-                .add("ToUserName", bot.loginSession().getUserName())
+                .add("FromUserName", bot.session().getUserName())
+                .add("ToUserName", bot.session().getUserName())
                 .add("ClientMsgId", System.currentTimeMillis() / 1000));
-
-        return new ReturnValue();
     }
 
     /**
@@ -292,23 +294,21 @@ public class LoginHandler {
         log.info("微信初始化...");
         int r = (int) (-System.currentTimeMillis() / 1000) / 1579;
         String url = String.format("%s/webwxinit?r=%d&pass_ticket=%s",
-                bot.loginSession().getUrl(), r, bot.loginSession().getPassTicket());
+                bot.session().getUrl(), r, bot.session().getPassTicket());
 
         JsonResponse response = bot.execute(new JsonRequest(url).post().jsonBody()
-                .add("BaseRequest", bot.loginSession().getBaseRequest()));
+                .add("BaseRequest", bot.session().getBaseRequest()));
 
         WebInitResponse webInitResponse = response.parse(WebInitResponse.class);
 
         User    user    = webInitResponse.getUser();
         SyncKey syncKey = webInitResponse.getSyncKey();
 
-        bot.loginSession().setInviteStartCount(webInitResponse.getInviteStartCount());
-        bot.loginSession().setUser(user);
-        bot.loginSession().setUserName(user.getUserName());
-        bot.loginSession().setNickName(user.getNickName());
-        bot.loginSession().setSyncKey(syncKey);
-
-        bot.getMemberList().add(bot.loginSession().getUser());
+        bot.session().setInviteStartCount(webInitResponse.getInviteStartCount());
+        bot.session().setUser(user);
+        bot.session().setUserName(user.getUserName());
+        bot.session().setNickName(user.getNickName());
+        bot.session().setSyncKey(syncKey);
 
         return webInitResponse;
     }
@@ -376,15 +376,15 @@ public class LoginHandler {
      * @return
      */
     public SyncCheckRet syncCheck() {
-        String url = String.format("%s/synccheck", bot.loginSession().getSyncOrUrl());
+        String url = String.format("%s/synccheck", bot.session().getSyncOrUrl());
         try {
             ApiResponse response = bot.execute(new StringRequest(url)
                     .add("r", System.currentTimeMillis())
-                    .add("skey", bot.loginSession().getSKey())
-                    .add("sid", bot.loginSession().getWxSid())
-                    .add("uin", bot.loginSession().getWxUin())
-                    .add("deviceid", bot.loginSession().getDeviceId())
-                    .add("synckey", bot.loginSession().getSynckeyStr())
+                    .add("skey", bot.session().getSKey())
+                    .add("sid", bot.session().getWxSid())
+                    .add("uin", bot.session().getWxUin())
+                    .add("deviceid", bot.session().getDeviceId())
+                    .add("synckey", bot.session().getSynckeyStr())
                     .add("_", System.currentTimeMillis())
             );
 
@@ -407,12 +407,12 @@ public class LoginHandler {
      */
     public WebSyncResponse webSync() {
         String url = String.format("%s/webwxsync?sid=%s&sKey=%s&passTicket=%s",
-                bot.loginSession().getUrl(), bot.loginSession().getWxSid(),
-                bot.loginSession().getSKey(), bot.loginSession().getPassTicket());
+                bot.session().getUrl(), bot.session().getWxSid(),
+                bot.session().getSKey(), bot.session().getPassTicket());
 
         JsonResponse response = bot.execute(new JsonRequest(url).post().jsonBody()
-                .add("BaseRequest", bot.loginSession().getBaseRequest())
-                .add("SyncKey", bot.loginSession().getSyncKey())
+                .add("BaseRequest", bot.session().getBaseRequest())
+                .add("SyncKey", bot.session().getSyncKey())
                 .add("rr", ~(System.currentTimeMillis() / 1000)));
 
         WebSyncResponse webSyncResponse = response.parse(WebSyncResponse.class);
@@ -420,7 +420,7 @@ public class LoginHandler {
             return null;
         }
 
-        bot.loginSession().setSyncKey(webSyncResponse.getSyncKey());
+        bot.session().setSyncKey(webSyncResponse.getSyncKey());
 
         return webSyncResponse;
     }
@@ -430,19 +430,18 @@ public class LoginHandler {
      *
      * @return
      */
-    public ReturnValue logout() {
+    public void logout() {
         if (bot.isRunning()) {
-            String url = String.format("%s/webwxlogout", bot.loginSession().getUrl());
+            String url = String.format("%s/webwxlogout", bot.session().getUrl());
             bot.execute(new StringRequest(url)
                     .add("redirect", 1)
                     .add("type", 1)
-                    .add("sKey", bot.loginSession().getSKey()));
+                    .add("sKey", bot.session().getSKey()));
             bot.setRunning(false);
         }
 
         this.logging = false;
         bot.api().cookies().clear();
-        return new ReturnValue();
     }
 
 }

@@ -43,8 +43,8 @@ public class ContactHandler {
         List<User> memberList;
         while (true) {
             String url = String.format("%s/webwxgetcontact?r=%s&seq=%s&skey=%s",
-                    bot.loginSession().getUrl(), System.currentTimeMillis(),
-                    seq, bot.loginSession().getSKey());
+                    bot.session().getUrl(), System.currentTimeMillis(),
+                    seq, bot.session().getSKey());
 
             JsonResponse response = bot.execute(new JsonRequest(url).jsonBody());
 
@@ -69,7 +69,7 @@ public class ContactHandler {
             } else if (contact.getUserName().contains("@@")) {
                 iterator.remove();
                 groupList.add(contact);
-            } else if (bot.loginSession().getUserName().equals(contact.getUserName())) {
+            } else if (bot.session().getUserName().equals(contact.getUserName())) {
                 iterator.remove();
             }
         }
@@ -79,8 +79,8 @@ public class ContactHandler {
 
     public String getUserRemarkName(String id) {
         String name = id.contains("@@") ? "未知群" : "陌生人";
-        if (id.equals(this.bot.loginSession().getUserName())) {
-            return this.bot.loginSession().getNickName();
+        if (id.equals(this.bot.session().getUserName())) {
+            return this.bot.session().getNickName();
         }
         if (id.contains("@@")) {
             return this.getGroupName(id);
@@ -127,7 +127,7 @@ public class ContactHandler {
 
     private List<User> getNameById(String id) {
         String url = String.format("%s/webwxbatchgetcontact?type=ex&r=%s&pass_ticket=%s",
-                bot.loginSession().getUrl(), System.currentTimeMillis() / 1000, bot.loginSession().getPassTicket());
+                bot.session().getUrl(), System.currentTimeMillis() / 1000, bot.session().getPassTicket());
 
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         Map<String, String>       map  = new HashMap<String, String>();
@@ -136,8 +136,8 @@ public class ContactHandler {
         list.add(map);
 
         JsonResponse response = bot.execute(new JsonRequest(url).post().jsonBody()
-                .add("BaseRequest", bot.loginSession().getBaseRequest())
-                .add("Count", bot.loginSession().getBaseRequest())
+                .add("BaseRequest", bot.session().getBaseRequest())
+                .add("Count", bot.session().getBaseRequest())
                 .add("List", list));
 
         List<User> contactUser = WeChatUtils.fromJson(WeChatUtils.toJson(response.toJsonObject().getAsJsonObject("")),

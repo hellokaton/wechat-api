@@ -8,6 +8,10 @@ import java.util.Random;
  */
 public class StringUtils {
 
+    public static boolean isEmpty(String value){
+        return null == value || value.isEmpty();
+    }
+
     public static boolean isNotEmpty(String value){
         return null != value && !value.isEmpty();
     }

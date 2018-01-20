@@ -1,6 +1,9 @@
 package io.github.biezhi.wechat.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 保存消息返回
@@ -9,6 +12,9 @@ import lombok.Data;
  * @date 2018/1/20
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StorageResponse {
 
     /**

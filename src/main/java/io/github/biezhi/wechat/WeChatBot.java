@@ -3,14 +3,14 @@ package io.github.biezhi.wechat;
 import com.google.gson.Gson;
 import io.github.biezhi.wechat.api.WeChatBotClient;
 import io.github.biezhi.wechat.callback.Callback;
+import io.github.biezhi.wechat.constant.Config;
 import io.github.biezhi.wechat.handler.ContactHandler;
 import io.github.biezhi.wechat.handler.LoginHandler;
 import io.github.biezhi.wechat.handler.MessageHandler;
-import io.github.biezhi.wechat.constant.Config;
 import io.github.biezhi.wechat.model.LoginSession;
-import io.github.biezhi.wechat.model.User;
 import io.github.biezhi.wechat.request.ApiRequest;
 import io.github.biezhi.wechat.response.ApiResponse;
+import io.github.biezhi.wechat.storage.StorageMessage;
 import io.github.biezhi.wechat.utils.OkHttpUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,9 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 微信机器人
@@ -38,22 +35,19 @@ public class WeChatBot {
     @Getter
     private MessageHandler messageHandler;
 
-    private Config          config;
-    private LoginSession    loginSession;
     private WeChatBotClient api;
-    @Getter
-    @Setter
-    private boolean         running;
+    private Config          config;
+    private LoginSession    session;
+    private StorageMessage  storageMessage;
 
     @Getter
-    private List<User> memberList   = new ArrayList<User>();
-    @Getter
-    private List<User> chatRoomList = new ArrayList<User>();
+    @Setter
+    private boolean running;
 
     public WeChatBot(Builder builder) {
         this.config = builder.config;
         this.api = builder.api;
-        this.loginSession = new LoginSession();
+        this.session = new LoginSession();
     }
 
     public WeChatBot(Config config) {
@@ -76,8 +70,8 @@ public class WeChatBot {
         return this.config;
     }
 
-    public LoginSession loginSession() {
-        return loginSession;
+    public LoginSession session() {
+        return session;
     }
 
     public WeChatBotClient api() {
@@ -89,6 +83,10 @@ public class WeChatBot {
         contactHandler = new ContactHandler(this);
         messageHandler = new MessageHandler(this);
         loginHandler.login();
+    }
+
+    public StorageMessage storageMessage() {
+        return storageMessage;
     }
 
     public boolean autoReply() {
