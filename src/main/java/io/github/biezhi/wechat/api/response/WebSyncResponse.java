@@ -6,6 +6,7 @@ import io.github.biezhi.wechat.api.model.Profile;
 import io.github.biezhi.wechat.api.model.SyncKey;
 import io.github.biezhi.wechat.api.model.Account;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @date 2018/1/20
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class WebSyncResponse extends JsonResponse {
 
     @SerializedName("AddMsgCount")
