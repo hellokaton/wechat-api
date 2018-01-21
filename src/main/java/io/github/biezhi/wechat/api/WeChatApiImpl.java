@@ -81,6 +81,11 @@ public class WeChatApiImpl implements WeChatApi {
     @Getter
     private List<Account> groupList;
 
+    /**
+     * 群UserName列表
+     */
+    private Set<String> groupUserNames = new HashSet<>();
+
     public WeChatApiImpl(WeChatBot bot) {
         this.bot = bot;
         this.init();
@@ -168,9 +173,10 @@ public class WeChatApiImpl implements WeChatApi {
         System.out.println();
 
         log.info("共有 {} 个群 | {} 个直接联系人 | {} 个特殊账号 ｜ {} 公众号或服务号",
-                this.groupList.size(), this.contactList.size(),
+                this.groupUserNames.size(), this.contactList.size(),
                 this.specialUsersList.size(), this.publicUsersList.size());
 
+        // 加载群聊信息，群成员
         this.loadGroupList();
 
         log.info("[{}] 登录成功.", bot.session().getNickName());
@@ -266,7 +272,7 @@ public class WeChatApiImpl implements WeChatApi {
         List<String> syncUrl = new ArrayList<>();
         for (int i = 0; i < FILE_URL.size(); i++) {
             fileUrl.add(String.format("https://%s/cgi-bin/mmwebwx-bin", FILE_URL.get(i)));
-            syncUrl.add(String.format("https://%s/cgi-bin/mmwebwx-bin", WEBPUSH_URL.get(i)));
+            syncUrl.add(String.format("https://%s/cgi-bin/mmwebwx-bin", WEB_PUSH_URL.get(i)));
         }
         boolean flag = false;
         for (int i = 0; i < FILE_URL.size(); i++) {
@@ -446,6 +452,8 @@ public class WeChatApiImpl implements WeChatApi {
         }
         this.logging = false;
         bot.client().cookies().clear();
+        String file = bot.config().assetsDir() + "/login.json";
+        new File(file).delete();
     }
 
     /**
@@ -483,7 +491,10 @@ public class WeChatApiImpl implements WeChatApi {
         this.contactList = new ArrayList<>(this.getAccountByType(AccountType.TYPE_FRIEND));
         this.publicUsersList = new ArrayList<>(this.getAccountByType(AccountType.TYPE_MP));
         this.specialUsersList = new ArrayList<>(this.getAccountByType(AccountType.TYPE_SPECIAL));
-        this.groupList = new ArrayList<>(this.getAccountByType(AccountType.TYPE_GROUP));
+        Set<Account> groupAccounts = this.getAccountByType(AccountType.TYPE_GROUP);
+        for (Account groupAccount : groupAccounts) {
+            groupUserNames.add(groupAccount.getUserName());
+        }
     }
 
     /**
@@ -493,11 +504,11 @@ public class WeChatApiImpl implements WeChatApi {
         log.info("加载群聊信息");
 
         // 群账号
-        List<Map<String, String>> list = new ArrayList<>(groupList.size());
+        List<Map<String, String>> list = new ArrayList<>(groupUserNames.size());
 
-        for (Account account : groupList) {
-            Map<String, String> map = new HashMap<>();
-            map.put("UserName", account.getUserName());
+        for (String groupUserName : groupUserNames) {
+            Map<String, String> map = new HashMap<>(2);
+            map.put("UserName", groupUserName);
             map.put("EncryChatRoomId", "");
             list.add(map);
         }
@@ -508,7 +519,7 @@ public class WeChatApiImpl implements WeChatApi {
         // 加载群信息
         JsonResponse jsonResponse = bot.client().send(new JsonRequest(url).post().jsonBody()
                 .add("BaseRequest", bot.session().getBaseRequest())
-                .add("Count", groupList.size())
+                .add("Count", groupUserNames.size())
                 .add("List", list)
         );
 
@@ -605,31 +616,44 @@ public class WeChatApiImpl implements WeChatApi {
     }
 
     private void processMsg(Message message) {
-        Integer type = message.getType();
-        String  name = this.getUserRemarkName(message.getFromUserName());
-        String content = message.getContent().replace("&lt;", "<")
-                .replace("&gt;", ">");
+        Integer type    = message.getType();
+        String  name    = this.getUserRemarkName(message.getFromUserName());
+        String  msgId   = message.getId();
+        String  content = message.getContent();
 
         if (message.isGroup()) {
-            if (content.contains(":<br/>")) {
-                content = content.substring(content.indexOf(":<br/>") + 6);
+            // 如果本地缓存的群名列表没有当前群，则添加进去，下次更新使用
+            if (message.getFromUserName().contains(GROUP_IDENTIFY) &&
+                    !groupUserNames.contains(message.getFromUserName())) {
+                this.groupUserNames.add(message.getFromUserName());
+            }
+            if (message.getToUserName().contains(GROUP_IDENTIFY) &&
+                    !groupUserNames.contains(message.getToUserName())) {
+                this.groupUserNames.add(message.getToUserName());
+            }
+            if (content.contains(GROUP_BR)) {
+                content = content.substring(content.indexOf(GROUP_BR) + 6);
             }
         }
 
-        String  msgId       = message.getId();
+        content = WeChatUtils.formatMsg(content);
+
         Account fromAccount = this.getAccountById(message.getFromUserName());
         if (null == fromAccount) {
             log.warn("未知消息类型: {}", WeChatUtils.toJson(message));
             return;
         }
 
-        log.debug("收到消息JSON: {}", WeChatUtils.toJson(message));
+        if (log.isDebugEnabled()) {
+            log.debug("收到消息JSON: {}", WeChatUtils.toJson(message));
+        }
 
         WeChatMessage.WeChatMessageBuilder weChatMessageBuilder = WeChatMessage.builder()
                 .raw(message)
                 .fromNickName(fromAccount.getNickName())
                 .fromRemarkName(fromAccount.getRemarkName())
                 .fromUserName(message.getFromUserName())
+                .toUserName(message.getToUserName())
                 .msgType(message.msgType())
                 .text(content);
 

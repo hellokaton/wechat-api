@@ -10,16 +10,18 @@ import java.util.*;
  */
 public interface Constant {
 
-    String VERSION  = "0.1.0";
-    String BASE_URL = "https://login.weixin.qq.com";
-    String GET      = "GET";
+    String VERSION        = "1.0.2";
+    String BASE_URL       = "https://login.weixin.qq.com";
+    String GET            = "GET";
+    String GROUP_BR       = ":<br/>";
+    String GROUP_IDENTIFY = "@@";
 
     String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36";
 
     /**
      * 特殊用户 须过滤
      */
-    Set<String> API_SPECIAL_USER = new HashSet<String>(
+    Set<String> API_SPECIAL_USER = new HashSet<>(
             Arrays.asList("newsapp", "filehelper", "weibo", "qqmail",
                     "fmessage", "tmessage", "qmessage", "qqsync",
                     "floatbottle", "lbsapp", "shakeapp", "medianote",
@@ -30,15 +32,24 @@ public interface Constant {
                     "notification_messages", "wxid_novlwrv3lqwv11",
                     "gh_22b87fa7cb3c", "userexperience_alarm"));
 
-    List<String> INDEX_URL = new ArrayList<String>(
+    /**
+     * index url
+     */
+    List<String> INDEX_URL = new ArrayList<>(
             Arrays.asList("wx2.qq.com", "wx8.qq.com",
                     "wx.qq.com", "web2.wechat.com", "wechat.com"));
 
-    List<String> FILE_URL = new ArrayList<String>(
+    /**
+     * file url
+     */
+    List<String> FILE_URL = new ArrayList<>(
             Arrays.asList("file.wx2.qq.com", "file.wx8.qq.com",
                     "file.wx.qq.com", "file.web2.wechat.com", "file.web.wechat.com"));
 
-    List<String> WEBPUSH_URL = new ArrayList<String>(
+    /**
+     * webpush url
+     */
+    List<String> WEB_PUSH_URL = new ArrayList<>(
             Arrays.asList("webpush.wx2.qq.com", "webpush.wx8.qq.com",
                     "webpush.wx.qq.com", "webpush.web2.wechat.com", "webpush.web.wechat.com"));
 

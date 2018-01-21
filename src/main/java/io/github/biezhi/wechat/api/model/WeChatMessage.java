@@ -60,6 +60,11 @@ public class WeChatMessage {
     private String fromRemarkName;
 
     /**
+     * 接收人 username
+     */
+    private String toUserName;
+
+    /**
      * 消息类型
      */
     private MsgType msgType;
@@ -73,8 +78,13 @@ public class WeChatMessage {
         return StringUtils.isEmpty(fromRemarkName) ? this.fromNickName : this.fromRemarkName;
     }
 
+    /**
+     * 是否是群聊消息
+     *
+     * @return 返回是否是群组消息
+     */
     public boolean isGroup() {
-        return fromUserName.contains("@@");
+        return fromUserName.contains("@@") || toUserName.contains("@@");
     }
 
 }

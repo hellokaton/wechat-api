@@ -3,6 +3,7 @@ package io.github.biezhi.wechat.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.vdurmont.emoji.EmojiParser;
 import io.github.biezhi.wechat.exception.WeChatException;
 
 import java.io.*;
@@ -28,13 +29,59 @@ public class WeChatUtils {
      * @param str
      * @return
      */
-    public static String match(String p, String str) {
-        Pattern pattern = Pattern.compile(p);
-        Matcher m       = pattern.matcher(str);
+    public static String match(String reg, String text) {
+        Pattern pattern = Pattern.compile(reg);
+        Matcher m       = pattern.matcher(text);
         if (m.find()) {
             return m.group(1);
         }
         return null;
+    }
+
+    public static Matcher matcher(String reg, String text) {
+        Pattern pattern = Pattern.compile(reg);
+        return pattern.matcher(text);
+    }
+
+    /**
+     * 格式化微信消息
+     * <p>
+     * 处理emoji表情、HTML转义符
+     *
+     * @param msg
+     * @return
+     */
+    public static String formatMsg(String msg) {
+        msg = msg.replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("<br/>", "\n");
+        return emojiParse(msg);
+    }
+
+    public static String emojiParse(String text) {
+        Matcher       m         = matcher("<span class=\"emoji emoji(.{1,10})\"></span>", text);
+        StringBuilder sb        = new StringBuilder();
+        int           lastStart = 0;
+        while (m.find()) {
+            String str = m.group(1);
+            if (str.length() == 6) {
+
+            } else if (str.length() == 10) {
+
+            } else {
+                str = "&#x" + str + ";";
+                String tmp = text.substring(lastStart, m.start());
+                sb.append(tmp + str);
+                lastStart = m.end();
+            }
+        }
+        if (lastStart < text.length()) {
+            sb.append(text.substring(lastStart));
+        }
+        if (sb.length() > 0) {
+            return EmojiParser.parseToUnicode(sb.toString());
+        }
+        return text;
     }
 
     public static String toPrettyJson(Object bean) {
