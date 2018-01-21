@@ -985,17 +985,16 @@ public class WeChatApiImpl implements WeChatApi {
 
         String fileSuffix = title.substring(title.lastIndexOf(".") + 1, title.length());
 
-        String msgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
+        String msgId = System.currentTimeMillis() + "";
 
         String content = String.format("<appmsg appid='wxeb7ec651dd0aefa9' sdkver=''>" +
-                        "<title>%s</title><des></des><action></action><type>6</type><content></content><url></url><lowurl></lowurl><appattach>" +
-                        "<totallen>%s</totallen>" +
-                        "<attachid>%s</attachid>" +
-                        "<fileext>%s</fileext></appattach><extinfo></extinfo></appmsg>",
+                        "<title>%s</title><des></des><action></action><type>6</type><content></content><url></url><lowurl></lowurl>" +
+                        "<appattach><totallen>%s</totallen><attachid>%s</attachid><fileext>%s</fileext></appattach><extinfo></extinfo></appmsg>",
+
                 title, mediaResponse.getStartPos(), mediaResponse.getMediaId(), fileSuffix);
 
-        Map<String, Object> msgMap = new HashMap<>(6);
-        msgMap.put("Type", 6);
+        Map<String, String> msgMap = new HashMap<>(6);
+        msgMap.put("Type", "6");
         msgMap.put("Content", content);
         msgMap.put("FromUserName", bot.session().getUserName());
         msgMap.put("ToUserName", toUser);
