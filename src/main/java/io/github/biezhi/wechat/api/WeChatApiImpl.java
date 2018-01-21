@@ -22,10 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStream;
 import java.net.SocketTimeoutException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -727,9 +728,8 @@ public class WeChatApiImpl implements WeChatApi {
             // 联系人初始化
             case CONTACT_INIT:
                 break;
-            // 邀请好友进群
-            case INVITE_FRIEND:
-                log.info("{}", content);
+            // 系统消息
+            case SYSTEM:
                 break;
             // 撤回消息
             case REVOKE_MSG:
@@ -847,11 +847,21 @@ public class WeChatApiImpl implements WeChatApi {
         if (!file.exists()) {
             throw new WeChatException("文件[" + filePath + "]不存在");
         }
-
-        long   size     = file.length();
-        String mimeType = WeChatUtils.getMimeType(filePath);
-        String url      = String.format("%s/webwxuploadmedia?f=json", bot.session().getFileUrl());
-        String mediaId  = System.currentTimeMillis() / 1000 + StringUtils.random(6);
+        log.info("开始上传文件: {}", filePath);
+        long   size      = file.length();
+        String mimeType  = WeChatUtils.getMimeType(filePath);
+        String mediatype = "doc";
+        if (mediatype.contains("image")) {
+            mediatype = "pic";
+        }
+        if (mediatype.contains("audio")) {
+            mediatype = "audio";
+        }
+        if (mediatype.contains("video")) {
+            mediatype = "video";
+        }
+        String url     = String.format("%s/webwxuploadmedia?f=json", bot.session().getFileUrl());
+        String mediaId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
 
         Map<String, Object> uploadMediaRequest = new HashMap<>(10);
         uploadMediaRequest.put("UploadType", 2);
@@ -877,7 +887,7 @@ public class WeChatApiImpl implements WeChatApi {
                 .add("type", mimeType)
                 .add("lastModifieDate", new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date()))
                 .add("size", String.valueOf(size))
-                .add("mediatype", mimeType)
+                .add("mediatype", mediatype)
                 .add("uploadmediarequest", WeChatUtils.toJson(uploadMediaRequest))
                 .add("webwx_data_ticket", dataTicket)
                 .add("pass_ticket", bot.session().getPassTicket())
@@ -887,6 +897,7 @@ public class WeChatApiImpl implements WeChatApi {
         if (!mediaResponse.success()) {
             log.warn("上传附件失败: {}", mediaResponse.getMsg());
         }
+        log.info("文件上传成功: {}", filePath);
         return mediaResponse;
     }
 
@@ -897,7 +908,7 @@ public class WeChatApiImpl implements WeChatApi {
      * @param filePath   文件路径
      */
     @Override
-    public void sendFile(String toUserName, String filePath) {
+    public void sendImg(String toUserName, String filePath) {
         String mediaId = this.uploadMedia(toUserName, filePath).getMediaId();
         if (StringUtils.isEmpty(mediaId)) {
             log.warn("Media为空");
@@ -921,6 +932,16 @@ public class WeChatApiImpl implements WeChatApi {
                 .add("BaseRequest", bot.session().getBaseRequest())
                 .add("Msg", msg)
         );
+    }
+
+    @Override
+    public void sendImgByName(String name, String filePath) {
+        Account account = this.getAccountByName(name);
+        if (null == account) {
+            log.warn("找不到用户: {}", name);
+            return;
+        }
+        this.sendFile(account.getUserName(), filePath);
     }
 
     /**
@@ -951,12 +972,50 @@ public class WeChatApiImpl implements WeChatApi {
     }
 
     @Override
+    public void sendFile(String toUser, String filePath) {
+        String        title         = new File(filePath).getName();
+        MediaResponse mediaResponse = this.uploadMedia(toUser, filePath);
+        if (null == mediaResponse) {
+            log.warn("上传附件到微信出错");
+            return;
+        }
+
+        String url = String.format("%s/webwxsendappmsg?fun=async&f=json&pass_ticket=%s",
+                bot.session().getUrl(), bot.session().getPassTicket());
+
+        String fileSuffix = title.substring(title.lastIndexOf(".") + 1, title.length());
+
+        String msgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
+
+        String content = String.format("<appmsg appid='wxeb7ec651dd0aefa9' sdkver=''>" +
+                        "<title>%s</title><des></des><action></action><type>6</type><content></content><url></url><lowurl></lowurl><appattach>" +
+                        "<totallen>%s</totallen>" +
+                        "<attachid>%s</attachid>" +
+                        "<fileext>%s</fileext></appattach><extinfo></extinfo></appmsg>",
+                title, mediaResponse.getStartPos(), mediaResponse.getMediaId(), fileSuffix);
+
+        Map<String, Object> msgMap = new HashMap<>(6);
+        msgMap.put("Type", 6);
+        msgMap.put("Content", content);
+        msgMap.put("FromUserName", bot.session().getUserName());
+        msgMap.put("ToUserName", toUser);
+        msgMap.put("LocalID", msgId);
+        msgMap.put("ClientMsgId", msgId);
+
+        client.send(new JsonRequest(url).post().jsonBody()
+                .add("BaseRequest", bot.session().getBaseRequest())
+                .add("Msg", msgMap)
+                .add("Scene", 0)
+        );
+    }
+
+    @Override
     public void sendFileByName(String name, String filePath) {
         Account account = this.getAccountByName(name);
         if (null == account) {
             log.warn("找不到用户: {}", name);
             return;
         }
-        this.sendFile(account.getUserName(), filePath);
+        this.sendFileByName(account.getUserName(), filePath);
     }
 }

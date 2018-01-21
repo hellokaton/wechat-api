@@ -39,11 +39,11 @@ public class MyBot extends WeChatBot {
      *
      * @param message
      */
-    @Bind(msgType = MsgType.TEXT, accountType = AccountType.TYPE_FRIEND)
+    @Bind(msgType = {MsgType.TEXT, MsgType.VIDEO, MsgType.IMAGE, MsgType.EMOTICONS}, accountType = AccountType.TYPE_FRIEND)
     public void friendMessage(WeChatMessage message) {
         log.info("接收到好友 [{}] 的消息: {}", message.getName(), message.getText());
         this.api().sendText(message.getFromUserName(), "自动回复: " + message.getText());
-//        this.api().sendFile(message.getFromUserName(), "/Users/biezhi/Desktop/3849072.jpeg");
+        this.api().sendFile(message.getFromUserName(), "/Users/biezhi/Desktop/Hot_Spots_blade2.0.4_alpha1.html");
     }
 
     /**

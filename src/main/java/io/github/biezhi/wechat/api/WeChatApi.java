@@ -72,6 +72,22 @@ public interface WeChatApi {
     void sendTextByName(String name, String msg);
 
     /**
+     * 发送图片
+     *
+     * @param toUser
+     * @param filePath
+     */
+    void sendImg(String toUser, String filePath);
+
+    /**
+     * 根据备注或者昵称发送图片
+     *
+     * @param name
+     * @param filePath
+     */
+    void sendImgByName(String name, String filePath);
+
+    /**
      * 发送文件
      *
      * @param toUser

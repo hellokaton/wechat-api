@@ -104,8 +104,8 @@ public class BotClient {
                 if (!"file.web.wechat.com".equals(okHttpRequest.url().host())) {
                     cookieStore.put("file.web.wechat.com", cookies);
                 }
-                if (!"file.wx2.qq.com".equals(okHttpRequest.url().host())) {
-                    cookieStore.put("file.wx2.qq.com", cookies);
+                if (!"web.wechat.com".equals(okHttpRequest.url().host())) {
+                    cookieStore.put("web.wechat.com", cookies);
                 }
             }
 
