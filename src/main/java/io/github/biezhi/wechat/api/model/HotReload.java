@@ -30,7 +30,7 @@ public class HotReload {
     /**
      * 重新登录
      */
-    public void relogin(WeChatBot bot) {
+    public void reLogin(WeChatBot bot) {
         BotClient.recoverCookie(this.cookieStore);
         bot.setSession(this.session);
     }

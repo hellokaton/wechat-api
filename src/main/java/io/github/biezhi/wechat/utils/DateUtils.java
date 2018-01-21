@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class DateUtils {
 
-    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 
     /**
      * 休眠，单位: 毫秒
@@ -37,7 +37,7 @@ public class DateUtils {
      * @return
      */
     public static String getDateString() {
-        return dateFormat.format(new Date());
+        return DATE_FORMAT.format(new Date());
     }
 
 }

@@ -23,7 +23,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class BotClient {
 
-    private static Map<String, List<Cookie>> cookieStore = new ConcurrentHashMap<String, List<Cookie>>();
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+    private static Map<String, List<Cookie>> cookieStore = new ConcurrentHashMap<>();
 
     private OkHttpClient client;
     private OkHttpClient clientWithTimeout;
@@ -44,7 +46,7 @@ public class BotClient {
         BotClient.cookieStore = cookieStore;
     }
 
-    public static Map<String, List<Cookie>> cookieStore(){
+    public static Map<String, List<Cookie>> cookieStore() {
         return cookieStore;
     }
 
@@ -213,8 +215,6 @@ public class BotClient {
         }
         return builder.build();
     }
-
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private RequestBody createRequestBody(ApiRequest<?, ?> request) {
         if (request.isMultipart()) {

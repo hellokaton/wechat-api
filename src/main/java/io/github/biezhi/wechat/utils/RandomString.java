@@ -14,8 +14,9 @@ public class RandomString {
      * Generate a random string.
      */
     public String nextString() {
-        for (int idx = 0; idx < buf.length; ++idx)
+        for (int idx = 0; idx < buf.length; ++idx) {
             buf[idx] = symbols[random.nextInt(symbols.length)];
+        }
         return new String(buf);
     }
 

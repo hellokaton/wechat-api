@@ -2,7 +2,6 @@ package io.github.biezhi.wechat.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import io.github.biezhi.wechat.api.model.HotReload;
 import io.github.biezhi.wechat.exception.WeChatException;
 
 import java.io.*;
@@ -57,9 +56,16 @@ public class WeChatUtils {
     }
 
     public static File saveFile(InputStream inputStream, String dirPath, String id) {
+        return saveFileByDay(inputStream, dirPath, id, false);
+    }
+
+    public static File saveFileByDay(InputStream inputStream, String dirPath, String id, boolean byDay) {
         FileOutputStream fileOutputStream = null;
         try {
-            File dir = new File(dirPath + "/" + DateUtils.getDateString());
+            if (byDay) {
+                dirPath = dirPath + "/" + DateUtils.getDateString();
+            }
+            File dir = new File(dirPath);
             if (!dir.isDirectory()) {
                 dir.mkdirs();
             }

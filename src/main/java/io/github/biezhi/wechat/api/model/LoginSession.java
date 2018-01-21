@@ -28,7 +28,7 @@ public class LoginSession implements Serializable {
     private String      wxSid;
     private String      wxUin;
     private String      passTicket;
-    private String      synckeyStr;
+    private String      syncKeyStr;
     private Integer     inviteStartCount;
     private BaseRequest baseRequest;
     private SyncKey     syncKey;
@@ -55,7 +55,7 @@ public class LoginSession implements Serializable {
             syncKeyBuf.append("|").append(item.getKey()).append("_").append(item.getVal());
         }
         if (syncKeyBuf.length() > 0) {
-            this.synckeyStr = syncKeyBuf.substring(1);
+            this.syncKeyStr = syncKeyBuf.substring(1);
         }
     }
 

@@ -4,12 +4,9 @@ import io.github.biezhi.wechat.api.StorageMessage;
 import io.github.biezhi.wechat.api.WeChatApi;
 import io.github.biezhi.wechat.api.WeChatApiImpl;
 import io.github.biezhi.wechat.api.client.BotClient;
-import io.github.biezhi.wechat.api.client.Callback;
 import io.github.biezhi.wechat.api.constant.Config;
 import io.github.biezhi.wechat.api.constant.Constant;
 import io.github.biezhi.wechat.api.model.LoginSession;
-import io.github.biezhi.wechat.api.request.ApiRequest;
-import io.github.biezhi.wechat.api.response.ApiResponse;
 import io.github.biezhi.wechat.utils.DateUtils;
 import io.github.biezhi.wechat.utils.OkHttpUtils;
 import lombok.Getter;
@@ -48,18 +45,6 @@ public class WeChatBot {
 
     public WeChatBot(Config config) {
         this(new Builder().config(config));
-    }
-
-    public <T extends ApiRequest, R extends ApiResponse> R execute(ApiRequest<T, R> request) {
-        return botClient.send(request);
-    }
-
-    public <T extends ApiRequest, R extends ApiResponse> R download(ApiRequest<T, R> request) {
-        return botClient.download(request);
-    }
-
-    public <T extends ApiRequest<T, R>, R extends ApiResponse> void execute(T request, Callback<T, R> callback) {
-        botClient.send(request, callback);
     }
 
     public Config config() {

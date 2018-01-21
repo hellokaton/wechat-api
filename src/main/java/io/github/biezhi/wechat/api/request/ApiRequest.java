@@ -36,7 +36,7 @@ public abstract class ApiRequest<T extends ApiRequest, R extends ApiResponse> {
     public ApiRequest(String url, Class<? extends R> responseClass) {
         this.url = url;
         this.responseClass = responseClass;
-        this.parameters = new HashMap<String, Object>();
+        this.parameters = new HashMap<>();
         this.headers = Headers.of("User-Agent", Constant.USER_AGENT, "Content-Type", this.contentType);
     }
 

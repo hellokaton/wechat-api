@@ -15,7 +15,7 @@ wechat-api 是微信个人号的Java版本API，让你更方便的操作个人�
 - 支持文本、图片、视频、撤回消息等
 - 注解绑定消息监听
 - 支持扩展存储消息
-- JDK6+
+- JDK7+
 
 ## 使用
 
@@ -25,7 +25,7 @@ wechat-api 是微信个人号的Java版本API，让你更方便的操作个人�
 <dependency>
     <groupId>io.github.biezhi</groupId>
     <artifactId>wechat-api</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
