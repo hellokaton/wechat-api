@@ -648,7 +648,10 @@ public class WeChatApiImpl implements WeChatApi {
             List<WeChatMessage> weChatMessages = new ArrayList<>(messages.size());
             log.info("你有新的消息");
             for (Message message : messages) {
-                weChatMessages.add(this.processMsg(message));
+                WeChatMessage weChatMessage = this.processMsg(message);
+                if (null != weChatMessage) {
+                    weChatMessages.add(weChatMessage);
+                }
             }
             return weChatMessages;
         }
@@ -660,6 +663,11 @@ public class WeChatApiImpl implements WeChatApi {
         String  name    = this.getUserRemarkName(message.getFromUserName());
         String  msgId   = message.getId();
         String  content = message.getContent();
+
+        // 不处理自己发的消息
+        if (message.getFromUserName().equals(bot.session().getUserName())) {
+            return null;
+        }
 
         if (message.isGroup()) {
             // 如果本地缓存的群名列表没有当前群，则添加进去，下次更新使用
