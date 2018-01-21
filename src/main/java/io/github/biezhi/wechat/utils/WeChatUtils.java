@@ -1,6 +1,7 @@
 package io.github.biezhi.wechat.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import io.github.biezhi.wechat.exception.WeChatException;
 
@@ -17,7 +18,8 @@ import java.util.regex.Pattern;
  */
 public class WeChatUtils {
 
-    private static final Gson gson = new Gson();
+    private static final Gson GSON        = new Gson();
+    private static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
 
     /**
      * 正则匹配
@@ -35,24 +37,28 @@ public class WeChatUtils {
         return null;
     }
 
+    public static String toPrettyJson(Object bean) {
+        return PRETTY_GSON.toJson(bean);
+    }
+
     public static String toJson(Object bean) {
-        return gson.toJson(bean);
+        return GSON.toJson(bean);
     }
 
     public static <T> T fromJson(String json, Class<T> from) {
-        return gson.fromJson(json, from);
+        return GSON.fromJson(json, from);
     }
 
     public static <T> T fromJson(String json, Type from) {
-        return gson.fromJson(json, from);
+        return GSON.fromJson(json, from);
     }
 
     public static <T> T fromJson(FileReader fileReader, Type from) {
-        return gson.fromJson(fileReader, from);
+        return GSON.fromJson(fileReader, from);
     }
 
     public static <T> T fromJson(String json, TypeToken<T> typeToken) {
-        return gson.fromJson(json, typeToken.getType());
+        return GSON.fromJson(json, typeToken.getType());
     }
 
     public static File saveFile(InputStream inputStream, String dirPath, String id) {
@@ -93,7 +99,7 @@ public class WeChatUtils {
     public static <T> void writeJson(String file, T data) {
         try {
             FileWriter writer = new FileWriter(file);
-            gson.toJson(data, writer);
+            GSON.toJson(data, writer);
             writer.close();
         } catch (Exception e) {
             e.printStackTrace();

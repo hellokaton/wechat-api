@@ -1,6 +1,5 @@
 package io.github.biezhi.wechat;
 
-import io.github.biezhi.wechat.api.StorageMessage;
 import io.github.biezhi.wechat.api.WeChatApi;
 import io.github.biezhi.wechat.api.WeChatApiImpl;
 import io.github.biezhi.wechat.api.client.BotClient;
@@ -26,16 +25,14 @@ import java.util.Scanner;
 @Slf4j
 public class WeChatBot {
 
-    private WeChatApi      api;
-    private BotClient      botClient;
-    private Config         config;
-    @Setter
-    private LoginSession   session;
-    private StorageMessage storageMessage;
-
+    private WeChatApi    api;
+    private BotClient    botClient;
+    private Config       config;
     @Getter
     @Setter
-    private boolean running;
+    private boolean      running;
+    @Setter
+    private LoginSession session;
 
     public WeChatBot(Builder builder) {
         this.config = builder.config;
@@ -81,10 +78,6 @@ public class WeChatBot {
             }
             DateUtils.sleep(100);
         }
-    }
-
-    public StorageMessage storageMessage() {
-        return storageMessage;
     }
 
     public boolean autoReply() {

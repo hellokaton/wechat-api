@@ -83,20 +83,25 @@ public class WeChatApiImpl implements WeChatApi {
 
     public WeChatApiImpl(WeChatBot bot) {
         this.bot = bot;
+        this.init();
+    }
+
+    private void init() {
         Method[] methods = bot.getClass().getMethods();
         for (Method method : methods) {
             Bind bind = method.getAnnotation(Bind.class);
-            if (null != bind) {
-                MsgType[] msgTypes = bind.msgType();
-                for (MsgType msgType : msgTypes) {
-                    List<Invoke> invokes = mapping.get(msgType);
-                    if (null == mapping.get(msgType)) {
-                        invokes = new ArrayList<>();
-                    }
-                    invokes.add(new Invoke(method, Arrays.asList(bind.accountType())));
-                    log.info("绑定函数 [{}] - [{}]", method.getName(), msgType);
-                    mapping.put(msgType, invokes);
+            if (null == bind) {
+                continue;
+            }
+            MsgType[] msgTypes = bind.msgType();
+            for (MsgType msgType : msgTypes) {
+                List<Invoke> invokes = mapping.get(msgType);
+                if (null == mapping.get(msgType)) {
+                    invokes = new ArrayList<>();
                 }
+                invokes.add(new Invoke(method, Arrays.asList(bind.accountType())));
+                log.info("绑定函数 [{}] - [{}]", method.getName(), msgType);
+                mapping.put(msgType, invokes);
             }
         }
     }
@@ -507,8 +512,7 @@ public class WeChatApiImpl implements WeChatApi {
                 .add("List", list)
         );
 
-        List<Account> groups = WeChatUtils.fromJson(WeChatUtils.toJson(jsonResponse.toJsonObject().getAsJsonArray("ContactList")), new TypeToken<List<Account>>() {});
-
+        this.groupList = WeChatUtils.fromJson(WeChatUtils.toJson(jsonResponse.toJsonObject().getAsJsonArray("ContactList")), new TypeToken<List<Account>>() {});
     }
 
     /**
@@ -731,9 +735,6 @@ public class WeChatApiImpl implements WeChatApi {
      */
     private void callBack(List<Invoke> invokes, WeChatMessage message) {
         if (null != invokes && invokes.size() > 0 && null != message) {
-            if (null != bot.storageMessage()) {
-                bot.storageMessage().save(message);
-            }
             for (Invoke invoke : invokes) {
                 invoke.call(bot, message);
             }

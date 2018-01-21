@@ -6,7 +6,7 @@
 
     <groupId>io.github.biezhi</groupId>
     <artifactId>wechat-api</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>wechat-api</name>
     <url>https://biezhi.github.io/wechat-api</url>
     <description>wechat-api</description>

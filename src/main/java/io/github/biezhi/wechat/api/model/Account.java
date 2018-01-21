@@ -22,20 +22,29 @@ public class Account implements Serializable {
     @SerializedName("Uin")
     private Long uin;
 
+    /**
+     * 用户唯一标识
+     */
     @SerializedName("UserName")
     private String userName;
 
+    /**
+     * 微信昵称
+     */
     @SerializedName("NickName")
     private String nickName;
 
+    /**
+     * 微信头像URL
+     */
     @SerializedName("HeadImgUrl")
     private String headImgUrl;
 
+    /**
+     * 备注名
+     */
     @SerializedName("RemarkName")
     private String remarkName;
-
-    @SerializedName("MemberList")
-    private List<Member> members;
 
     @SerializedName("PYInitial")
     private String pyInitial;
@@ -55,6 +64,9 @@ public class Account implements Serializable {
     @SerializedName("StarFriend")
     private Integer starFriend;
 
+    /**
+     * 性别
+     */
     @SerializedName("Sex")
     private Integer sex;
 
@@ -81,6 +93,12 @@ public class Account implements Serializable {
 
     ///////////////////群聊相关/////////////////////
 
+    /**
+     * 群成员
+     */
+    @SerializedName("MemberList")
+    private List<Member> members;
+
     @SerializedName("UniFriend")
     private Integer uniFriend;
 
@@ -105,6 +123,9 @@ public class Account implements Serializable {
     @SerializedName("IsOwner")
     private Integer isOwner;
 
+    /**
+     * 账户类型，群、好友、公众号、特殊账号
+     */
     @Expose
     private AccountType accountType;
 
