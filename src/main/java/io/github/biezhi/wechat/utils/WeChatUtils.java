@@ -2,11 +2,11 @@ package io.github.biezhi.wechat.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.github.biezhi.wechat.api.model.HotReload;
 import io.github.biezhi.wechat.exception.WeChatException;
 
 import java.io.*;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
+import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,18 +44,16 @@ public class WeChatUtils {
         return gson.fromJson(json, from);
     }
 
-    public static <T> T fromJson(String json, TypeToken<T> typeToken) {
-        return gson.fromJson(json, typeToken.getType());
+    public static <T> T fromJson(String json, Type from) {
+        return gson.fromJson(json, from);
     }
 
-    public static String escapeHTML(String s) {
-        String escapedHtml = s
-                .replaceAll("&", "&amp;")
-                .replaceAll("\"", "&quot;")
-                .replaceAll("\"", "&quot;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;");
-        return escapedHtml;
+    public static <T> T fromJson(FileReader fileReader, Type from) {
+        return gson.fromJson(fileReader, from);
+    }
+
+    public static <T> T fromJson(String json, TypeToken<T> typeToken) {
+        return gson.fromJson(json, typeToken.getType());
     }
 
     public static File saveFile(InputStream inputStream, String dirPath, String id) {
@@ -86,56 +84,14 @@ public class WeChatUtils {
         }
     }
 
-    public static String fileMd5(File file) {
-        InputStream       is  = null;
-        DigestInputStream dis = null;
+    public static <T> void writeJson(String file, T data) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            is = new FileInputStream(file);
-            dis = new DigestInputStream(is, md);
-            byte[] digest = md.digest();
-            return new String(digest, "UTF-8");
+            FileWriter writer = new FileWriter(file);
+            gson.toJson(data, writer);
+            writer.close();
         } catch (Exception e) {
-            return "";
-        } finally {
-            try {
-                if (null != dis) {
-                    dis.close();
-                }
-                if (null != is) {
-                    is.close();
-                }
-            } catch (Exception e) {
-
-            }
+            e.printStackTrace();
         }
     }
 
-    public static byte[] fileToBytes(File file) {
-        byte[]                b           = new byte[1024];
-        InputStream           inputStream = null;
-        ByteArrayOutputStream os          = null;
-        try {
-            inputStream = new FileInputStream(file);
-            os = new ByteArrayOutputStream();
-            int c;
-            while ((c = inputStream.read(b)) != -1) {
-                os.write(b, 0, c);
-            }
-            return os.toByteArray();
-        } catch (Exception e) {
-            return null;
-        } finally {
-            try {
-                if(null != os){
-                    os.close();
-                }
-                if(null != inputStream){
-                    inputStream.close();
-                }
-            } catch (Exception e){
-
-            }
-        }
-    }
 }

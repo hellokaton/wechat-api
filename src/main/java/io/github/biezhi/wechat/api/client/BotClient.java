@@ -1,10 +1,10 @@
 package io.github.biezhi.wechat.api.client;
 
-import com.google.gson.Gson;
 import io.github.biezhi.wechat.api.constant.Constant;
 import io.github.biezhi.wechat.api.request.ApiRequest;
 import io.github.biezhi.wechat.api.response.ApiResponse;
 import io.github.biezhi.wechat.api.response.FileResponse;
+import io.github.biezhi.wechat.utils.WeChatUtils;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
@@ -23,16 +23,29 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class BotClient {
 
-    private final OkHttpClient client;
-    private       OkHttpClient clientWithTimeout;
-    private final Gson         gson;
-    private static final ConcurrentHashMap<String, List<Cookie>> cookieStore = new ConcurrentHashMap<String, List<Cookie>>();
+    private static Map<String, List<Cookie>> cookieStore = new ConcurrentHashMap<String, List<Cookie>>();
 
-    public BotClient(OkHttpClient client, Gson gson) {
+    private OkHttpClient client;
+    private OkHttpClient clientWithTimeout;
+
+    public BotClient(OkHttpClient client) {
         this.client = client;
-        this.gson = gson;
         System.setProperty("https.protocols", "TLSv1");
         System.setProperty("jsse.enableSNIExtension", "false");
+    }
+
+    /**
+     * 重新恢复Cookie
+     *
+     * @param cookieStore
+     */
+    public static void recoverCookie(Map<String, List<Cookie>> cookieStore) {
+        BotClient.cookieStore.clear();
+        BotClient.cookieStore = cookieStore;
+    }
+
+    public static Map<String, List<Cookie>> cookieStore(){
+        return cookieStore;
     }
 
     public <T extends ApiRequest, R extends ApiResponse> void send(final T request, final Callback<T, R> callback) {
@@ -43,12 +56,12 @@ public class BotClient {
                 try {
                     String body = response.body().string();
                     if (log.isDebugEnabled()) {
-                        log.debug("Response: {}", body);
+                        log.debug("Response:\r\n{}", body);
                     }
                     if (ApiResponse.class.equals(request.getResponseType())) {
                         callback.onResponse(request, (R) new ApiResponse(body));
                     } else {
-                        R result = gson.fromJson(body, request.getResponseType());
+                        R result = WeChatUtils.fromJson(body, request.getResponseType());
                         result.setRawBody(body);
                         callback.onResponse(request, result);
                     }
@@ -73,7 +86,7 @@ public class BotClient {
             String       body          = response.body().string();
 
             if (log.isDebugEnabled()) {
-                log.debug("Response : {}", body);
+                log.debug("Response :\r\n{}", body);
             }
 
             // 获取头部的Cookie,注意：可以通过Cooke.parseAll()来获取
@@ -95,7 +108,7 @@ public class BotClient {
             if (ApiResponse.class.equals(request.getResponseType())) {
                 return (R) new ApiResponse(body);
             }
-            R result = gson.fromJson(body, request.getResponseType());
+            R result = WeChatUtils.fromJson(body, request.getResponseType());
             result.setRawBody(body);
             return result;
         } catch (IOException e) {
@@ -224,9 +237,9 @@ public class BotClient {
             return builder.build();
         } else {
             if (request.isJsonBody()) {
-                String json = gson.toJson(request.getParameters());
+                String json = WeChatUtils.toJson(request.getParameters());
                 if (log.isDebugEnabled()) {
-                    log.debug("Request Body: {}", json);
+                    log.debug("Request Body:\r\n{}", json);
                 }
                 return RequestBody.create(JSON, json);
             } else {

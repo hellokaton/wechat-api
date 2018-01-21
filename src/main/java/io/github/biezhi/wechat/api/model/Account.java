@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import io.github.biezhi.wechat.api.enums.AccountType;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 import static io.github.biezhi.wechat.api.constant.Constant.API_SPECIAL_USER;
@@ -16,7 +17,7 @@ import static io.github.biezhi.wechat.api.constant.Constant.API_SPECIAL_USER;
  * @date 2018/1/19
  */
 @Data
-public class Account {
+public class Account implements Serializable {
 
     @SerializedName("Uin")
     private Long uin;

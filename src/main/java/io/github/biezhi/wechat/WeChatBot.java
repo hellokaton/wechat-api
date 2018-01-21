@@ -1,6 +1,5 @@
 package io.github.biezhi.wechat;
 
-import com.google.gson.Gson;
 import io.github.biezhi.wechat.api.StorageMessage;
 import io.github.biezhi.wechat.api.WeChatApi;
 import io.github.biezhi.wechat.api.WeChatApiImpl;
@@ -33,6 +32,7 @@ public class WeChatBot {
     private WeChatApi      api;
     private BotClient      botClient;
     private Config         config;
+    @Setter
     private LoginSession   session;
     private StorageMessage storageMessage;
 
@@ -83,8 +83,8 @@ public class WeChatBot {
      */
     public void start() {
         this.api = new WeChatApiImpl(this);
-        log.info("wechat-botClient: {}", Constant.VERSION);
-        api.login();
+        log.info("wechat-bot: {}", Constant.VERSION);
+        api.login(config.autoLogin());
         while (true) {
             Scanner scanner = new Scanner(System.in);
             if (scanner.hasNext()) {
@@ -113,7 +113,7 @@ public class WeChatBot {
         private OkHttpClient okHttpClient;
 
         public Builder() {
-            botClient = new BotClient(client(null), gson());
+            botClient = new BotClient(client(null));
         }
 
         public Builder okHttpClient(OkHttpClient client) {
@@ -128,7 +128,7 @@ public class WeChatBot {
 
         public WeChatBot build() {
             if (okHttpClient != null) {
-                botClient = new BotClient(okHttpClient, gson());
+                botClient = new BotClient(okHttpClient);
             }
             return new WeChatBot(this);
         }
@@ -140,10 +140,6 @@ public class WeChatBot {
                 builder.addInterceptor(interceptor);
             }
             return builder.build();
-        }
-
-        private static Gson gson() {
-            return new Gson();
         }
 
     }

@@ -1,5 +1,6 @@
 package io.github.biezhi.wechat.api.model;
 
+import io.github.biezhi.wechat.api.enums.MsgType;
 import io.github.biezhi.wechat.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -59,12 +60,21 @@ public class WeChatMessage {
     private String fromRemarkName;
 
     /**
+     * 消息类型
+     */
+    private MsgType msgType;
+
+    /**
      * 获取发送人姓名如果有备注则优先显示备注，否则显示昵称
      *
      * @return
      */
     public String getName() {
         return StringUtils.isEmpty(fromRemarkName) ? this.fromNickName : this.fromRemarkName;
+    }
+
+    public boolean isGroup() {
+        return fromUserName.contains("@@");
     }
 
 }

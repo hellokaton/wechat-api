@@ -42,21 +42,4 @@ public interface Constant {
             Arrays.asList("webpush.wx2.qq.com", "webpush.wx8.qq.com",
                     "webpush.wx.qq.com", "webpush.web2.wechat.com", "webpush.web.wechat.com"));
 
-    /**
-     * 资源存储的文件夹，包括图片、视频、音频
-     */
-    String CONF_ASSETS_DIR         = "wechat.asstes-path";
-    String CONF_ASSETS_DIR_DEFAULT = "assets";
-
-    /**
-     * 是否输出二维码到终端
-     */
-    String CONF_PRINT_TERMINAL         = "wechat.print-terminal";
-    String CONF_PRINT_TERMINAL_DEFAULT = "false";
-
-    /**
-     * 自动回复消息，测试时用
-     */
-    String CONF_AUTO_REPLY         = "wechat.autoreply";
-    String CONF_AUTO_REPLY_DEFAULT = "false";
 }

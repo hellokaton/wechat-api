@@ -17,7 +17,7 @@ public interface WeChatApi {
      *
      * @return
      */
-    void login();
+    void login(boolean autoLogin);
 
     /**
      * 退出登录

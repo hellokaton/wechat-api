@@ -1,9 +1,11 @@
 package io.github.biezhi.wechat.api;
 
 import io.github.biezhi.wechat.WeChatBot;
+import io.github.biezhi.wechat.api.model.HotReload;
 import io.github.biezhi.wechat.api.model.SyncCheckRet;
 import io.github.biezhi.wechat.api.response.WebSyncResponse;
 import io.github.biezhi.wechat.utils.DateUtils;
+import io.github.biezhi.wechat.utils.WeChatUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -38,6 +40,11 @@ public class ChatLoop implements Runnable {
                 break;
             }
             if (syncCheckRet.getCode() == 0) {
+                if (bot.config().autoLogin()) {
+                    String file = bot.config().assetsDir() + "/login.json";
+                    WeChatUtils.writeJson(file, HotReload.build(bot.session()));
+                    log.info("写入本地登录JSON");
+                }
                 switch (syncCheckRet.getSelector()) {
                     case 2:
                         WebSyncResponse webSyncResponse = api.webSync();
@@ -56,7 +63,7 @@ public class ChatLoop implements Runnable {
                         break;
                 }
             }
-            if (System.currentTimeMillis() - lastCheckTs <= 20) {
+            if (System.currentTimeMillis() - lastCheckTs <= 50) {
                 DateUtils.sleep(System.currentTimeMillis() - lastCheckTs);
             }
         }

@@ -4,6 +4,8 @@ import io.github.biezhi.wechat.api.request.BaseRequest;
 import io.github.biezhi.wechat.utils.StringUtils;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 登录会话
  *
@@ -11,7 +13,7 @@ import lombok.Data;
  * @date 2018/1/18
  */
 @Data
-public class LoginSession {
+public class LoginSession implements Serializable {
 
     private Account account;
 

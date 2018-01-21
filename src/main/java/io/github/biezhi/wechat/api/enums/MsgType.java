@@ -10,12 +10,14 @@ package io.github.biezhi.wechat.api.enums;
  * VIDEO: 视频消息
  * PERSON_CARD: 个人名片
  * REVOKE: 撤回消息
+ * INVITE_FRIEND: 邀请好友
+ * UNKNOWN: 未知类型
  *
  * @author biezhi
  * @date 2018/1/19
  */
 public enum MsgType {
 
-    ALL, TEXT, IMAGE, VOICE, VIDEO, PERSON_CARD, REVOKE
+    ALL, TEXT, IMAGE, VOICE, VIDEO, PERSON_CARD, INVITE_FRIEND, REVOKE, UNKNOWN
 
 }

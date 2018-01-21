@@ -1,6 +1,7 @@
 package io.github.biezhi.wechat.api.model;
 
 import com.google.gson.annotations.SerializedName;
+import io.github.biezhi.wechat.api.enums.MsgType;
 import lombok.Data;
 
 /**
@@ -22,7 +23,7 @@ public class Message {
     private String toUserName;
 
     @SerializedName("MsgType")
-    private Integer msgType;
+    private Integer type;
 
     @SerializedName("Content")
     private String content;
@@ -100,4 +101,28 @@ public class Message {
         return fromUserName.contains("@@");
     }
 
+    public MsgType msgType() {
+        switch (this.type) {
+            case 1:
+                return MsgType.TEXT;
+            case 3:
+                return MsgType.IMAGE;
+            case 34:
+                return MsgType.VOICE;
+            case 42:
+                return MsgType.PERSON_CARD;
+            case 43:
+                return MsgType.VIDEO;
+            case 47:
+                return MsgType.IMAGE;
+            case 62:
+                return MsgType.VIDEO;
+            case 10000:
+                return MsgType.INVITE_FRIEND;
+            case 10002:
+                return MsgType.REVOKE;
+            default:
+                return MsgType.UNKNOWN;
+        }
+    }
 }
