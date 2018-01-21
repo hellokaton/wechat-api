@@ -4,12 +4,14 @@ import io.github.biezhi.wechat.api.constant.Constant;
 import io.github.biezhi.wechat.api.request.ApiRequest;
 import io.github.biezhi.wechat.api.response.ApiResponse;
 import io.github.biezhi.wechat.api.response.FileResponse;
+import io.github.biezhi.wechat.exception.WeChatException;
 import io.github.biezhi.wechat.utils.WeChatUtils;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -114,7 +116,7 @@ public class BotClient {
             result.setRawBody(body);
             return result;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new WeChatException(e);
         }
     }
 

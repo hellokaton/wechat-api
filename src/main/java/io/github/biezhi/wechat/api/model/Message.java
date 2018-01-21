@@ -114,18 +114,24 @@ public class Message {
                 return MsgType.IMAGE;
             case 34:
                 return MsgType.VOICE;
+            case 37:
+                return MsgType.ADD_FRIEND;
             case 42:
                 return MsgType.PERSON_CARD;
             case 43:
                 return MsgType.VIDEO;
             case 47:
-                return MsgType.IMAGE;
+                return MsgType.EMOTICONS;
+            case 49:
+                return MsgType.SHARE;
+            case 51:
+                return MsgType.CONTACT_INIT;
             case 62:
                 return MsgType.VIDEO;
             case 10000:
                 return MsgType.INVITE_FRIEND;
             case 10002:
-                return MsgType.REVOKE;
+                return MsgType.REVOKE_MSG;
             default:
                 return MsgType.UNKNOWN;
         }

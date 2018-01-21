@@ -5,6 +5,7 @@ import io.github.biezhi.wechat.api.enums.AccountType;
 import io.github.biezhi.wechat.exception.WeChatException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  * @date 2018/1/20
  */
 @Data
+@Slf4j
 @AllArgsConstructor
 public class Invoke {
 
@@ -30,13 +32,17 @@ public class Invoke {
      * @param <T>
      */
     public <T extends WeChatBot> void call(T bot, WeChatMessage message) {
-        AccountType accountType = bot.api().getAccountById(message.getFromUserName()).getAccountType();
-        if (accountTypes.contains(accountType)) {
-            try {
+        try {
+            Account account = bot.api().getAccountById(message.getFromUserName());
+            if (null != account) {
+                if (accountTypes.contains(account.getAccountType())) {
+                    method.invoke(bot, message);
+                }
+            } else {
                 method.invoke(bot, message);
-            } catch (Exception e) {
-                throw new WeChatException(e);
             }
+        } catch (Exception e) {
+            log.warn("回调给客户端出错: {}\r\n", message, e);
         }
     }
 

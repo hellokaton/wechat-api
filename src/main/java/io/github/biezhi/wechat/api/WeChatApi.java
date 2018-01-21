@@ -1,8 +1,9 @@
 package io.github.biezhi.wechat.api;
 
-import io.github.biezhi.wechat.api.model.Account;
-import io.github.biezhi.wechat.api.model.SyncCheckRet;
+import io.github.biezhi.wechat.api.model.*;
 import io.github.biezhi.wechat.api.response.WebSyncResponse;
+
+import java.util.List;
 
 /**
  * 微信API
@@ -46,11 +47,12 @@ public interface WeChatApi {
     WebSyncResponse webSync();
 
     /**
-     * 处理消息
+     * 处理消息，转换为 WeChatMessage 类型
      *
-     * @param webSyncResponse
+     * @param messages
+     * @return
      */
-    void handleMsg(WebSyncResponse webSyncResponse);
+    List<WeChatMessage> handleMsg(List<Message> messages);
 
     /**
      * 发送文本消息
@@ -75,5 +77,12 @@ public interface WeChatApi {
      * @return
      */
     Account getAccountById(String id);
+
+    /**
+     * 添加好友验证
+     *
+     * @param recommend 好友信息
+     */
+    void verify(Recommend recommend);
 
 }

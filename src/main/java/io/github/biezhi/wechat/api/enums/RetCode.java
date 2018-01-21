@@ -1,50 +1,40 @@
 package io.github.biezhi.wechat.api.enums;
 
+import lombok.Getter;
+
 /**
- * 返回码枚举
+ * 心跳检查状态码
  *
  * @author biezhi
- * @date 2018/1/19
+ * @date 2018/1/21
  */
+@Getter
 public enum RetCode {
 
-    SUCCESS(0, "请求成功"),
-    INVALID_OPTION(-1006, "无效操作"),
-    INVALID_PARAM(-1005, "参数错误"),
-    SERVER_ERROR(-1004, "服务器返回异常值"),
-    SERVER_REJECT_CONNECT(-1003, "服务器拒绝连接"),
-    FILE_POSITION_ERROR(-1002, "文件位置错误"),
-    NOT_FOUND_MEMBER(-1001, "无法找到对应的成员"),
-    NOT_BASE_RESPONSE(-1000, "返回值不带BaseResponse");
+    NORMAL(0, "正常"),
+    LOGIN_OTHERWISE(1101, "其它地方登陆"),
+    MOBILE_LOGIN_OUT(1102, "移动端退出"),
+    UNKNOWN(9999, "未知");
 
     private int    code;
-    private String msg;
+    private String type;
 
-    RetCode(int code, String msg) {
+    RetCode(int code, String type) {
         this.code = code;
-        this.msg = msg;
+        this.type = type;
     }
 
     public static RetCode parse(int code) {
         switch (code) {
             case 0:
-                return RetCode.SUCCESS;
-            case -1006:
-                return RetCode.INVALID_OPTION;
-            case -1005:
-                return RetCode.INVALID_PARAM;
-            case -1004:
-                return RetCode.SERVER_ERROR;
-            case -1003:
-                return RetCode.SERVER_REJECT_CONNECT;
-            case -1002:
-                return RetCode.FILE_POSITION_ERROR;
-            case -1001:
-                return RetCode.NOT_FOUND_MEMBER;
-            case -1000:
-                return RetCode.NOT_BASE_RESPONSE;
+                return NORMAL;
+            case 1102:
+                return MOBILE_LOGIN_OUT;
+            case 1101:
+                return LOGIN_OTHERWISE;
             default:
-                return RetCode.INVALID_OPTION;
+                return UNKNOWN;
         }
     }
+
 }

@@ -1,5 +1,6 @@
 package io.github.biezhi.wechat.api.model;
 
+import io.github.biezhi.wechat.api.enums.RetCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,7 +14,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class SyncCheckRet {
 
-    private int code;
-    private int selector;
+    private RetCode retCode;
+    private int     selector;
 
 }

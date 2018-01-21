@@ -8,9 +8,9 @@
         </layout>
     </appender>
 
-    <logger name="io.github.biezhi.wechat" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
+    <!--<logger name="io.github.biezhi.wechat" level="debug" additivity="false">-->
+        <!--<appender-ref ref="STDOUT" />-->
+    <!--</logger>-->
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
