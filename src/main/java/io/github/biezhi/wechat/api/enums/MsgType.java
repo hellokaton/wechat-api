@@ -13,7 +13,7 @@ package io.github.biezhi.wechat.api.enums;
  * EMOTICONS: 动画表情, type=47
  * REVOKE_MSG: 撤回消息, type=10002
  * SYSTEM: 系统消息, type=10000
- * SHARE: 分享, type=49
+ * SHARE: 分享, type=49。AppMsgType=33 微信小程序 | AppMsgType=5 链接
  * CONTACT_INIT: 联系人初始化, type=51
  * UNKNOWN: 未知类型
  *

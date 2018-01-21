@@ -78,7 +78,7 @@ public class WeChatMessage {
      * 消息类型
      */
     private MsgType msgType;
-
+    
     /**
      * 获取发送人姓名如果有备注则优先显示备注，否则显示昵称
      *

@@ -5,10 +5,8 @@ import io.github.biezhi.wechat.api.constant.Config;
 import io.github.biezhi.wechat.api.enums.AccountType;
 import io.github.biezhi.wechat.api.enums.MsgType;
 import io.github.biezhi.wechat.api.model.WeChatMessage;
-import io.github.biezhi.wechat.utils.DateUtils;
+import io.github.biezhi.wechat.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Date;
 
 /**
  * 我的小机器人
@@ -31,7 +29,7 @@ public class MyBot extends WeChatBot {
     @Bind(msgType = MsgType.ALL, accountType = AccountType.TYPE_GROUP)
     public void groupMessage(WeChatMessage message) {
         log.info("接收到群 [{}] 的消息: {}", message.getName(), message.getText());
-//        this.api().sendText(message.getFromUserName(), "发送给群: " + new Date().toLocaleString());
+        this.api().sendText(message.getFromUserName(), "自动回复: " + message.getText());
     }
 
     /**
@@ -41,9 +39,11 @@ public class MyBot extends WeChatBot {
      */
     @Bind(msgType = {MsgType.TEXT, MsgType.VIDEO, MsgType.IMAGE, MsgType.EMOTICONS}, accountType = AccountType.TYPE_FRIEND)
     public void friendMessage(WeChatMessage message) {
-        log.info("接收到好友 [{}] 的消息: {}", message.getName(), message.getText());
-        this.api().sendText(message.getFromUserName(), "自动回复: " + message.getText());
-        this.api().sendFile(message.getFromUserName(), "/Users/biezhi/Desktop/Hot_Spots_blade2.0.4_alpha1.html");
+        if (StringUtils.isNotEmpty(message.getName())) {
+            log.info("接收到好友 [{}] 的消息: {}", message.getName(), message.getText());
+            this.api().sendText(message.getFromUserName(), "自动回复: " + message.getText());
+//            this.api().sendFile("战斗型美少女", "/Users/biezhi/Desktop/Hot_Spots_blade2.0.4_alpha1.html");
+        }
     }
 
     /**
