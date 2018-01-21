@@ -28,7 +28,7 @@ public class Member {
     private String remarkName;
 
     @SerializedName("AttrStatus")
-    private Integer attrStatus;
+    private Long attrStatus;
 
     @SerializedName("MemberStatus")
     private Integer memberStatus;

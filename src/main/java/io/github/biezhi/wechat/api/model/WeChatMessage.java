@@ -25,6 +25,11 @@ public class WeChatMessage {
     private Message raw;
 
     /**
+     * mssage_id
+     */
+    private String id;
+
+    /**
      * 文本内容
      */
     private String text;

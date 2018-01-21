@@ -680,6 +680,7 @@ public class WeChatApiImpl implements WeChatApi {
 
         WeChatMessage.WeChatMessageBuilder weChatMessageBuilder = WeChatMessage.builder()
                 .raw(message)
+                .id(message.getId())
                 .fromUserName(message.getFromUserName())
                 .toUserName(message.getToUserName())
                 .msgType(message.msgType())
