@@ -63,6 +63,14 @@ public interface WeChatApi {
     void sendText(String toUser, String msg);
 
     /**
+     * 根据备注或者昵称发送消息
+     *
+     * @param name
+     * @param msg
+     */
+    void sendTextByName(String name, String msg);
+
+    /**
      * 发送文件
      *
      * @param toUser
@@ -71,12 +79,28 @@ public interface WeChatApi {
     void sendFile(String toUser, String filePath);
 
     /**
+     * 根据备注或者昵称发送消息
+     *
+     * @param name
+     * @param filePath
+     */
+    void sendFileByName(String name, String filePath);
+
+    /**
      * 根据UserName获取账号信息
      *
      * @param id
      * @return
      */
     Account getAccountById(String id);
+
+    /**
+     * 根据备注或昵称查找账户
+     *
+     * @param name
+     * @return
+     */
+    Account getAccountByName(String name);
 
     /**
      * 添加好友验证

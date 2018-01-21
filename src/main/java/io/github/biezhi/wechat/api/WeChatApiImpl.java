@@ -526,6 +526,25 @@ public class WeChatApiImpl implements WeChatApi {
         return accountMap.get(id);
     }
 
+    /**
+     * 根据备注或昵称查找账户
+     *
+     * @param name
+     * @return
+     */
+    @Override
+    public Account getAccountByName(String name) {
+        for (Account account : accountMap.values()) {
+            if (name.equals(account.getRemarkName())) {
+                return account;
+            }
+            if (name.equals(account.getNickName())) {
+                return account;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void verify(Recommend recommend) {
         String url = String.format("%s/webwxverifyuser?r=%s&lang=zh_CN&pass_ticket=%s",
@@ -933,4 +952,23 @@ public class WeChatApiImpl implements WeChatApi {
         );
     }
 
+    @Override
+    public void sendTextByName(String name, String msg) {
+        Account account = this.getAccountByName(name);
+        if (null == account) {
+            log.warn("找不到用户: {}", name);
+            return;
+        }
+        this.sendText(account.getUserName(), msg);
+    }
+
+    @Override
+    public void sendFileByName(String name, String filePath) {
+        Account account = this.getAccountByName(name);
+        if (null == account) {
+            log.warn("找不到用户: {}", name);
+            return;
+        }
+        this.sendFile(account.getUserName(), filePath);
+    }
 }

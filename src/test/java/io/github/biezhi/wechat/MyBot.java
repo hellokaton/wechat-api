@@ -31,7 +31,7 @@ public class MyBot extends WeChatBot {
     @Bind(msgType = MsgType.ALL, accountType = AccountType.TYPE_GROUP)
     public void groupMessage(WeChatMessage message) {
         log.info("接收到群 [{}] 的消息: {}", message.getName(), message.getText());
-        this.api().sendText(message.getFromUserName(), "发送给群: " + new Date().toLocaleString());
+//        this.api().sendText(message.getFromUserName(), "发送给群: " + new Date().toLocaleString());
     }
 
     /**

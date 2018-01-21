@@ -7,7 +7,10 @@ import io.github.biezhi.wechat.api.client.BotClient;
 import io.github.biezhi.wechat.api.constant.Config;
 import io.github.biezhi.wechat.api.constant.Constant;
 import io.github.biezhi.wechat.api.enums.MsgType;
-import io.github.biezhi.wechat.api.model.*;
+import io.github.biezhi.wechat.api.model.HotReload;
+import io.github.biezhi.wechat.api.model.Invoke;
+import io.github.biezhi.wechat.api.model.LoginSession;
+import io.github.biezhi.wechat.api.model.WeChatMessage;
 import io.github.biezhi.wechat.utils.DateUtils;
 import io.github.biezhi.wechat.utils.OkHttpUtils;
 import io.github.biezhi.wechat.utils.WeChatUtils;
@@ -145,7 +148,7 @@ public class WeChatBot {
                 if (null == mapping.get(msgType)) {
                     invokes = new ArrayList<>();
                 }
-                invokes.add(new Invoke(method, Arrays.asList(bind.accountType())));
+                invokes.add(new Invoke(method, Arrays.asList(bind.accountType()), Arrays.asList(msgTypes)));
                 log.info("绑定消息监听函数 [{}] - [{}]", method.getName(), msgType);
                 mapping.put(msgType, invokes);
             }
@@ -176,6 +179,10 @@ public class WeChatBot {
         msgHandle.setDaemon(true);
         msgHandle.start();
 
+        this.other();
+    }
+
+    protected void other() {
         while (true) {
             Scanner scanner = new Scanner(System.in);
             if (scanner.hasNext()) {

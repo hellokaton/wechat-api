@@ -2,6 +2,7 @@ package io.github.biezhi.wechat.api.model;
 
 import io.github.biezhi.wechat.WeChatBot;
 import io.github.biezhi.wechat.api.enums.AccountType;
+import io.github.biezhi.wechat.api.enums.MsgType;
 import io.github.biezhi.wechat.exception.WeChatException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class Invoke {
 
     private Method            method;
     private List<AccountType> accountTypes;
+    private List<MsgType>     msgTypes;
 
     /**
      * 回调给客户端
@@ -34,12 +36,16 @@ public class Invoke {
     public <T extends WeChatBot> void call(T bot, WeChatMessage message) {
         try {
             Account account = bot.api().getAccountById(message.getFromUserName());
-            if (null != account) {
+            if (null == account) {
+                method.invoke(bot, message);
+                return;
+            }
+            if (msgTypes.contains(MsgType.ADD_FRIEND) && message.getMsgType() == MsgType.ADD_FRIEND) {
+                method.invoke(bot, message);
+            } else {
                 if (accountTypes.contains(account.getAccountType())) {
                     method.invoke(bot, message);
                 }
-            } else {
-                method.invoke(bot, message);
             }
         } catch (Exception e) {
             log.warn("回调给客户端出错: {}\r\n", message, e);

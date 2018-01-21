@@ -10,7 +10,7 @@ import java.util.*;
  */
 public interface Constant {
 
-    String VERSION        = "1.0.2";
+    String VERSION        = "1.0.3";
     String BASE_URL       = "https://login.weixin.qq.com";
     String GET            = "GET";
     String GROUP_BR       = ":<br/>";
