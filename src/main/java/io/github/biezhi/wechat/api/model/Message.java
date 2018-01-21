@@ -129,7 +129,7 @@ public class Message {
             case 62:
                 return MsgType.VIDEO;
             case 10000:
-                return MsgType.INVITE_FRIEND;
+                return MsgType.SYSTEM;
             case 10002:
                 return MsgType.REVOKE_MSG;
             default:

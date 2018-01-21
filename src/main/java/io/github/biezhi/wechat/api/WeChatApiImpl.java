@@ -722,7 +722,8 @@ public class WeChatApiImpl implements WeChatApi {
                 return weChatMessageBuilder.imagePath(imgUrl).build();
             // 分享
             case SHARE:
-                break;
+                String shareUrl = this.searchContent("url", content);
+                return weChatMessageBuilder.text(shareUrl).build();
             // 联系人初始化
             case CONTACT_INIT:
                 break;
