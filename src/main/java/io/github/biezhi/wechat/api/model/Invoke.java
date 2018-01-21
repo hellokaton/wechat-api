@@ -24,7 +24,7 @@ public class Invoke {
 
     private Method            method;
     private List<AccountType> accountTypes;
-    private List<MsgType>     msgTypes;
+    private MsgType           msgType;
 
     /**
      * 回调给客户端
@@ -40,11 +40,13 @@ public class Invoke {
                 method.invoke(bot, message);
                 return;
             }
-            if (msgTypes.contains(MsgType.ADD_FRIEND) && message.getMsgType() == MsgType.ADD_FRIEND) {
-                method.invoke(bot, message);
-            } else {
-                if (accountTypes.contains(account.getAccountType())) {
+            if (msgType == MsgType.ALL || msgType == message.getMsgType()) {
+                if (message.getMsgType() == MsgType.ADD_FRIEND) {
                     method.invoke(bot, message);
+                } else {
+                    if (accountTypes.contains(account.getAccountType())) {
+                        method.invoke(bot, message);
+                    }
                 }
             }
         } catch (Exception e) {

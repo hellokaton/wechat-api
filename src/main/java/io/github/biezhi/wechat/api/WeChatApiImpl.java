@@ -93,6 +93,9 @@ public class WeChatApiImpl implements WeChatApi {
         this.client = bot.client();
     }
 
+    /**
+     * 自动登录
+     */
     private void autoLogin() {
         String file = bot.config().assetsDir() + "/login.json";
         try {
@@ -708,14 +711,7 @@ public class WeChatApiImpl implements WeChatApi {
                 return weChatMessageBuilder.text(message.getRecommend().getContent()).build();
             // 名片
             case PERSON_CARD:
-                log.info("{} 发送了一张名片: ", name);
-                log.info("=========================");
-                log.info("= 昵称: {}", message.getRecommend().getNickName());
-                log.info("= 微信号: {}", message.getRecommend().getAlias());
-                log.info("= 地区: {}-{}", message.getRecommend().getProvince(), message.getRecommend().getCity());
-                log.info("= 性别: {}", message.getRecommend().getSex());
-                log.info("=========================");
-                return weChatMessageBuilder.build();
+                return weChatMessageBuilder.recommend(message.getRecommend()).build();
             // 视频
             case VIDEO:
                 String videoPath = this.downloadVideo(msgId);
@@ -723,10 +719,7 @@ public class WeChatApiImpl implements WeChatApi {
             // 动画表情
             case EMOTICONS:
                 String imgUrl = this.searchContent("cdnurl", content);
-                log.info("{} 发了一个动画表情，点击下面链接查看\r\n{}", name, imgUrl);
-                WeChatMessage weChatMessage = weChatMessageBuilder.imagePath(imgUrl).build();
-                weChatMessage.setText("发了一个动画表情，点击下面链接查看\r\n" + imgUrl);
-                return weChatMessage;
+                return weChatMessageBuilder.imagePath(imgUrl).build();
             // 分享
             case SHARE:
                 break;
@@ -847,6 +840,7 @@ public class WeChatApiImpl implements WeChatApi {
      * @param filePath 文件路径
      * @return MediaResponse
      */
+    @Override
     public MediaResponse uploadMedia(String toUser, String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {
@@ -854,16 +848,9 @@ public class WeChatApiImpl implements WeChatApi {
         }
 
         long   size     = file.length();
-        String mimeType = "image/jpeg";
-
-        try {
-            mimeType = Files.probeContentType(Paths.get(file.toURI()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String url     = String.format("%s/webwxuploadmedia?f=json", bot.session().getFileUrl());
-        String mediaId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
+        String mimeType = WeChatUtils.getMimeType(filePath);
+        String url      = String.format("%s/webwxuploadmedia?f=json", bot.session().getFileUrl());
+        String mediaId  = System.currentTimeMillis() / 1000 + StringUtils.random(6);
 
         Map<String, Object> uploadMediaRequest = new HashMap<>(10);
         uploadMediaRequest.put("UploadType", 2);
@@ -893,7 +880,7 @@ public class WeChatApiImpl implements WeChatApi {
                 .add("uploadmediarequest", WeChatUtils.toJson(uploadMediaRequest))
                 .add("webwx_data_ticket", dataTicket)
                 .add("pass_ticket", bot.session().getPassTicket())
-                .add("filename", RequestBody.create(MediaType.parse("image/jpeg"), file)));
+                .add("filename", RequestBody.create(MediaType.parse(mimeType), file)));
 
         MediaResponse mediaResponse = response.parse(MediaResponse.class);
         if (!mediaResponse.success()) {

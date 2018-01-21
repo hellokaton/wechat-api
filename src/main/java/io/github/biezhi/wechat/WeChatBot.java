@@ -148,7 +148,7 @@ public class WeChatBot {
                 if (null == mapping.get(msgType)) {
                     invokes = new ArrayList<>();
                 }
-                invokes.add(new Invoke(method, Arrays.asList(bind.accountType()), Arrays.asList(msgTypes)));
+                invokes.add(new Invoke(method, Arrays.asList(bind.accountType()), msgType));
                 log.info("绑定消息监听函数 [{}] - [{}]", method.getName(), msgType);
                 mapping.put(msgType, invokes);
             }
@@ -171,6 +171,8 @@ public class WeChatBot {
                         WeChatMessage weChatMessage = nextMessage();
                         callBack(mapping.get(MsgType.ALL), weChatMessage);
                         callBack(mapping.get(weChatMessage.getMsgType()), weChatMessage);
+                    } else {
+                        DateUtils.sleep(50);
                     }
                 }
             }
@@ -182,6 +184,9 @@ public class WeChatBot {
         this.other();
     }
 
+    /**
+     * 启动后主线程干的事，子类可重写
+     */
     protected void other() {
         while (true) {
             Scanner scanner = new Scanner(System.in);

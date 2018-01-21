@@ -8,6 +8,8 @@ import io.github.biezhi.wechat.exception.WeChatException;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.net.FileNameMap;
+import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,6 +58,18 @@ public class WeChatUtils {
                 .replace("&gt;", ">")
                 .replace("<br/>", "\n");
         return emojiParse(msg);
+    }
+
+    /**
+     * 获取文件 MimeType
+     *
+     * @param fileUrl
+     * @return
+     */
+    public static String getMimeType(String fileUrl) {
+        FileNameMap fileNameMap = URLConnection.getFileNameMap();
+        String      type        = fileNameMap.getContentTypeFor(fileUrl);
+        return type;
     }
 
     public static String emojiParse(String text) {

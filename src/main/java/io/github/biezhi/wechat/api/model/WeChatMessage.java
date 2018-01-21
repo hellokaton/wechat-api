@@ -65,6 +65,11 @@ public class WeChatMessage {
     private String toUserName;
 
     /**
+     * 个人名片
+     */
+    private Recommend recommend;
+
+    /**
      * 消息类型
      */
     private MsgType msgType;

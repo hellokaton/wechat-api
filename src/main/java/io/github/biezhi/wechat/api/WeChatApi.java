@@ -1,6 +1,7 @@
 package io.github.biezhi.wechat.api;
 
 import io.github.biezhi.wechat.api.model.*;
+import io.github.biezhi.wechat.api.response.MediaResponse;
 import io.github.biezhi.wechat.api.response.WebSyncResponse;
 
 import java.util.List;
@@ -85,6 +86,15 @@ public interface WeChatApi {
      * @param filePath
      */
     void sendFileByName(String name, String filePath);
+
+    /**
+     * 上传附件
+     *
+     * @param toUser
+     * @param filePath
+     * @return
+     */
+    MediaResponse uploadMedia(String toUser, String filePath);
 
     /**
      * 根据UserName获取账号信息
