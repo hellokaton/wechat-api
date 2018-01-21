@@ -8,7 +8,8 @@
     <artifactId>wechat-api</artifactId>
     <version>1.0.3</version>
     <name>wechat-api</name>
-    <url>https://biezhi.github.io/wechat-api</url>
+
+    <url>https://github.com/biezhi/wechat-api</url>
     <description>wechat-api</description>
 
     <licenses>
@@ -68,7 +69,7 @@
         <dependency>
             <groupId>com.vdurmont</groupId>
             <artifactId>emoji-java</artifactId>
-            <version>3.2.0</version>
+            <version>4.0.0</version>
         </dependency>
 
         <dependency>
