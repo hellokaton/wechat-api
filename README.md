@@ -29,7 +29,7 @@ wechat-api 是微信个人号的Java版本API，让你更方便的操作个人�
 <dependency>
     <groupId>io.github.biezhi</groupId>
     <artifactId>wechat-api</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
@@ -83,6 +83,98 @@ public class MyBot extends WeChatBot {
     
 }
 ```
+
+## Bot API
+
+```java
+/**
+ * 发送文本消息
+ *
+ * @param toUser
+ * @param msg
+ */
+void sendText(String toUser, String msg);
+
+/**
+ * 根据备注或者昵称发送消息
+ *
+ * @param name
+ * @param msg
+ */
+void sendTextByName(String name, String msg);
+
+/**
+ * 发送图片
+ *
+ * @param toUser
+ * @param filePath
+ */
+void sendImg(String toUser, String filePath);
+
+/**
+ * 根据备注或者昵称发送图片
+ *
+ * @param name
+ * @param filePath
+ */
+void sendImgByName(String name, String filePath);
+
+/**
+ * 发送文件
+ *
+ * @param toUser
+ * @param filePath
+ */
+void sendFile(String toUser, String filePath);
+
+/**
+ * 根据备注或者昵称发送消息
+ *
+ * @param name
+ * @param filePath
+ */
+void sendFileByName(String name, String filePath);
+
+/**
+ * 上传附件
+ *
+ * @param toUser
+ * @param filePath
+ * @return
+ */
+MediaResponse uploadMedia(String toUser, String filePath);
+
+/**
+ * 根据UserName获取账号信息
+ *
+ * @param id
+ * @return
+ */
+Account getAccountById(String id);
+
+/**
+ * 根据备注或昵称查找账户
+ *
+ * @param name
+ * @return
+ */
+Account getAccountByName(String name);
+
+/**
+ * 添加好友验证
+ *
+ * @param recommend 好友信息
+ */
+void verify(Recommend recommend);
+```
+
+## TODO
+
+1. 接收位置
+2. 撤回消息查看
+3. 创建群聊
+4. 发送文件消息
+5. 消息撤回
 
 ## 开源协议
 
