@@ -810,13 +810,17 @@ public class WeChatApiImpl implements WeChatApi {
 
         switch (message.msgType()) {
             case TEXT:
+                // 被艾特的消息
+                if (content.startsWith("@" + bot.session().getNickName())) {
+                    content = content.substring(content.indexOf(" "));
+                }
                 // 位置消息
                 if (content.contains(LOCATION_IDENTIFY)) {
                     int pos = content.indexOf(":");
                     content = content.substring(0, pos);
                     weChatMessageBuilder.isLocation(true).text(content);
                 }
-                return weChatMessageBuilder.build();
+                return weChatMessageBuilder.text(content).build();
             // 聊天图片
             case IMAGE:
                 String imgPath = this.downloadImg(msgId);

@@ -90,6 +90,11 @@ public class WeChatMessage {
     private boolean isLocation;
 
     /**
+     * 是否是艾特我的消息
+     */
+    private boolean isAtMe;
+
+    /**
      * 消息类型
      */
     private MsgType msgType;
@@ -110,15 +115,6 @@ public class WeChatMessage {
      */
     public boolean isGroup() {
         return fromUserName.contains("@@") || toUserName.contains("@@");
-    }
-
-    /**
-     * 是否艾特我
-     *
-     * @return
-     */
-    public boolean atMe() {
-        return this.text.startsWith("@" + this.mineNickName);
     }
 
 }
