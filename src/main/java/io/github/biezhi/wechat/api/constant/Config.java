@@ -1,5 +1,8 @@
 package io.github.biezhi.wechat.api.constant;
 
+import io.github.biezhi.wechat.exception.WeChatException;
+
+import java.io.InputStream;
 import java.util.Properties;
 
 import static io.github.biezhi.wechat.api.constant.Constant.*;
@@ -40,6 +43,22 @@ public class Config {
 
     public static Config me() {
         return new Config();
+    }
+
+    /**
+     * 加载 ClassPath 下的配置文件
+     *
+     * @param filePath
+     * @return
+     */
+    public static Config load(String filePath) {
+        Config config = new Config();
+        try (final InputStream stream = Config.class.getResourceAsStream(filePath)) {
+            config.props.load(stream);
+        } catch (Exception e) {
+            throw new WeChatException("加载配置文件出错", e);
+        }
+        return config;
     }
 
     public String assetsDir() {

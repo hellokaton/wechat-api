@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.vdurmont.emoji.EmojiParser;
 import io.github.biezhi.wechat.exception.WeChatException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
  * @author biezhi
  * @date 2018/1/19
  */
+@Slf4j
 public class WeChatUtils {
 
     private static final Gson GSON        = new Gson();
@@ -27,8 +29,8 @@ public class WeChatUtils {
     /**
      * 正则匹配
      *
-     * @param p
-     * @param str
+     * @param reg
+     * @param text
      * @return
      */
     public static String match(String reg, String text) {
@@ -127,7 +129,7 @@ public class WeChatUtils {
     }
 
     public static File saveFileByDay(InputStream inputStream, String dirPath, String id, boolean byDay) {
-        FileOutputStream fileOutputStream = null;
+        OutputStream outputStream = null;
         try {
             if (byDay) {
                 dirPath = dirPath + "/" + DateUtils.getDateString();
@@ -140,22 +142,26 @@ public class WeChatUtils {
             if (path.exists()) {
                 path.delete();
             }
-            fileOutputStream = new FileOutputStream(path);
-            byte[] buffer = new byte[2048];
+            outputStream = new FileOutputStream(path);
+
+            byte[] buffer = new byte[1024];
             int    len    = 0;
             while ((len = inputStream.read(buffer)) != -1) {
-                fileOutputStream.write(buffer, 0, len);
+                outputStream.write(buffer, 0, len);
             }
-            fileOutputStream.flush();
+            outputStream.flush();
             return path;
         } catch (Exception e) {
             throw new WeChatException(e);
         } finally {
             try {
-                if (null != fileOutputStream) {
-                    fileOutputStream.close();
+                if (inputStream != null) {
+                    inputStream.close();
                 }
-            } catch (Exception e) {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
             }
         }
     }
@@ -166,7 +172,7 @@ public class WeChatUtils {
             GSON.toJson(data, writer);
             writer.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("写入JSON到文件: {} 失败", file, e);
         }
     }
 

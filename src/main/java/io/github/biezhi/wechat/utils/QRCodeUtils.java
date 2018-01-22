@@ -5,6 +5,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author biezhi
  * @date 2018/1/18
  */
+@Slf4j
 public class QRCodeUtils {
 
     /**
@@ -36,7 +38,7 @@ public class QRCodeUtils {
                     return;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warn("在 {} 下打开文件 {} 失败", os, qrCode.getPath(), e);
             }
         }
         Map<EncodeHintType, Object> hintMap = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
@@ -79,9 +81,9 @@ public class QRCodeUtils {
     /**
      * 读取二维码信息
      *
-     * @param filePath
-     * @param hintMap
-     * @return
+     * @param filePath 文件路径
+     * @param hintMap  hintMap
+     * @return 二维码内容
      */
     private static String readQRCode(File filePath, Map hintMap) {
         try {
