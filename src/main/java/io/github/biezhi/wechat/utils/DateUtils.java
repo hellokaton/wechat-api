@@ -18,6 +18,11 @@ public class DateUtils {
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 
+    public static void sendSleep(){
+        int rand = 2 + WeChatUtils.random(100, 3000);
+        DateUtils.sleep(rand);
+    }
+
     /**
      * 休眠，单位: 毫秒
      *
