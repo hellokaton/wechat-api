@@ -67,6 +67,14 @@ public class Config {
         return config;
     }
 
+    public String get(String key) {
+        return props.getProperty(key);
+    }
+
+    public String get(String key, String defaultValue) {
+        return props.getProperty(key, defaultValue);
+    }
+
     public String assetsDir() {
         return props.getProperty(CONF_ASSETS_DIR, CONF_ASSETS_DIR_DEFAULT);
     }

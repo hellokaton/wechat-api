@@ -1032,6 +1032,8 @@ public class WeChatApiImpl implements WeChatApi {
      */
     @Override
     public boolean sendImg(String toUserName, String filePath) {
+        int rand = WeChatUtils.random(1000, 4000);
+        DateUtils.sleep(rand);
         String mediaId = this.uploadMedia(toUserName, filePath).getMediaId();
         if (StringUtils.isEmpty(mediaId)) {
             log.warn("Media为空");
@@ -1066,6 +1068,8 @@ public class WeChatApiImpl implements WeChatApi {
      */
     @Override
     public boolean sendText(String toUserName, String msg) {
+        int rand = WeChatUtils.random(1000, 4000);
+        DateUtils.sleep(rand);
         String url   = String.format("%s/webwxsendmsg?pass_ticket=%s", bot.session().getUrl(), bot.session().getPassTicket());
         String msgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
 
@@ -1078,6 +1082,8 @@ public class WeChatApiImpl implements WeChatApi {
 
     @Override
     public boolean sendFile(String toUser, String filePath) {
+        int rand = WeChatUtils.random(1000, 4000);
+        DateUtils.sleep(rand);
         String        title         = new File(filePath).getName();
         MediaResponse mediaResponse = this.uploadMedia(toUser, filePath);
         if (null == mediaResponse) {

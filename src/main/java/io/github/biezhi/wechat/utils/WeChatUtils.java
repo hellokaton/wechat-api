@@ -11,6 +11,7 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -174,6 +175,11 @@ public class WeChatUtils {
         } catch (Exception e) {
             log.warn("写入JSON到文件: {} 失败", file, e);
         }
+    }
+
+    public static int random(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max) % (max - min + 1) + min;
     }
 
 }
