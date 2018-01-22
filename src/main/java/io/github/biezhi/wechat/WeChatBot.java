@@ -11,6 +11,7 @@ import io.github.biezhi.wechat.api.model.HotReload;
 import io.github.biezhi.wechat.api.model.Invoke;
 import io.github.biezhi.wechat.api.model.LoginSession;
 import io.github.biezhi.wechat.api.model.WeChatMessage;
+import io.github.biezhi.wechat.exception.WeChatException;
 import io.github.biezhi.wechat.utils.DateUtils;
 import io.github.biezhi.wechat.utils.OkHttpUtils;
 import io.github.biezhi.wechat.utils.WeChatUtils;
@@ -141,6 +142,12 @@ public class WeChatBot {
             Bind bind = method.getAnnotation(Bind.class);
             if (null == bind) {
                 continue;
+            }
+            if (method.getParameterTypes().length != 1) {
+                throw new WeChatException("方法 " + method.getName() + " 参数个数不对，请检查");
+            }
+            if (!method.getParameterTypes()[0].equals(WeChatMessage.class)) {
+                throw new WeChatException("方法 " + method.getName() + " 参数类型不对，请检查");
             }
             MsgType[] msgTypes = bind.msgType();
             for (MsgType msgType : msgTypes) {
