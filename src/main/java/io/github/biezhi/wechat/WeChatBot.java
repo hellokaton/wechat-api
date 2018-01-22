@@ -149,9 +149,9 @@ public class WeChatBot {
                     invokes = new ArrayList<>();
                 }
                 invokes.add(new Invoke(method, Arrays.asList(bind.accountType()), msgType));
-                log.info("绑定消息监听函数 [{}] - [{}]", method.getName(), msgType);
                 mapping.put(msgType, invokes);
             }
+            log.info("绑定消息监听函数 [{}] - [{}]", method.getName(), msgTypes);
         }
     }
 

@@ -27,7 +27,7 @@ public class QRCodeUtils {
      * @param qrCode
      * @param terminal
      */
-    public static void showQrCode(File qrCode, boolean terminal) {
+    public static void showQrCode(File qrCode, boolean terminal) throws WriterException {
         if (!terminal) {
             String os = System.getProperty("os.name").toLowerCase();
             try {
@@ -49,12 +49,8 @@ public class QRCodeUtils {
         String       qrContent    = QRCodeUtils.readQRCode(qrCode, hintMap);
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix    bitMatrix;
-        try {
-            bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE, 10, 10, hintMap);
-            System.out.println(toAscii(bitMatrix));
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
+        bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE, 10, 10, hintMap);
+        System.out.println(toAscii(bitMatrix));
     }
 
     /**

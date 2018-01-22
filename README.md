@@ -1,6 +1,6 @@
 # wechat-api
 
-wechat-api 是微信个人号的Java版本API，让你更方便的操作个人微信号。
+wechat-api 是微信个人号的Java版本API，让个人号具备更多能力，提供方便的接口调用。
 
 [![](https://img.shields.io/travis/biezhi/wechat-api.svg)](https://travis-ci.org/biezhi/wechat-api)
 [![](https://img.shields.io/maven-central/v/io.github.biezhi/wechat-api.svg)](https://mvnrepository.com/artifact/io.github.biezhi/wechat-api)
@@ -22,6 +22,8 @@ wechat-api 是微信个人号的Java版本API，让你更方便的操作个人�
 - JDK7+
 
 ## 使用
+
+本地开发的同学请先安装 [lombok](https://projectlombok.org/) 插件并确保你的JDK环境是1.7+
 
 引入 `maven` 依赖
 

@@ -137,6 +137,9 @@ public class WeChatUtils {
                 dir.mkdirs();
             }
             File path = new File(dir, id);
+            if (path.exists()) {
+                path.delete();
+            }
             fileOutputStream = new FileOutputStream(path);
             byte[] buffer = new byte[2048];
             int    len    = 0;
