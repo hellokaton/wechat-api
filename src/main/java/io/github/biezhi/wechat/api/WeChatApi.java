@@ -129,6 +129,15 @@ public interface WeChatApi {
     Account getAccountByName(String name);
 
     /**
+     * 撤回本条消息 (应为 2 分钟内发出的消息)
+     *
+     * @param msgId  消息id
+     * @param toUser 发送消息的人
+     * @return
+     */
+    boolean revokeMsg(String msgId, String toUser);
+
+    /**
      * 添加好友验证
      *
      * @param recommend 好友信息

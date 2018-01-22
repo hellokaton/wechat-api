@@ -554,6 +554,20 @@ public class WeChatApiImpl implements WeChatApi {
     }
 
     @Override
+    public boolean revokeMsg(String msgId, String toUser) {
+        String url = String.format("%s/webwxrevokemsg?pass_ticket=%s&r=%s",
+                bot.session().getUrl(), bot.session().getPassTicket(), System.currentTimeMillis() / 1000);
+
+        JsonResponse response = client.send(new JsonRequest(url).post().jsonBody()
+                .add("SvrMsgId", msgId)
+                .add("ToUserName", toUser)
+                .add("ClientMsgId", System.currentTimeMillis())
+                .add("BaseRequest", bot.session().getBaseRequest())
+        );
+        return null != response && response.success();
+    }
+
+    @Override
     public boolean verify(Recommend recommend) {
         String url = String.format("%s/webwxverifyuser?r=%s&lang=zh_CN&pass_ticket=%s",
                 bot.session().getUrl(), System.currentTimeMillis() / 1000, bot.session().getPassTicket());
@@ -790,6 +804,11 @@ public class WeChatApiImpl implements WeChatApi {
 
         switch (message.msgType()) {
             case TEXT:
+                // 位置消息
+                if(content.contains("http://weixin.qq.com/cgi-bin/redirectforward?args=")){
+                    String pos = this.searchContent("title", content);
+
+                }
                 return weChatMessageBuilder.build();
             // 聊天图片
             case IMAGE:
@@ -816,11 +835,11 @@ public class WeChatApiImpl implements WeChatApi {
             // 分享
             case SHARE:
                 String shareUrl = message.getUrl();
-
                 return weChatMessageBuilder.text(shareUrl).build();
             // 联系人初始化
             case CONTACT_INIT:
-                break;
+                log.info("联系人初始化");
+                return null;
             // 系统消息
             case SYSTEM:
                 break;
