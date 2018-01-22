@@ -65,6 +65,16 @@ public class WeChatMessage {
     private String fromRemarkName;
 
     /**
+     * 我的UserName
+     */
+    private String mineUserName;
+
+    /**
+     * 我的微信昵称
+     */
+    private String mineNickName;
+
+    /**
      * 接收人 username
      */
     private String toUserName;
@@ -75,10 +85,15 @@ public class WeChatMessage {
     private Recommend recommend;
 
     /**
+     * 是否是位置信息
+     */
+    private boolean isLocation;
+
+    /**
      * 消息类型
      */
     private MsgType msgType;
-    
+
     /**
      * 获取发送人姓名如果有备注则优先显示备注，否则显示昵称
      *
@@ -95,6 +110,15 @@ public class WeChatMessage {
      */
     public boolean isGroup() {
         return fromUserName.contains("@@") || toUserName.contains("@@");
+    }
+
+    /**
+     * 是否艾特我
+     *
+     * @return
+     */
+    public boolean atMe() {
+        return this.text.startsWith("@" + this.mineNickName);
     }
 
 }

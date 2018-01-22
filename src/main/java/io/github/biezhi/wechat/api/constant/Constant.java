@@ -1,5 +1,7 @@
 package io.github.biezhi.wechat.api.constant;
 
+import io.github.biezhi.wechat.utils.StringUtils;
+
 import java.util.*;
 
 /**
@@ -10,11 +12,12 @@ import java.util.*;
  */
 public interface Constant {
 
-    String VERSION        = "1.0.3";
-    String BASE_URL       = "https://login.weixin.qq.com";
-    String GET            = "GET";
-    String GROUP_BR       = ":<br/>";
-    String GROUP_IDENTIFY = "@@";
+    String VERSION           = "1.0.4";
+    String BASE_URL          = "https://login.weixin.qq.com";
+    String GET               = "GET";
+    String GROUP_BR          = ":<br/>";
+    String GROUP_IDENTIFY    = "@@";
+    String LOCATION_IDENTIFY = "/cgi-bin/mmwebwx-bin/webwxgetpubliclinkimg?url=";
 
     String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36";
 

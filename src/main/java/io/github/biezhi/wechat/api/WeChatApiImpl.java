@@ -743,12 +743,16 @@ public class WeChatApiImpl implements WeChatApi {
     public List<WeChatMessage> handleMsg(List<Message> messages) {
         if (null != messages && messages.size() > 0) {
             List<WeChatMessage> weChatMessages = new ArrayList<>(messages.size());
-            log.info("你有新的消息");
+            boolean             hashNewMsg     = false;
             for (Message message : messages) {
                 WeChatMessage weChatMessage = this.processMsg(message);
                 if (null != weChatMessage) {
                     weChatMessages.add(weChatMessage);
+                    hashNewMsg = true;
                 }
+            }
+            if (hashNewMsg) {
+                log.info("你有新的消息");
             }
             return weChatMessages;
         }
@@ -788,6 +792,8 @@ public class WeChatApiImpl implements WeChatApi {
                 .id(message.getId())
                 .fromUserName(message.getFromUserName())
                 .toUserName(message.getToUserName())
+                .mineUserName(bot.session().getUserName())
+                .mineNickName(bot.session().getNickName())
                 .msgType(message.msgType())
                 .text(content);
 
@@ -805,9 +811,10 @@ public class WeChatApiImpl implements WeChatApi {
         switch (message.msgType()) {
             case TEXT:
                 // 位置消息
-                if(content.contains("http://weixin.qq.com/cgi-bin/redirectforward?args=")){
-                    String pos = this.searchContent("title", content);
-
+                if (content.contains(LOCATION_IDENTIFY)) {
+                    int pos = content.indexOf(":");
+                    content = content.substring(0, pos);
+                    weChatMessageBuilder.isLocation(true).text(content);
                 }
                 return weChatMessageBuilder.build();
             // 聊天图片
@@ -1020,11 +1027,11 @@ public class WeChatApiImpl implements WeChatApi {
      * @param filePath   文件路径
      */
     @Override
-    public void sendImg(String toUserName, String filePath) {
+    public boolean sendImg(String toUserName, String filePath) {
         String mediaId = this.uploadMedia(toUserName, filePath).getMediaId();
         if (StringUtils.isEmpty(mediaId)) {
             log.warn("Media为空");
-            return;
+            return false;
         }
 
         String url = String.format("%s/webwxsendmsgimg?fun=async&f=json&pass_ticket=%s",
@@ -1040,20 +1047,11 @@ public class WeChatApiImpl implements WeChatApi {
         msg.put("LocalID", msgId);
         msg.put("ClientMsgId", msgId);
 
-        this.client.send(new JsonRequest(url).post().jsonBody()
+        JsonResponse response = this.client.send(new JsonRequest(url).post().jsonBody()
                 .add("BaseRequest", bot.session().getBaseRequest())
                 .add("Msg", msg)
         );
-    }
-
-    @Override
-    public void sendImgByName(String name, String filePath) {
-        Account account = this.getAccountByName(name);
-        if (null == account) {
-            log.warn("找不到用户: {}", name);
-            return;
-        }
-        this.sendFile(account.getUserName(), filePath);
+        return null != response && response.success();
     }
 
     /**
@@ -1063,33 +1061,24 @@ public class WeChatApiImpl implements WeChatApi {
      * @param toUserName 发送给谁
      */
     @Override
-    public void sendText(String toUserName, String msg) {
+    public boolean sendText(String toUserName, String msg) {
         String url   = String.format("%s/webwxsendmsg?pass_ticket=%s", bot.session().getUrl(), bot.session().getPassTicket());
         String msgId = System.currentTimeMillis() / 1000 + StringUtils.random(6);
 
-        this.client.send(new JsonRequest(url).post().jsonBody()
+        JsonResponse response = this.client.send(new JsonRequest(url).post().jsonBody()
                 .add("BaseRequest", bot.session().getBaseRequest())
                 .add("Msg", new SendMessage(1, msg, bot.session().getUserName(), toUserName, msgId, msgId))
         );
+        return null != response && response.success();
     }
 
     @Override
-    public void sendTextByName(String name, String msg) {
-        Account account = this.getAccountByName(name);
-        if (null == account) {
-            log.warn("找不到用户: {}", name);
-            return;
-        }
-        this.sendText(account.getUserName(), msg);
-    }
-
-    @Override
-    public void sendFile(String toUser, String filePath) {
+    public boolean sendFile(String toUser, String filePath) {
         String        title         = new File(filePath).getName();
         MediaResponse mediaResponse = this.uploadMedia(toUser, filePath);
         if (null == mediaResponse) {
             log.warn("上传附件到微信出错");
-            return;
+            return false;
         }
 
         String url = String.format("%s/webwxsendappmsg?fun=async&f=json&pass_ticket=%s",
@@ -1113,20 +1102,12 @@ public class WeChatApiImpl implements WeChatApi {
         msgMap.put("LocalID", msgId);
         msgMap.put("ClientMsgId", msgId);
 
-        client.send(new JsonRequest(url).post().jsonBody()
+        JsonResponse response = client.send(new JsonRequest(url).post().jsonBody()
                 .add("BaseRequest", bot.session().getBaseRequest())
                 .add("Msg", msgMap)
                 .add("Scene", 0)
         );
+        return null != response && response.success();
     }
 
-    @Override
-    public void sendFileByName(String name, String filePath) {
-        Account account = this.getAccountByName(name);
-        if (null == account) {
-            log.warn("找不到用户: {}", name);
-            return;
-        }
-        this.sendFileByName(account.getUserName(), filePath);
-    }
 }

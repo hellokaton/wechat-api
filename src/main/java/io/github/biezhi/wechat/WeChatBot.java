@@ -7,10 +7,7 @@ import io.github.biezhi.wechat.api.client.BotClient;
 import io.github.biezhi.wechat.api.constant.Config;
 import io.github.biezhi.wechat.api.constant.Constant;
 import io.github.biezhi.wechat.api.enums.MsgType;
-import io.github.biezhi.wechat.api.model.HotReload;
-import io.github.biezhi.wechat.api.model.Invoke;
-import io.github.biezhi.wechat.api.model.LoginSession;
-import io.github.biezhi.wechat.api.model.WeChatMessage;
+import io.github.biezhi.wechat.api.model.*;
 import io.github.biezhi.wechat.exception.WeChatException;
 import io.github.biezhi.wechat.utils.DateUtils;
 import io.github.biezhi.wechat.utils.OkHttpUtils;
@@ -163,6 +160,97 @@ public class WeChatBot {
     }
 
     /**
+     * 给文件助手发送消息
+     *
+     * @param msg 消息内容
+     * @return 发送是否成功
+     */
+    public boolean sendMsgToFileHelper(String msg) {
+        return this.api.sendText("filehelper", msg);
+    }
+
+    /**
+     * 给某个用户发送消息
+     *
+     * @param name 用户UserName
+     * @param msg  消息内容
+     * @return 发送是否成功
+     */
+    public boolean sendMsg(String name, String msg) {
+        return this.api.sendText(name, msg);
+    }
+
+    /**
+     * 根据名称发送消息
+     *
+     * @param name 备注或昵称，精确匹配
+     * @param msg  消息内容
+     * @return 发送是否成功
+     */
+    public boolean sendMsgByName(String name, String msg) {
+        Account account = api.getAccountByName(name);
+        if (null == account) {
+            log.warn("找不到用户: {}", name);
+            return false;
+        }
+        return this.api.sendText(account.getUserName(), msg);
+    }
+
+    /**
+     * 给某个用户发送图片消息
+     *
+     * @param name    用户UserName
+     * @param imgPath 图片路径
+     * @return 发送是否成功
+     */
+    public boolean sendImg(String name, String imgPath) {
+        return this.api.sendImg(name, imgPath);
+    }
+
+    /**
+     * 根据名称发送图片消息
+     *
+     * @param name    备注或昵称，精确匹配
+     * @param imgPath 图片路径
+     * @return 发送是否成功
+     */
+    public boolean sendImgName(String name, String imgPath) {
+        Account account = api.getAccountByName(name);
+        if (null == account) {
+            log.warn("找不到用户: {}", name);
+            return false;
+        }
+        return this.api.sendImg(account.getUserName(), imgPath);
+    }
+
+    /**
+     * 给用户发送文件
+     *
+     * @param name     用户UserName
+     * @param filePath 文件路径
+     * @return 发送是否成功
+     */
+    public boolean sendFile(String name, String filePath) {
+        return this.api.sendFile(name, filePath);
+    }
+
+    /**
+     * 根据名称发送文件消息
+     *
+     * @param name     备注或昵称，精确匹配
+     * @param filePath 文件路径
+     * @return 发送是否成功
+     */
+    public boolean sendFileName(String name, String filePath) {
+        Account account = api.getAccountByName(name);
+        if (null == account) {
+            log.warn("找不到用户: {}", name);
+            return false;
+        }
+        return this.api.sendFile(account.getUserName(), filePath);
+    }
+
+    /**
      * 启动微信监听
      */
     public void start() {
@@ -222,10 +310,9 @@ public class WeChatBot {
         }
     }
 
-    public boolean autoReply() {
-        return config.autoReply();
-    }
-
+    /**
+     * 更新最后一次正常心跳时间
+     */
     public void updateLastCheck() {
         this.lastCheckTs = System.currentTimeMillis();
         if (this.config().autoLogin()) {

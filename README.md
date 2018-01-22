@@ -2,7 +2,7 @@
 
 wechat-api 是微信个人号的Java版本API，让个人号具备更多能力，提供方便的接口调用。
 
-[在线文档](http://biezhi.github.io/wechat-api/)
+[在线文档](https://biezhi.github.io/wechat-api/)
 
 [![](https://img.shields.io/travis/biezhi/wechat-api.svg)](https://travis-ci.org/biezhi/wechat-api)
 [![](https://img.shields.io/maven-central/v/io.github.biezhi/wechat-api.svg)](https://mvnrepository.com/artifact/io.github.biezhi/wechat-api)
@@ -33,56 +33,29 @@ wechat-api 是微信个人号的Java版本API，让个人号具备更多能力�
 <dependency>
     <groupId>io.github.biezhi</groupId>
     <artifactId>wechat-api</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
 构建自己的小机器人
 
 ```java
-public class MyBot extends WeChatBot {
-
-    public MyBot(Config config) {
+public class HelloBot extends WeChatBot {
+    
+    public HelloBot(Config config) {
         super(config);
     }
-
-    /**
-     * 绑定群聊信息
-     *
-     * @param message
-     */
-    @Bind(msgType = MsgType.ALL, accountType = AccountType.TYPE_GROUP)
-    public void groupMessage(WeChatMessage message) {
-        log.info("接收到群 [{}] 的消息: {}", message.getName(), message.getText());
-        this.api().sendText(message.getFromUserName(), "发送给群: " + new Date().toLocaleString());
-    }
-
-    /**
-     * 绑定私聊消息
-     *
-     * @param message
-     */
-    @Bind(msgType = MsgType.TEXT, accountType = AccountType.TYPE_FRIEND)
-    public void friendMessage(WeChatMessage message) {
-        log.info("接收到好友 [{}] 的消息: {}", message.getName(), message.getText());
-        this.api().sendText(message.getFromUserName(), "自动回复: " + message.getText());
-    }
     
-    /**
-     * 好友验证消息
-     *
-     * @param message
-     */
-    @Bind(msgType = MsgType.ADD_FRIEND)
-    public void addFriend(WeChatMessage message) {
-        log.info("收到好友验证消息: {}", message.getText());
-        if (message.getText().contains("java")) {
-            this.api().verify(message.getRaw().getRecommend());
+    @Bind(msgType = MsgType.TEXT)
+    public void handleText(WeChatMessage message) {
+        if (StringUtils.isNotEmpty(message.getName())) {
+            log.info("接收到 [{}] 的消息: {}", message.getName(), message.getText());
+            this.api().sendText(message.getFromUserName(), "自动回复: " + message.getText());
         }
     }
     
     public static void main(String[] args) {
-        new MyBot(Config.me().autoLogin(true).showTerminal(true)).start();
+        new HelloBot(Config.me().autoLogin(true).showTerminal(true)).start();
     }
     
 }
@@ -92,93 +65,76 @@ public class MyBot extends WeChatBot {
 
 ```java
 /**
- * 发送文本消息
+ * 给文件助手发送消息
  *
- * @param toUser
- * @param msg
+ * @param msg 消息内容
+ * @return 发送是否成功
  */
-void sendText(String toUser, String msg);
+boolean sendMsgToFileHelper(String msg);
 
 /**
- * 根据备注或者昵称发送消息
+ * 给某个用户发送消息
  *
- * @param name
- * @param msg
+ * @param name 用户UserName
+ * @param msg  消息内容
+ * @return 发送是否成功
  */
-void sendTextByName(String name, String msg);
+boolean sendMsg(String name, String msg);
 
 /**
- * 发送图片
+ * 根据名称发送消息
  *
- * @param toUser
- * @param filePath
+ * @param name 备注或昵称，精确匹配
+ * @param msg  消息内容
+ * @return 发送是否成功
  */
-void sendImg(String toUser, String filePath);
+boolean sendMsgByName(String name, String msg);
 
 /**
- * 根据备注或者昵称发送图片
+ * 给某个用户发送图片消息
  *
- * @param name
- * @param filePath
+ * @param name    用户UserName
+ * @param imgPath 图片路径
+ * @return 发送是否成功
  */
-void sendImgByName(String name, String filePath);
+boolean sendImg(String name, String imgPath);
 
 /**
- * 发送文件
+ * 根据名称发送图片消息
  *
- * @param toUser
- * @param filePath
+ * @param name    备注或昵称，精确匹配
+ * @param imgPath 图片路径
+ * @return 发送是否成功
  */
-void sendFile(String toUser, String filePath);
+boolean sendImgName(String name, String imgPath);
 
 /**
- * 根据备注或者昵称发送消息
+ * 给用户发送文件
  *
- * @param name
- * @param filePath
+ * @param name     用户UserName
+ * @param filePath 文件路径
+ * @return 发送是否成功
  */
-void sendFileByName(String name, String filePath);
+boolean sendFile(String name, String filePath);
 
 /**
- * 上传附件
+ * 根据名称发送文件消息
  *
- * @param toUser
- * @param filePath
- * @return
+ * @param name     备注或昵称，精确匹配
+ * @param filePath 文件路径
+ * @return 发送是否成功
  */
-MediaResponse uploadMedia(String toUser, String filePath);
-
-/**
- * 根据UserName获取账号信息
- *
- * @param id
- * @return
- */
-Account getAccountById(String id);
-
-/**
- * 根据备注或昵称查找账户
- *
- * @param name
- * @return
- */
-Account getAccountByName(String name);
-
-/**
- * 添加好友验证
- *
- * @param recommend 好友信息
- */
-void verify(Recommend recommend);
+boolean sendFileName(String name, String filePath);
 ```
+
+[更多API见文档](https://biezhi.github.io/wechat-api/#/?id=api%e5%88%97%e8%a1%a8)
 
 ## TODO
 
 1. 接收位置
 2. 撤回消息查看
-3. 创建群聊
-4. 发送文件消息
-5. 消息撤回
+3. 发送文件消息
+4. 多线程处理消息
 
 ## 开源协议
 

@@ -61,15 +61,7 @@ public interface WeChatApi {
      * @param toUser
      * @param msg
      */
-    void sendText(String toUser, String msg);
-
-    /**
-     * 根据备注或者昵称发送消息
-     *
-     * @param name
-     * @param msg
-     */
-    void sendTextByName(String name, String msg);
+    boolean sendText(String toUser, String msg);
 
     /**
      * 发送图片
@@ -77,15 +69,7 @@ public interface WeChatApi {
      * @param toUser
      * @param filePath
      */
-    void sendImg(String toUser, String filePath);
-
-    /**
-     * 根据备注或者昵称发送图片
-     *
-     * @param name
-     * @param filePath
-     */
-    void sendImgByName(String name, String filePath);
+    boolean sendImg(String toUser, String filePath);
 
     /**
      * 发送文件
@@ -93,15 +77,7 @@ public interface WeChatApi {
      * @param toUser
      * @param filePath
      */
-    void sendFile(String toUser, String filePath);
-
-    /**
-     * 根据备注或者昵称发送消息
-     *
-     * @param name
-     * @param filePath
-     */
-    void sendFileByName(String name, String filePath);
+    boolean sendFile(String toUser, String filePath);
 
     /**
      * 上传附件
