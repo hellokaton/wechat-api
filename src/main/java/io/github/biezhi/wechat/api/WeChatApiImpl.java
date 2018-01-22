@@ -554,7 +554,7 @@ public class WeChatApiImpl implements WeChatApi {
     }
 
     @Override
-    public void verify(Recommend recommend) {
+    public boolean verify(Recommend recommend) {
         String url = String.format("%s/webwxverifyuser?r=%s&lang=zh_CN&pass_ticket=%s",
                 bot.session().getUrl(), System.currentTimeMillis() / 1000, bot.session().getPassTicket());
 
@@ -564,7 +564,7 @@ public class WeChatApiImpl implements WeChatApi {
         verifyUser.put("VerifyUserTicket", recommend.getTicket());
         verifyUserList.add(verifyUser);
 
-        ApiResponse response = client.send(new StringRequest(url).post().jsonBody()
+        JsonResponse response = client.send(new JsonRequest(url).post().jsonBody()
                 .add("BaseRequest", bot.session().getBaseRequest())
                 .add("Opcode", 3)
                 .add("VerifyUserListSize", 1)
@@ -574,9 +574,88 @@ public class WeChatApiImpl implements WeChatApi {
                 .add("SceneList", Arrays.asList(33))
                 .add("skey", bot.session().getSyncKeyStr())
         );
+        return null != response && response.success();
+    }
 
-        System.out.println(response.getRawBody());
+    @Override
+    public boolean addFriend(String friendUserName, String msg) {
+        String url = String.format("%s/webwxverifyuser?r=%s&lang=zh_CN&pass_ticket=%s",
+                bot.session().getUrl(), System.currentTimeMillis() / 1000, bot.session().getPassTicket());
 
+        List<Map<String, Object>> verifyUserList = new ArrayList<>();
+        Map<String, Object>       verifyUser     = new HashMap<>(2);
+        verifyUser.put("Value", friendUserName);
+        verifyUser.put("VerifyUserTicket", "");
+        verifyUserList.add(verifyUser);
+
+        JsonResponse response = client.send(new JsonRequest(url).post().jsonBody()
+                .add("BaseRequest", bot.session().getBaseRequest())
+                .add("Opcode", 2)
+                .add("VerifyUserListSize", 1)
+                .add("VerifyUserList", verifyUserList)
+                .add("VerifyContent", msg)
+                .add("SceneListCount", 1)
+                .add("SceneList", Arrays.asList(33))
+                .add("skey", bot.session().getSyncKeyStr())
+        );
+        return null != response && response.success();
+    }
+
+    @Override
+    public boolean createChatRoom(String topic, List<String> members) {
+        String                    url        = String.format("%s/webwxcreatechatroom?r=%s&lang=zh_CN", bot.session().getUrl());
+        List<Map<String, String>> memberList = new ArrayList<>(members.size());
+        for (String member : members) {
+            Map<String, String> m = new HashMap<>(2);
+            m.put("UserName", member);
+            memberList.add(m);
+        }
+
+        JsonResponse response = client.send(new JsonRequest(url).post().jsonBody()
+                .add("MemberCount", members.size())
+                .add("MemberList", memberList)
+                .add("Topic", topic)
+                .add("BaseRequest", bot.session().getBaseRequest())
+        );
+        return null != response && response.success();
+    }
+
+    @Override
+    public boolean removeMemberByGroup(String member, String group) {
+        String url = String.format("%s/webwxupdatechatroom?fun=delmember", bot.session().getUrl());
+        JsonResponse response = client.send(new JsonRequest(url).post().jsonBody()
+                .add("DelMemberList", member)
+                .add("ChatRoomName", group)
+                .add("BaseRequest", bot.session().getBaseRequest())
+        );
+        return null != response && response.success();
+    }
+
+    @Override
+    public boolean inviteJoinGroup(String member, String group) {
+        String url = String.format("%s/webwxupdatechatroom?fun=addmember", bot.session().getUrl());
+        JsonResponse response = client.send(new JsonRequest(url).post().jsonBody()
+                .add("AddMemberList", member)
+                .add("ChatRoomName", group)
+                .add("BaseRequest", bot.session().getBaseRequest())
+        );
+        return null != response && response.success();
+    }
+
+    @Override
+    public boolean modifyGroupName(String oldTopic, String newTopic) {
+        Account account = this.getAccountByName(oldTopic);
+        if (null == account) {
+            log.warn("找不到群: [{}] 更换群名失败", oldTopic);
+            return false;
+        }
+        String url = String.format("%s/webwxupdatechatroom?fun=modtopic", bot.session().getUrl());
+        JsonResponse response = client.send(new JsonRequest(url).post().jsonBody()
+                .add("NewTopic", newTopic)
+                .add("ChatRoomName", account.getUserName())
+                .add("BaseRequest", bot.session().getBaseRequest())
+        );
+        return null != response && response.success();
     }
 
     private String getUserRemarkName(String id) {

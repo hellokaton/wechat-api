@@ -32,6 +32,6 @@ public @interface Bind {
      *
      * @return
      */
-    AccountType[] accountType() default {AccountType.TYPE_FRIEND};
+    AccountType[] accountType() default {AccountType.TYPE_FRIEND, AccountType.TYPE_GROUP};
 
 }

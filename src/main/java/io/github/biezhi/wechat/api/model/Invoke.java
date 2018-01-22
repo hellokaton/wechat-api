@@ -40,8 +40,13 @@ public class Invoke {
      * @param <T>
      */
     public <T extends WeChatBot> void call(T bot, WeChatMessage message) {
+        if (INVOKED_MSG.contains(message.getId())) {
+            return;
+        }
         try {
-            if (INVOKED_MSG.contains(message.getId())) {
+            // 自动同意添加好友
+            if (message.getMsgType() == MsgType.ADD_FRIEND && bot.config().autoAddFriend()) {
+                bot.api().verify(message.getRecommend());
                 return;
             }
             Account account = bot.api().getAccountById(message.getFromUserName());

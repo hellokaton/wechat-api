@@ -39,6 +39,12 @@ public class Config {
     private static final String CONF_AUTO_LOGIN         = "wechat.auto-login";
     private static final String CONF_AUTO_LOGIN_DEFAULT = "false";
 
+    /**
+     * 自动添加好友请求
+     */
+    private static final String CONF_AUTO_ADDFRIEND         = "wechat.auto-addfriend";
+    private static final String CONF_AUTO_ADDFRIEND_DEFAULT = "false";
+
     private Properties props = new Properties();
 
     public static Config me() {
@@ -91,6 +97,15 @@ public class Config {
     public Config autoLogin(boolean autoLogin) {
         props.setProperty(CONF_AUTO_LOGIN, String.valueOf(autoLogin));
         return this;
+    }
+
+    public Config autoAddFriend(boolean autoAddFriend) {
+        props.setProperty(CONF_AUTO_ADDFRIEND, String.valueOf(autoAddFriend));
+        return this;
+    }
+
+    public boolean autoAddFriend() {
+        return Boolean.valueOf(props.getProperty(CONF_AUTO_ADDFRIEND, CONF_AUTO_ADDFRIEND_DEFAULT));
     }
 
     public boolean autoLogin() {

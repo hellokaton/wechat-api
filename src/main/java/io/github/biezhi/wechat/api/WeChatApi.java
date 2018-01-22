@@ -133,6 +133,48 @@ public interface WeChatApi {
      *
      * @param recommend 好友信息
      */
-    void verify(Recommend recommend);
+    boolean verify(Recommend recommend);
 
+    /**
+     * 添加好友
+     *
+     * @param friend 好友的UserName
+     * @param msg    添加好友时的消息
+     * @return
+     */
+    boolean addFriend(String friend, String msg);
+
+    /**
+     * 创建群聊
+     *
+     * @param topic   群名称
+     * @param members 群成员UserName列表
+     */
+    boolean createChatRoom(String topic, List<String> members);
+
+    /**
+     * 从群聊中移除某个群成员
+     *
+     * @param member
+     * @param group
+     */
+    boolean removeMemberByGroup(String member, String group);
+
+    /**
+     * 邀请好友进群
+     *
+     * @param member
+     * @param group
+     * @return
+     */
+    boolean inviteJoinGroup(String member, String group);
+
+    /**
+     * 修改群名
+     *
+     * @param oldTopic 旧群名
+     * @param newTopic 新群名
+     * @return
+     */
+    boolean modifyGroupName(String oldTopic, String newTopic);
 }
