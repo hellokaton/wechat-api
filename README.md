@@ -2,6 +2,8 @@
 
 wechat-api 是微信个人号的Java版本API，让个人号具备更多能力，提供方便的接口调用。
 
+[在线文档](https://biezhi.github.io/wechat-api/)
+
 [![](https://img.shields.io/travis/biezhi/wechat-api.svg)](https://travis-ci.org/biezhi/wechat-api)
 [![](https://img.shields.io/maven-central/v/io.github.biezhi/wechat-api.svg)](https://mvnrepository.com/artifact/io.github.biezhi/wechat-api)
 [![](https://img.shields.io/badge/license-MIT-FF0080.svg)](https://github.com/biezhi/wechat-api/blob/master/LICENSE)
