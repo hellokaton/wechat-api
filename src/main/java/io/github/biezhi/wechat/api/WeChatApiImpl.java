@@ -203,10 +203,10 @@ public class WeChatApiImpl implements WeChatApi {
 
         InputStream inputStream = fileResponse.getInputStream();
         File        qrCode      = WeChatUtils.saveFile(inputStream, imgDir, "qrcode.png");
-        DateUtils.sleep(500);
+        DateUtils.sleep(200);
         try {
             QRCodeUtils.showQrCode(qrCode, terminalShow);
-        } catch (Exception e){
+        } catch (Exception e) {
             this.getQrImage(uid, terminalShow);
         }
     }
