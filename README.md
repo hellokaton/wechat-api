@@ -50,7 +50,7 @@ public class HelloBot extends WeChatBot {
     public void handleText(WeChatMessage message) {
         if (StringUtils.isNotEmpty(message.getName())) {
             log.info("接收到 [{}] 的消息: {}", message.getName(), message.getText());
-            this.api().sendText(message.getFromUserName(), "自动回复: " + message.getText());
+            this.sendMsg(message.getFromUserName(), "自动回复: " + message.getText());
         }
     }
     
