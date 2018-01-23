@@ -20,7 +20,7 @@
 <dependency>
     <groupId>io.github.biezhi</groupId>
     <artifactId>wechat-api</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 </dependency>
 ```
 
@@ -30,7 +30,7 @@
 <dependency>
     <groupId>io.github.biezhi</groupId>
     <artifactId>wechat-api</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.5</version>
     <exclusions>
         <exclusion>
             <groupId>ch.qos.logback</groupId>
@@ -148,6 +148,11 @@ public void addFriend(WeChatMessage message) {
 > 有些账号是天生无法给自己的账号发送信息的，建议使用 `filehelper` 代替。
 
 # 更新日志
+
+## v1.0.5
+
+1. 调整发送消息频率
+2. `Config` 类添加获取配置方法
 
 ## v1.0.4
 

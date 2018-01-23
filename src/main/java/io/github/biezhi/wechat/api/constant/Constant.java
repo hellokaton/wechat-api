@@ -1,7 +1,5 @@
 package io.github.biezhi.wechat.api.constant;
 
-import io.github.biezhi.wechat.utils.StringUtils;
-
 import java.util.*;
 
 /**
@@ -12,7 +10,7 @@ import java.util.*;
  */
 public interface Constant {
 
-    String VERSION           = "1.0.4";
+    String VERSION           = "1.0.5";
     String BASE_URL          = "https://login.weixin.qq.com";
     String GET               = "GET";
     String GROUP_BR          = ":<br/>";
