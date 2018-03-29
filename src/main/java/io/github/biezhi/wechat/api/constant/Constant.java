@@ -51,7 +51,7 @@ public interface Constant {
      * webpush url
      */
     List<String> WEB_PUSH_URL = new ArrayList<>(
-            Arrays.asList("webpush.wx2.qq.com", "webpush.wx8.qq.com",
-                    "webpush.wx.qq.com", "webpush.web2.wechat.com", "webpush.web.wechat.com"));
+            Arrays.asList("wx2.qq.com", "wx8.qq.com",
+                    "wx.qq.com", "web2.wechat.com", "web.wechat.com"));
 
 }
