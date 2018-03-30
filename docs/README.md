@@ -20,7 +20,7 @@
 <dependency>
     <groupId>io.github.biezhi</groupId>
     <artifactId>wechat-api</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 </dependency>
 ```
 
@@ -30,7 +30,7 @@
 <dependency>
     <groupId>io.github.biezhi</groupId>
     <artifactId>wechat-api</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <exclusions>
         <exclusion>
             <groupId>ch.qos.logback</groupId>
